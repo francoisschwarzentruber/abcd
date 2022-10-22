@@ -1,5 +1,5 @@
 # abcd
-A simple ASCII format to represent music scores
+A super simple ASCII format to represent music scores. It compiles to a Lilypond file and then run the Lilypond engraver.
 
 # Example
 
@@ -14,3 +14,9 @@ produces the score
 
 
  
+# Syntax
+
+- Each line that contains notes is the current voice in the current staff in the current measure
+- A new line means "next voice" (not working yet)
+- Two new lines (i.e an empty line) means "next staff"
+- A line containing "|" means "next measure"
