@@ -6,6 +6,7 @@ A super simple ASCII format to represent music scores. It compiles to a Lilypond
 A file containing 
 
         c4 d4 e2
+        
         c2    g2
         
 produces the score
