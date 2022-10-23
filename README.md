@@ -31,6 +31,8 @@ produces the score
 |  add bass clef    |   write 𝄢                   |
 |  add lyrics       |  start a line with 💬 or 😀  | 
 
+If your text lines are too long, add a new line contaning |.
+
 
 
 # Example
