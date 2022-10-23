@@ -1,6 +1,20 @@
 # abcd
 A super simple ASCII format to represent music scores. Technically, this repository provides a program, that preprocesses the file to produce a Lilypond file, and then run the Lilypond engraver to produce a PDF.
 
+# Basic example
+
+A file containing
+
+        𝄞 2/4    e'2   |  d'4  r4
+
+        𝄢     r4 c4 |  c8 c8 c4
+
+produces the score
+
+![image](https://user-images.githubusercontent.com/43071857/197391690-8d0cba5b-d522-449d-b0ca-96fddb51d895.png)
+
+
+
 # Example
 
 A file containing 
