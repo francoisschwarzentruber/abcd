@@ -1,7 +1,6 @@
 import os
 import sys
 
-filename = "example.abcd" if len(sys.argv) == 1 else sys.argv[1]
 
 
 class Voice:
@@ -176,4 +175,6 @@ def abcdFileToPdf(filename):
   os.system("lilypond tmp.ly")
 
 
+
+filename = "example.abcd" if len(sys.argv) == 1 else sys.argv[1]
 abcdFileToPdf(filename)
