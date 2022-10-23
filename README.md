@@ -50,13 +50,15 @@ produces the score
 
 
  
-# Syntax
+# Features
+
+| Feature           | How to do it in the .abcd language |
+| ----------------- | --------------------------- |
+| Notes and rests   | use of the Lilypond format  |
+|  add a new voice  |    just write in a new line |
+|  add a new staff  |  add an empty line          |
+|  add treble clef  |    write 𝄞                  |
+|  add bass clef    |   write 𝄢                   |
+|  add lyrics       |  start a line with 💬 or 😀  | 
 
 
-- Each line that contains notes is the current voice in the current staff in the current measure. Notes are written in the Lilypond format.
-- A new line means "next voice" (not working yet)
-- Two new lines (i.e an empty line) means "next staff"
-- A line containing "|" means "next measure"
-- 𝄞 for inserting a treble clef
-- 𝄢 for inserting a bass clef
-- lyrics are indicated after 💬 or 😀
