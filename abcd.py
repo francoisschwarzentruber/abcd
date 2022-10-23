@@ -1,13 +1,22 @@
-from re import S
-
-
 filename = "example.abcd"
+
+
+class Voice:
+
+  data = ""
+  lyrics = ""
+
+  def add(self, data):
+    self.data += data
+
+  def addLyrics(self,lyrics):
+    self.lyrics += lyrics
 
 
 class Score:
   def __init__(self):
     self.staffs = []
-
+    
   def add(self, istaff, ivoice, data):
     """
     :istaff the number of the staff in which we will add data
@@ -18,11 +27,14 @@ class Score:
       self.staffs.append([])
 
     if len(self.staffs[istaff]) - 1 < ivoice:
-      self.staffs[istaff].append("")
+      self.staffs[istaff].append(Voice())
 
-    self.staffs[istaff][ivoice] += data
+    self.staffs[istaff][ivoice].add(data)
 
 
+  def addLyrics(self, istaff, ivoice, lyrics):
+     self.staffs[istaff][ivoice].addLyrics(lyrics)
+  
 
 def toScore(lines):
   """
@@ -46,6 +58,8 @@ def toScore(lines):
       sthAdded = False
       istaff = 0
       ivoice = 0
+    elif line.startswith("💬"):
+      score.addLyrics(istaff, ivoice-1, line[1:])
     else:
       score.add(istaff, ivoice, line)
       sthAdded = True
@@ -55,17 +69,29 @@ def toScore(lines):
 
 
 
+
+
+voiceNumber = 0
+
+
 def toLilypond(lines):
      """
      :param lines in the .abcd format
      :return lines in the lilypond format
      """
 
-
+   
 
      def toLilypondVoice(voice):
-          return '\\new Voice  = "miaou" { ' + voice.replace("𝄢", "\\clef bass").replace("𝄞", "\\clef treble") + "} \n"
+          global voiceNumber
+          voiceNumber += 1
+          voiceName = "v" + str(voiceNumber)
+          s = '\\new Voice  = "' + voiceName + '" { ' + voice.data.replace("𝄢", "\\clef bass").replace("𝄞", "\\clef treble").replace("3/4", "\\time 3/4").replace("4/4", "\\time 4/4") + "} \n"
 
+          if voice.lyrics != "":
+            s += '\\new Lyrics \\lyricsto "' + voiceName + '" {\n ' + voice.lyrics + "\n}"
+
+          return s
 
      def toLilypondStaff(staff):
       s = "\\new Staff <<\n"
