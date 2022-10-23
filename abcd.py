@@ -4,14 +4,16 @@ from re import S
 filename = "example.abcd"
 
 
-
-
-
 class Score:
   def __init__(self):
     self.staffs = []
 
   def add(self, istaff, ivoice, data):
+    """
+    :istaff the number of the staff in which we will add data
+    :ivoice the number of the voice in that staff
+    :data string in the Lilypond format
+    """
     if len(self.staffs) - 1 < istaff:
       self.staffs.append([])
 
