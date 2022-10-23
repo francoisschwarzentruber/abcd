@@ -1,5 +1,9 @@
 # abcd
+
 A super simple ASCII format to represent music scores. Technically, this repository provides a program, that preprocesses the file to produce a Lilypond file, and then run the Lilypond engraver to produce a PDF.
+
+Why? Because in wysiwyg software, you never know where to click. Because abc is too restrictive. Because Lilypond is awesome, but combersome to write. In particular, all the information concerning a single measure is spread out in the Lilypond source.
+
 
 # Basic example
 
@@ -12,6 +16,20 @@ A file containing
 produces the score
 
 ![image](https://user-images.githubusercontent.com/43071857/197391690-8d0cba5b-d522-449d-b0ca-96fddb51d895.png)
+
+
+
+ 
+# Features
+
+| Feature           | How to do it in the .abcd language |
+| ----------------- | --------------------------- |
+| Notes and rests   | use of the Lilypond format  |
+|  add a new voice  |    just write in a new line |
+|  add a new staff  |  add an empty line          |
+|  add treble clef  |    write 𝄞                  |
+|  add bass clef    |   write 𝄢                   |
+|  add lyrics       |  start a line with 💬 or 😀  | 
 
 
 
@@ -48,17 +66,5 @@ produces the score
 
 ![image](https://user-images.githubusercontent.com/43071857/197391020-418f9fc6-9396-4359-9333-ac7ee72bfd43.png)
 
-
- 
-# Features
-
-| Feature           | How to do it in the .abcd language |
-| ----------------- | --------------------------- |
-| Notes and rests   | use of the Lilypond format  |
-|  add a new voice  |    just write in a new line |
-|  add a new staff  |  add an empty line          |
-|  add treble clef  |    write 𝄞                  |
-|  add bass clef    |   write 𝄢                   |
-|  add lyrics       |  start a line with 💬 or 😀  | 
 
 
