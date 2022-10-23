@@ -27,7 +27,10 @@ produces the score
  
 # Syntax
 
+
 - Each line that contains notes is the current voice in the current staff in the current measure. Notes are written in the Lilypond format.
 - A new line means "next voice" (not working yet)
 - Two new lines (i.e an empty line) means "next staff"
 - A line containing "|" means "next measure"
+- 𝄞 for inserting a treble clef
+- 𝄢 for inserting a bass clef
