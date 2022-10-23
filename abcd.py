@@ -1,4 +1,7 @@
-filename = "example.abcd"
+import os
+import sys
+
+filename = "example.abcd" if len(sys.argv) == 1 else sys.argv[1]
 
 
 class Voice:
@@ -58,7 +61,7 @@ def toScore(lines):
       sthAdded = False
       istaff = 0
       ivoice = 0
-    elif line.startswith("💬"):
+    elif line.startswith("💬") or line.startswith("😀"):
       score.addLyrics(istaff, ivoice-1, line[1:])
     else:
       score.add(istaff, ivoice, line)
@@ -80,13 +83,24 @@ def toLilypond(lines):
      :return lines in the lilypond format
      """
 
-   
+
+     def replaceForLilypond(text):
+        s = text
+        s = s.replace("𝄢", "\\clef bass")
+        s = s.replace("𝄞", "\\clef treble")
+        s = s.replace("3/4", "\\time 3/4")
+        s = s.replace("2/4", "\\time 2/4")
+        s = s.replace("4/4", "\\time 4/4")
+        s = s.replace("6/8", "\\time 6/8")
+
+        return s
+
 
      def toLilypondVoice(voice):
           global voiceNumber
           voiceNumber += 1
           voiceName = "v" + str(voiceNumber)
-          s = '\\new Voice  = "' + voiceName + '" { ' + voice.data.replace("𝄢", "\\clef bass").replace("𝄞", "\\clef treble").replace("3/4", "\\time 3/4").replace("4/4", "\\time 4/4") + "} \n"
+          s = '\\new Voice  = "' + voiceName + '" { ' + replaceForLilypond(voice.data) + "} \n"
 
           if voice.lyrics != "":
             s += '\\new Lyrics \\lyricsto "' + voiceName + '" {\n ' + voice.lyrics + "\n}"
@@ -158,7 +172,7 @@ def abcdFileToPdf(filename):
   lilyFile.writelines(lilePondCode)
   lilyFile.close()
 
-  import os
+  
   os.system("lilypond tmp.ly")
 
 
