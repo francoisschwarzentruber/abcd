@@ -33,6 +33,10 @@ produces the score
 
 If your text lines are too long, add a new line contaning |.
 
+# Screeshot of the tool
+
+![image](https://user-images.githubusercontent.com/43071857/198897652-cad34c1f-cf4b-40bc-886a-8fd02ca13483.png)
+
 
 
 # Example
