@@ -10,8 +10,6 @@ class Voice {
 
 class Score {
     staffs = [];
-
-
     /*
         :istaff the number of the staff in which we will add data
         :ivoice the number of the voice in that staff
@@ -34,8 +32,6 @@ class Score {
     addLyrics(istaff, ivoice, lyrics) {
         this.staffs[istaff][ivoice].addLyrics(lyrics)
     }
-
-
 
 }
 
@@ -93,6 +89,27 @@ function toLilypond(lines) {
 
     function replaceForLilypond(text) {
         s = text
+        s = s.replaceAll(" ♯ ", " \\key g \\major ");
+        s = s.replaceAll(" ♯♯ ", " \\key d \\major ");
+        s = s.replaceAll(" ♯♯♯ ", " \\key a \\major ");
+        s = s.replaceAll(" ♯♯♯♯ ", " \\key e \\major ");
+        s = s.replaceAll(" ♯♯♯♯♯ ", " \\key b \\major ");
+        s = s.replaceAll(" ♯♯♯♯♯♯ ", " \\key fis \\major ");
+        s = s.replaceAll(" ♯♯♯♯♯♯♯ ", " \\key cis \\major ");
+        s = s.replaceAll(" ♭ ", " \\key f \\major ");
+        s = s.replaceAll(" ♭♭ ", " \\key bes \\major ");
+        s = s.replaceAll(" ♭♭♭ ", " \\key ees \\major ");
+        s = s.replaceAll(" ♭♭♭♭ ", " \\key aes \\major ");
+        s = s.replaceAll(" ♭♭♭♭♭ ", " \\key des \\major ");
+        s = s.replaceAll(" ♭♭♭♭♭♭ ", " \\key ges \\major ");
+        s = s.replaceAll(" ♭♭♭♭♭♭♭ ", " \\key ces \\major ");
+
+
+
+
+        s = s.replaceAll("♭", "es")
+        s = s.replaceAll("#", "is")
+        s = s.replaceAll("♯", "is")
         s = s.replaceAll("𝄢", "\\clef bass")
         s = s.replaceAll("𝄞", "\\clef treble")
         s = s.replaceAll("3/4", "\\time 3/4")

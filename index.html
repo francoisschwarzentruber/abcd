@@ -1,39 +1,59 @@
 <!DOCTYPE html>
 <html>
 <meta charset="utf-8">
+<script src="https://cdn.jsdelivr.net/npm/ace-builds@1.12.3/src-noconflict/ace.min.js"></script>
 
 <head>
+    <style>
+            #editor {
+        position: absolute;
+        top: 48px;
+        right: 50%;
+        bottom: 0;
+        left: 0;
+    }
 
+
+    iframe {
+        position:absolute;
+        top: 48px;
+     left:50%;
+     right: 0;
+     bottom: 0;
+
+    }
+
+
+    button {
+        font-size: 18px;
+        border: 1px solid black;
+        border-radius: 7px;
+        margin: 2px;
+        padding: 4px;
+    }
+
+    #downloadPDF {
+        background: #AAFFAA;
+        left:50%;
+        position:absolute
+    }
+
+#toolbarInsert {
+    display:inline-block;
+}
+    </style>
 </head>
 
 <body>
-    <textarea cols="100" rows="30" id="input">
-𝄞    e''2.
-😀  ohh
-
-𝄞 3/4  c''4 d''8 d''8 e''4
-😀     la    vie est  très
-
-𝄞 <<e'8 g'8>> e'8 e'8 e'8 f'8. a'16 
-c'1
-
-𝄢 c4    r2
-
-|
-r2.
-
-        f''2.
-😀  belle
-
-b'4 c''4 c''4
-
-a2  𝄞 g'4
-
-|
-    </textarea>
-    <button id="downloadPDF">Generate PDF</button>
+<div><div id="toolbarInsert"></div><button id="button8up">8↑</button><button id="button8down">8↓</button><button id="downloadPDF">Update PDF</button></div>
+<div>
+    <div id="editor"></div>
+    <iframe id="output" src="./tmp.pdf" width="50%" height="100%">
+    </iframe>
+</div>
     <script src="js/abcd2ly.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/harmony.js"></script>
+    <script src="js/gui.js"></script>
 </body>
 
 </html>
