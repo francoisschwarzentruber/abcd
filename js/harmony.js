@@ -1,10 +1,13 @@
-class Note {
+/**
+ * A note or a silence
+ */
+class Element {
     constructor(s) {
         if (s == "")
             throw "empty string";
 
-        if (!(["a", "b", "c", "d", "e", "f", "g"].indexOf(s[0]) >= 0))
-            throw "not a note";
+        if (!(["a", "b", "c", "d", "e", "f", "g", "r"].indexOf(s[0]) >= 0))
+            throw "not a note or a rest";
         this.note = s[0];
 
         s = s.substr(1);
@@ -46,7 +49,7 @@ class Note {
 
     toString() {
         return this.note + (this.alteration > 0 ? "♯".repeat(this.alteration) : "♭".repeat(-this.alteration))
-            + (this.height > 0 ? "'".repeat(this.height) : ",".repeat(-this.height))
+            + ((this.note == "r") ? "" : (this.height > 0 ? "'".repeat(this.height) : ",".repeat(-this.height)))
             + this.duration;
     }
 
@@ -59,7 +62,7 @@ function str8up(str) {
     function move8up(s) {
         if (s == "") return s;
         try {
-            const note = new Note(s);
+            const note = new Element(s);
             note.height++;
             return note.toString();
         }
@@ -77,7 +80,7 @@ function str8down(str) {
     function move8up(s) {
         if (s == "") return s;
         try {
-            const note = new Note(s);
+            const note = new Element(s);
             note.height--;
             return note.toString();
         }

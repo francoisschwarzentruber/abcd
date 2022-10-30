@@ -150,7 +150,6 @@ function toLilypond(lines) {
     }
 
     score = toScore(lines)
-    console.log(score.staffs)
 
     return toLilypondScore(score)
 
