@@ -46,8 +46,16 @@ function actionOnSelection(f) {
     });
 }
 
-button8up.onclick = () => actionOnSelection(str8up);
-button8down.onclick = () => actionOnSelection(str8down);
+
+function action8upOrDown(f) {
+    if (editor.getSelectedText() == "") {
+        inputOctave.value = f("a" + inputOctave.value).substr(1);
+    }
+    else
+        actionOnSelection(f);
+}
+button8up.onclick = () => action8upOrDown(str8up);
+button8down.onclick = () => action8upOrDown(str8down);
 
 
 ["𝄞 ", "𝄢 ", "♭", "♯", "😀 "].map(buttonInsert);
