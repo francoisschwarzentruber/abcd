@@ -25,6 +25,7 @@ produces the score
 | Feature           | How to do it in the .abcd language |
 | ----------------- | --------------------------- |
 | Notes and rests   | use of the Lilypond format  |
+| Chords            | put notes between < and >   |
 |  add a new voice  |    just write in a new line |
 |  add a new staff  |  add an empty line          |
 |  add treble clef  |    write 𝄞                  |
