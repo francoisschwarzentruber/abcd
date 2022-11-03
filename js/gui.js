@@ -60,6 +60,8 @@ button8down.onclick = () => action8upOrDown(str8down);
 
 ["𝄞 ", "𝄢 ", "♭", "♯", "😀 "].map(buttonInsert);
 
+
+
 downloadPDF.onclick = async () => {
     const fd = new FormData();
     const abcd = editor.getValue();
