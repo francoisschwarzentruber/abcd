@@ -1,4 +1,4 @@
-var editor = ace.edit("editor");
+const editor = ace.edit("editor");
 
 const synth = new Tone.Synth().toDestination();
 
@@ -22,6 +22,57 @@ editor.commands.on('afterExec', eventData => {
             }
     }
 });
+
+
+/**
+ * clean the code, align the |
+ */
+function clean() {
+    const code = editor.getValue();
+
+    function alignLines(lines, ibegin, iend) {
+        console.log(ibegin, iend)
+        const splits = [];
+        const measureLength = [];
+
+        for (let i = ibegin; i <= iend; i++) {
+            splits[i] = lines[i].split("|").map((s) => s.trim());
+
+            for (let j = 0; j < splits[i].length; j++) {
+                if (j > measureLength.length - 1)
+                    measureLength.push(1);
+                measureLength[j] = Math.max(measureLength[j], splits[i][j].length);
+            }
+        }
+
+        for (let i = ibegin; i <= iend; i++) {
+            for (let j = 0; j < splits[i].length; j++) {
+                splits[i][j] = splits[i][j].padEnd(measureLength[j], " ");
+            }
+            lines[i] = splits[i].join(" | ");
+        }
+    }
+
+    function reorganiseLines(lines) {
+        let ibegin = 0;
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (line == "|" || line == "||") {
+                iend = i - 1;
+                alignLines(lines, ibegin, iend);
+                ibegin = i + 1;
+            }
+        }
+        alignLines(lines, ibegin, lines.length-1);
+        return lines;
+    }
+    editor.setValue(reorganiseLines(code.split("\n")).join("\n"), -1);
+}
+
+
+
+buttonClean.onclick = clean;
+
 
 
 function buttonInsert(s) {
@@ -62,7 +113,7 @@ button8down.onclick = () => action8upOrDown(str8down);
 
 
 
-downloadPDF.onclick = async () => {
+buttonUpdatePDF.onclick = async () => {
     const fd = new FormData();
     const abcd = editor.getValue();
     const ly = abcd2ly(abcd);
