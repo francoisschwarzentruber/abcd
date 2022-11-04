@@ -73,15 +73,14 @@ downloadPDF.onclick = async () => {
         body: fd
     });
     if (response.ok) {
-        const b = await response.blob();
-        const fileURL = URL.createObjectURL(b);
+        const pdfFilename = await response.text();
 
         /*  const a = document.createElement("a");
           a.href = URL.createObjectURL(b);
           a.setAttribute("download", "output.pdf");
           a.click();
   */
-        output.src = "./tmp.pdf"
+        output.src = pdfFilename
     }
 }
 

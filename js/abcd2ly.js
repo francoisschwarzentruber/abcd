@@ -105,8 +105,9 @@ function toScore(lines) {
 
         if (line == "") {
             if (sthAdded) {
-                istaff += 1
-                ivoice = 0
+                istaff += 1;
+                ivoice = 0;
+                sthAdded = false;
             }
         }
         else if (line == "|") {
@@ -130,6 +131,13 @@ function toScore(lines) {
         else if (line.startsWith("💬") || line.startsWith("😀"))
             score.addLyrics(istaff, ivoice - 1, line.substr(2))
         else {
+            if (line.startsWith("𝄞") || line.startsWith("𝄢")) {
+                if (sthAdded) {
+                    istaff += 1
+                    ivoice = 0
+                }
+            }
+
             score.add(istaff, ivoice, line)
             if (istaffBeginGroup) {
                 score.staffs[istaff].setStartGroup();
