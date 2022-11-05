@@ -10,7 +10,6 @@ Why? Because in wysiwyg software, you never know where to click. Because abc is 
 A file containing
 
         𝄞 2/4    e'2   |  d'4  r4
-
         𝄢     r4 c4 |  c8 c8 c4
 
 produces the score
@@ -27,12 +26,12 @@ produces the score
 | Notes and rests   | use of the Lilypond format  |
 | Chords            | put notes between < and >   |
 |  add a new voice  |    just write in a new line |
-|  add a new staff  |  add an empty line          |
+|  add a new staff  |  add an empty line or a line starting with 𝄞 or 𝄢          |
 |  add treble clef  |    write 𝄞                  |
 |  add bass clef    |   write 𝄢                   |
 |  add lyrics       |  start a line with 💬 or 😀  | 
 
-If your text lines are too long, add a new line contaning |.
+If your text lines are too long, add a new line contaning | or || (for double bars).
 
 # Screeshot of the tool
 
@@ -46,13 +45,10 @@ A file containing
 
         𝄞    e''2.
         😀  ohh
-
         𝄞 3/4  c''4 d''8 d''8 e''4
         😀     la    vie est  très
-
         𝄞 <<e'8 g'8>> e'8 e'8 e'8 f'8. a'16 
         c'1
-
         𝄢 c4    r2
 
         |
