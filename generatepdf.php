@@ -32,18 +32,22 @@
 
     }
 
+    try {
+        ini_set('default_charset', 'UTF-8');
+        chdir("scores");
 
-    ini_set('default_charset', 'UTF-8');
-    chdir("scores");
+        clean();
 
-    clean();
-
-    $id = rand();
-    unlink("*.pdf");
-    $code = substr($_POST["code"], 1);
-    file_put_contents("$id.ly", $code, 0);
-    $command = escapeshellcmd("lilypond $id.ly");
-    system($command);
+        $id = rand();
+        unlink("*.pdf");
+        $code = substr($_POST["code"], 1);
+        file_put_contents("$id.ly", $code, 0);
+        $command = escapeshellcmd("lilypond $id.ly");
+        system($command);
+    
+    } catch (Exception $e) {
+        echo 'Exception: ',  $e->getMessage(), "\n";
+    }
     echo("scores/$id.pdf")
    
 ?>

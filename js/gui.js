@@ -6,13 +6,18 @@ const synth = new Tone.Synth().toDestination();
 
 editor.setValue("𝄞  ♯♯  3/4  e''2.", -1); //-1 means cursor at the beginning
 
+let isSelection = false;
+setInterval(() => { isSelection = (editor.getSelectedText() != "") }, 200);
+
 editor.commands.on('afterExec', eventData => {
     if (eventData.command.name === 'insertstring') {
+        if (isSelection)
+            return;
         const currline = editor.getSelectionRange().start.row;
         const wholelinetxt = editor.session.getLine(currline);
         if (!wholelinetxt.startsWith("😀"))
             if (['a', 'b', 'c', 'd', 'e', 'f', 'g'].indexOf(eventData.args) >= 0) {
-                let h = 3
+                let h = 3;
                 if (inputOctave.value.length > 0)
                     h += inputOctave.value.length * (inputOctave.value[0] == "'" ? 1 : -1);
 
@@ -63,7 +68,7 @@ function clean() {
                 ibegin = i + 1;
             }
         }
-        alignLines(lines, ibegin, lines.length-1);
+        alignLines(lines, ibegin, lines.length - 1);
         return lines;
     }
     editor.setValue(reorganiseLines(code.split("\n")).join("\n"), -1);
@@ -120,17 +125,10 @@ buttonUpdatePDF.onclick = async () => {
     fd.append("code", ly);
     const response = await fetch("generatepdf.php", {
         method: 'post',
-        type: 'application/pdf',
         body: fd
     });
     if (response.ok) {
         const pdfFilename = await response.text();
-
-        /*  const a = document.createElement("a");
-          a.href = URL.createObjectURL(b);
-          a.setAttribute("download", "output.pdf");
-          a.click();
-  */
         output.src = pdfFilename
     }
 }
