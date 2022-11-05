@@ -34,12 +34,13 @@
 
     try {
         ini_set('default_charset', 'UTF-8');
-        chdir("scores");
+        if(!chdir("scores")) 
+            throw new Exception("folder scores not found in " + getcwd());
+        
 
         clean();
 
         $id = rand();
-        unlink("*.pdf");
         $code = substr($_POST["code"], 1);
         file_put_contents("$id.ly", $code, 0);
         $command = escapeshellcmd("lilypond $id.ly");
