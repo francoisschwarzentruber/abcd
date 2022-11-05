@@ -2,7 +2,8 @@
 
 A super simple ASCII format to represent music scores. Technically, this repository provides a program, that preprocesses the file to produce a Lilypond file, and then run the Lilypond engraver to produce a PDF.
 
-Why? Because in wysiwyg software, you never know where to click. Because abc is too restrictive. Among, textual langages, the abc notation is simple but sufficient powerful. Otherwise Lilypond is awesome, but combersome to write. In particular, all the information concerning a single measure is spread out in the Lilypond source. abcd is a hint to the abc notation. So technically abcd files are just compiled into Lilypond!
+# Motivation
+Why? Because in wysiwyg software, you never know where to click. Among, textual langages, the abc notation is simple but  not sufficiently powerful. Otherwise Lilypond is awesome, but combersome to write. In particular, all the information concerning a single measure is spread out in the Lilypond source. The name abcd is a hint to the abc notation. So technically abcd files are just compiled into Lilypond!
 
 
 # Basic example
