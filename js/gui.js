@@ -2,12 +2,13 @@ const editor = ace.edit("editor");
 
 const synth = new Tone.Synth().toDestination();
 
+editor.setValue(localStorage.getItem("save") ? localStorage.getItem("save") : "𝄞  ♯♯  3/4  e''2.", -1); //-1 means cursor at the beginning
+setInterval(() => localStorage.setItem("save", editor.getValue()), 5000);
 
-
-editor.setValue("𝄞  ♯♯  3/4  e''2.", -1); //-1 means cursor at the beginning
 
 let isSelection = false;
 setInterval(() => { isSelection = (editor.getSelectedText() != "") }, 200);
+
 
 editor.commands.on('afterExec', eventData => {
     if (eventData.command.name === 'insertstring') {
