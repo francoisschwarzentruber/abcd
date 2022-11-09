@@ -208,7 +208,7 @@ function toLilypond(lines) {
     function toLilypondVoice(voice) {
         voiceNumber += 1
         voiceName = "v" + voiceNumber
-        s = '\\new Voice  = "' + voiceName + '" { ' + replaceForLilypond(voice.data) + "} \n"
+        s = '\\new Voice  = "' + voiceName + `"  { ` + replaceForLilypond(voice.data) + "} \n"
 
         if (voice.lyrics != "")
             s += '\\new Lyrics \\lyricsto "' + voiceName + '" {\n ' + voice.lyrics + "\n}"
@@ -227,7 +227,7 @@ function toLilypond(lines) {
     }
 
     function toLilypondScore(score) {
-        let s = '\n\\version "2.23.4"\n \\new Score <<\n';
+        let s = '\n\\version "2.23.4"\n \\score {\n';
 
         for (let istaff = 0; istaff < score.staffs.length; istaff++) {
             const staff = score.staffs[istaff];
@@ -239,8 +239,8 @@ function toLilypond(lines) {
                 s += ">>\n"; //end new PianoStaff
 
         }
-
-        s += ">>\n"; //end score
+        s += "\\layout{} \n \\midi{} \n";
+        s += "}\n"; //end score
         return s
     }
 

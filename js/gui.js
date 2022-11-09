@@ -119,7 +119,7 @@ button8down.onclick = () => action8upOrDown(str8down);
 
 
 
-buttonUpdatePDF.onclick = async () => {
+buttonUpdate.onclick = async () => {
     const fd = new FormData();
     const abcd = editor.getValue();
     const ly = abcd2ly(abcd);
@@ -129,8 +129,11 @@ buttonUpdatePDF.onclick = async () => {
         body: fd
     });
     if (response.ok) {
-        const pdfFilename = await response.text();
-        output.src = pdfFilename
+        const filenameID = await response.text();
+        output.src = filenameID + ".pdf";
+        //midiPlayer.src = window.location.href+ filenameID + ".midi";
+        document.getElementById("midiPlayer").src = filenameID + ".midi";
+        console.log(window.location.href + filenameID + ".midi")
     }
 }
 

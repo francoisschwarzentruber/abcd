@@ -2,6 +2,8 @@
 <html>
 <meta charset="utf-8">
 <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.12.3/src-noconflict/ace.min.js"></script>
+<script
+    src="https://cdn.jsdelivr.net/combine/npm/tone@14.7.58,npm/@magenta/music@1.23.1/es6/core.js,npm/focus-visible@5,npm/html-midi-player@1.5.0"></script>
 <script src="http://unpkg.com/tone"></script>
 
 <head>
@@ -10,17 +12,34 @@
             position: absolute;
             top: 48px;
             right: 50%;
-            bottom: 0;
+            bottom: 0px;
             left: 0;
         }
 
 
-        iframe {
+
+
+        #midi {
             position: absolute;
             top: 48px;
             left: 50%;
             right: 0;
-            bottom: 0;
+        }
+
+        midi-player {
+            width: 100%;
+        }
+
+
+        #outputWrapper {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            right: 0;
+            bottom: 0px;
+        }
+        iframe {
+            
 
         }
 
@@ -37,7 +56,7 @@
             scale: 0.95;
         }
 
-        #buttonUpdatePDF {
+        #buttonUpdate {
             background: #AAFFAA;
             left: 50%;
             position: absolute
@@ -61,13 +80,21 @@
 
         <input id="inputOctave" title="indicate the pitch shift (' or '' or ''' etc. or , or ,, or ,,, etc.)" value="'"
             maxlength="4"></input>
-        <button id="buttonUpdatePDF">Update PDF</button>
+        <button id="buttonUpdate">Update</button>
         <button id="buttonClean">indent!</button>
     </div>
     <div>
         <div id="editor"></div>
-        <iframe id="output" src="./tmp.pdf#toolbar=1&navpanes=0" width="50%" height="100%">
-        </iframe>
+        <div id="midi">
+            <midi-player id="midiPlayer" sound-font>
+            </midi-player>
+
+        </div>
+        <div id="outputWrapper">
+            <iframe id="output" src="./tmp.pdf#toolbar=1&navpanes=0" width="100%" height="100%">
+            </iframe>
+
+        </div>
     </div>
     <script src="js/abcd2ly.js"></script>
     <script src="js/harmony.js"></script>

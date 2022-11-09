@@ -49,6 +49,6 @@
     } catch (Exception $e) {
         echo 'Exception: ',  $e->getMessage(), "\n";
     }
-    echo("scores/$id.pdf")
+    echo("scores/$id")
    
 ?>
