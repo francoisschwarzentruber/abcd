@@ -31,6 +31,8 @@ produces the score
 |  add treble clef  |    write 𝄞                  |
 |  add bass clef    |   write 𝄢                   |
 |  add lyrics       |  start a line with 💬 or 😀  | 
+| add tempo         | add ♩=150                   |
+
 
 If your text lines are too long, add a new line contaning | or || (for double bars).
 
