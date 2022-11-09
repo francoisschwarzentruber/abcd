@@ -102,7 +102,6 @@ function toScore(lines) {
     let istaffBeginGroup = false;
 
     for (const line of lines.map((s) => s.trim()))
-
         if (line == "") {
             if (sthAdded) {
                 istaff += 1;
@@ -130,6 +129,10 @@ function toScore(lines) {
         }
         else if (line.startsWith("💬") || line.startsWith("😀"))
             score.addLyrics(istaff, ivoice - 1, line.substr(2))
+        else if (line.startsWith("♩=")) {
+            const tempo = parseInt(line.substr(2));
+            score.add(istaff, ivoice, `\\tempo 4 = ${tempo}\n`);
+        }
         else {
             if (line.startsWith("𝄞") || line.startsWith("𝄢")) {
                 if (sthAdded) {
@@ -188,9 +191,6 @@ function toLilypond(lines) {
         s = s.replaceAll(" ♭♭♭♭♭♭ ", " \\key ges \\major ");
         s = s.replaceAll(" ♭♭♭♭♭♭♭ ", " \\key ces \\major ");
 
-
-
-
         s = s.replaceAll("♭", "es")
         s = s.replaceAll("#", "is")
         s = s.replaceAll("♯", "is")
@@ -228,7 +228,6 @@ function toLilypond(lines) {
 
     function toLilypondScore(score) {
         let s = '\n\\version "2.23.4"\n \\score {\n';
-
         for (let istaff = 0; istaff < score.staffs.length; istaff++) {
             const staff = score.staffs[istaff];
 

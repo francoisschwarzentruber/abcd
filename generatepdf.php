@@ -25,7 +25,7 @@
     function clean() {
         $files = glob('*'); // get all file names
         foreach($files as $file) { // iterate files
-        if(is_file($file) && is_old_file($file) && (endsWith($file, ".ly") || endsWith($file, ".pdf") )) {
+        if(is_file($file) && is_old_file($file) && (endsWith($file, ".ly") || endsWith($file, ".pdf") || endsWith($file, ".midi") )) {
             unlink($file); // delete file
         }
     }
