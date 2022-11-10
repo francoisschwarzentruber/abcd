@@ -196,10 +196,9 @@ function toLilypond(lines) {
         s = s.replaceAll("♯", "is")
         s = s.replaceAll("𝄢", "\\clef bass")
         s = s.replaceAll("𝄞", "\\clef treble")
-        s = s.replaceAll("3/4", "\\time 3/4")
-        s = s.replaceAll("2/4", "\\time 2/4")
-        s = s.replaceAll("4/4", "\\time 4/4")
-        s = s.replaceAll("6/8", "\\time 6/8")
+
+        for (const timeSignature of ["2/2", "2/4", "3/4", "3/8", "4/4", "6/4", "6/8"])
+            s = s.replaceAll(timeSignature, "\\time " + timeSignature);
 
         return s
     }
