@@ -66,14 +66,25 @@
             width: 24px;
         }
 
+        #buttonInsert {
+
+        }
+
         #toolbarInsert {
-            display: inline-block;
+            display: none;
+            position:absolute;
+            z-index: 20;
+        }
+
+        #toolbarInsert.show {
+            display: block;
         }
     </style>
 </head>
 
 <body>
     <div>
+        <button id="buttonInsert" onclick="toolbarInsert.classList.toggle('show')">Palette</button>
         <div id="toolbarInsert"></div>
         <button title="shift one octave down" id="button8down">8↓</button>
         <button title="shift one octave up" id="button8up">8↑</button>
@@ -98,7 +109,9 @@
     </div>
     <script src="js/abcd2ly.js"></script>
     <script src="js/harmony.js"></script>
+    <script src="js/midiinput.js"></script>
     <script src="js/gui.js"></script>
+    <script src="js/midiinputgui.js"></script>
 </body>
 
 </html>

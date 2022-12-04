@@ -1,15 +1,37 @@
 const editor = ace.edit("editor");
-
 const synth = new Tone.Synth().toDestination();
 
+/**
+ * reload the content from local storage
+ */
 editor.setValue(localStorage.getItem("save") ? localStorage.getItem("save") : "𝄞  ♯♯  3/4  e''2.", -1); //-1 means cursor at the beginning
 setInterval(() => localStorage.setItem("save", editor.getValue()), 5000);
 
-
+/**
+ * we store whether there is (was) a selection
+ */
 let isSelection = false;
 setInterval(() => { isSelection = (editor.getSelectedText() != "") }, 200);
 
 
+/**
+ * 
+ * @param {*} event 
+ * @description close the insert menu
+ */
+
+
+window.onclick =  (event) => {
+    if (!event.target.matches('#buttonInsert')) {
+        toolbarInsert.classList.remove("show");
+    }
+}
+
+
+
+/**
+ * @description executed after the user types sth
+ */
 editor.commands.on('afterExec', eventData => {
     if (eventData.command.name === 'insertstring') {
         if (isSelection)
@@ -31,7 +53,7 @@ editor.commands.on('afterExec', eventData => {
 
 
 /**
- * clean the code, align the |
+ * clean the code, align the symbols |
  */
 function clean() {
     const code = editor.getValue();
@@ -75,27 +97,40 @@ function clean() {
     editor.setValue(reorganiseLines(code.split("\n")).join("\n"), -1);
 }
 
-
-
 buttonClean.onclick = clean;
 
 
 
-function buttonInsert(s) {
+/**
+ * 
+ * @param {*} text 
+ * @param {*} event
+ * @description add a button in the list of buttons 
+ */
+function addButton(text, event) {
     const b = document.createElement("button");
-    b.innerHTML = s;
-    b.title = "insert " + s;
-    b.onclick = () => {
-        editor.session.insert(editor.getCursorPosition(), s);
-        editor.focus();
-    }
+    b.innerHTML = text;
+    b.onclick = event;
     toolbarInsert.append(b);
+}
 
+function buttonInsert(s) {
+    addButton(s, () => {
+        editorReplaceSelection(() => s)
+        editor.focus();
+    });
 }
 
 
-function actionOnSelection(f) {
-    let r = editor.selection.getRange();
+
+
+/**
+ * 
+ * @param {*} f
+ * @description replace the selection by f(selection) 
+ */
+function editorReplaceSelection(f) {
+    const r = editor.selection.getRange();
 
     const end = editor.session.replace(r, f(editor.getSelectedText()));
     editor.selection.setRange({
@@ -104,21 +139,41 @@ function actionOnSelection(f) {
 }
 
 
+
+function editorInsert(str) {
+    const r = editor.selection.getRange();
+    editor.session.replace(r, str);
+}
+
 function action8upOrDown(f) {
     if (editor.getSelectedText() == "") {
         inputOctave.value = f("a" + inputOctave.value).substr(1);
     }
     else
-        actionOnSelection(f);
+        editorReplaceSelection(f);
 }
+
 button8up.onclick = () => action8upOrDown(str8up);
 button8down.onclick = () => action8upOrDown(str8down);
 
 
-["𝄞 ", "𝄢 ", "♭", "♯", "😀 "].map(buttonInsert);
+["𝄞 ", "𝄢 ", "♭", "♯", "😀 ", "♩=120"].map(buttonInsert);
+
+addButton("chord", () => {
+    if (editor.getSelectedText() != "")
+        editorReplaceSelection((selection) => "<" + selection + ">");
+    else {
+        let pos = editor.getCursorPosition();
+        editor.session.insert(pos, "<>");
+        editor.gotoLine(pos.row + 1, pos.column + 1);
+    }
+    editor.focus();
+})
 
 
-
+/**
+ * call the Lilypond compilation on the server side
+ */
 buttonUpdate.onclick = async () => {
     const fd = new FormData();
     const abcd = editor.getValue();
@@ -131,10 +186,16 @@ buttonUpdate.onclick = async () => {
     if (response.ok) {
         const filenameID = await response.text();
         output.src = filenameID + ".pdf";
-        //midiPlayer.src = window.location.href+ filenameID + ".midi";
         document.getElementById("midiPlayer").src = filenameID + ".midi";
         console.log(window.location.href + filenameID + ".midi")
     }
 }
+
+
+
+
+
+
+
 
 
