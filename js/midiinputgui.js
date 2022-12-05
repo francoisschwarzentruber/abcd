@@ -1,16 +1,20 @@
 
 
-
+/**
+ * 
+ * @param {*} i 
+ * @returns the lilypond string for the midi note i
+ */
 function imidiNote2Ly(i) {
     const iC = 12;
     const fromC = i - iC;
 
     function decorationOctave(octave) {
-        const mid = 5;
-        if (octave)
+        const mid = 3;
+        if (octave < mid)
             return ",".repeat(mid + 1 - octave);
         else
-            return ".".repeat(octave - mid)
+            return "'".repeat(octave - mid)
 
     }
 
@@ -34,8 +38,11 @@ function imidiNote2Ly(i) {
         }
     }
 
-    return imidiNote082Ly(fromC % 12) + decorationOctave(fromC / 12);
+    console.log(fromC)
+    return imidiNote082Ly(fromC % 12) + decorationOctave(Math.floor(fromC / 12));
 }
+
+
 
 MidiInput.setEventListenerNoteOff((inote) => { editorInsert(" " + imidiNote2Ly(inote)) });
 MidiInput.setEventListenerNoteOn((inote) => { });
