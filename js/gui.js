@@ -116,7 +116,7 @@ function addButton(text, event) {
 
 function buttonInsert(s) {
     addButton(s, () => {
-        editorReplaceSelection(() => s)
+        editorInsert(s)
         editor.focus();
     });
 }

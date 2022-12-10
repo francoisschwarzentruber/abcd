@@ -226,7 +226,8 @@ function toLilypond(lines) {
     }
 
     function toLilypondScore(score) {
-        let s = '\n\\version "2.23.4"\n \\score {\n';
+        console.log("number of staffs: " + score.staffs.length);
+        let s = '\n\\version "2.23.4"\n \\score {\n <<';
         for (let istaff = 0; istaff < score.staffs.length; istaff++) {
             const staff = score.staffs[istaff];
 
@@ -237,7 +238,7 @@ function toLilypond(lines) {
                 s += ">>\n"; //end new PianoStaff
 
         }
-        s += "\\layout{} \n \\midi{} \n";
+        s += ">>\n \\layout{} \n \\midi{} \n";
         s += "}\n"; //end score
         return s
     }

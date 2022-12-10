@@ -71,20 +71,15 @@
         }
 
         #toolbarInsert {
-            display: none;
-            position:absolute;
-            z-index: 20;
+            display: inline-block;
         }
 
-        #toolbarInsert.show {
-            display: block;
-        }
+     
     </style>
 </head>
 
 <body>
     <div>
-        <button id="buttonInsert" onclick="toolbarInsert.classList.toggle('show')">Palette</button>
         <div id="toolbarInsert"></div>
         <button title="shift one octave down" id="button8down">8↓</button>
         <button title="shift one octave up" id="button8up">8↑</button>
