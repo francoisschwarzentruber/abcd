@@ -171,25 +171,34 @@ function extractTimeSignature(s) {
 */
 function toLilypond(lines) {
 
-    let voiceNumber = 0;
+    let voiceNumber = 0; //current index of a voice
 
 
     function replaceForLilypond(text) {
         s = text
-        s = s.replaceAll(" ♯ ", " \\key g \\major ");
-        s = s.replaceAll(" ♯♯ ", " \\key d \\major ");
-        s = s.replaceAll(" ♯♯♯ ", " \\key a \\major ");
-        s = s.replaceAll(" ♯♯♯♯ ", " \\key e \\major ");
-        s = s.replaceAll(" ♯♯♯♯♯ ", " \\key b \\major ");
-        s = s.replaceAll(" ♯♯♯♯♯♯ ", " \\key fis \\major ");
-        s = s.replaceAll(" ♯♯♯♯♯♯♯ ", " \\key cis \\major ");
-        s = s.replaceAll(" ♭ ", " \\key f \\major ");
-        s = s.replaceAll(" ♭♭ ", " \\key bes \\major ");
-        s = s.replaceAll(" ♭♭♭ ", " \\key ees \\major ");
-        s = s.replaceAll(" ♭♭♭♭ ", " \\key aes \\major ");
-        s = s.replaceAll(" ♭♭♭♭♭ ", " \\key des \\major ");
-        s = s.replaceAll(" ♭♭♭♭♭♭ ", " \\key ges \\major ");
-        s = s.replaceAll(" ♭♭♭♭♭♭♭ ", " \\key ces \\major ");
+
+        function accidentalsSurroundedBySpace(accident, n) { return " " + accident.repeat(n) + " "; }
+        
+        for (const sharp of ["#", "♯"]) {
+            s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 1), " \\key g \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 2), " \\key d \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 3), " \\key a \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 4), " \\key e \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 5), " \\key b \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 6), " \\key fis \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 7), " \\key cis \\major ");
+
+        }
+        for (const flat of ["♭", "b"]) {
+            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " \\key f \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " \\key bes \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " \\key ees \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " \\key aes \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " \\key des \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " \\key ges \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " \\key ces \\major ");
+        }
+
 
         s = s.replaceAll("♭", "es")
         s = s.replaceAll("#", "is")
@@ -204,9 +213,14 @@ function toLilypond(lines) {
     }
 
 
+    /**
+     * 
+     * @param {*} voice 
+     * @returns the code of the voice
+     */
     function toLilypondVoice(voice) {
         voiceNumber += 1
-        voiceName = "v" + voiceNumber
+        voiceName = "v" + voiceNumber;
         s = '\\new Voice  = "' + voiceName + `"  { ` + replaceForLilypond(voice.data) + "} \n"
 
         if (voice.lyrics != "")
@@ -216,6 +230,12 @@ function toLilypond(lines) {
 
     }
 
+    /**
+     * 
+     * @param {*} istaff 
+     * @param {*} staff 
+     * @returns the lilypond code of the staff
+     */
     function toLilypondStaff(istaff, staff) {
         let s = `\\new Staff = "staff${istaff}" <<\n`
         for (const voice of staff.voices)
@@ -225,6 +245,11 @@ function toLilypond(lines) {
         return s
     }
 
+    /**
+     * 
+     * @param {*} score 
+     * @returns the lilypond code for the score
+     */
     function toLilypondScore(score) {
         console.log("number of staffs: " + score.staffs.length);
         let s = '\n\\version "2.23.4"\n \\score {\n <<';
