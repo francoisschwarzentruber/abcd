@@ -38,10 +38,8 @@
             right: 0;
             bottom: 0px;
         }
-        iframe {
-            
 
-        }
+        iframe {}
 
 
         button {
@@ -57,8 +55,11 @@
         }
 
         #buttonUpdate {
-            background: #AAFFAA;
+            background: #00a600;
+            color: white;
+            font-weight: bold;
             left: 50%;
+            border-radius: 0px 8px 8px 0px;
             position: absolute
         }
 
@@ -66,15 +67,11 @@
             width: 24px;
         }
 
-        #buttonInsert {
-
-        }
+        #buttonInsert {}
 
         #toolbarInsert {
             display: inline-block;
         }
-
-     
     </style>
 </head>
 
@@ -88,6 +85,8 @@
             maxlength="4"></input>
         <button id="buttonUpdate">Update</button>
         <button id="buttonClean">indent!</button>
+        <input checked type="checkbox" id="recordMidi">
+        <label for="recordMidi">record Midi</label>
     </div>
     <div>
         <div id="editor"></div>

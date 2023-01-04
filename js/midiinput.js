@@ -62,6 +62,8 @@ class MidiInput {
 
 
         function onMIDIMessage(event) {
+            if (!document.getElementById("recordMidi").checked)
+                return;
             data = event.data,
                 cmd = data[0] >> 4,
                 channel = data[0] & 0xf,
