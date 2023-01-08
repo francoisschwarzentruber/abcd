@@ -38,7 +38,7 @@ class Score {
         */
 
     currentTimeSignature = { a: 4, b: 4 };
-    
+
 
     getLilypondInvisibleRest() {
         if (this.currentTimeSignature.a / this.currentTimeSignature.b == 3 / 4)
@@ -216,13 +216,14 @@ function toLilypond(lines) {
 
         }
         for (const flat of ["♭", "b"]) {
-            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " \\key f \\major ");
-            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " \\key bes \\major ");
-            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " \\key ees \\major ");
-            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " \\key aes \\major ");
-            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " \\key des \\major ");
-            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " \\key ges \\major ");
-            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " \\key ces \\major ");
+            if (flat == "♭")
+                s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " \\key f \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 2), " \\key bes \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 3), " \\key ees \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 4), " \\key aes \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 5), " \\key des \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 6), " \\key ges \\major ");
+            s = s.replaceAll(accidentalsSurroundedBySpace(flat, 7), " \\key ces \\major ");
         }
 
 

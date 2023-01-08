@@ -79,12 +79,24 @@
             padding: 4px;
             color: white;
             background-color: red;
+            animation:recordMidi 1s alternate infinite;
+        }
+
+        @keyframes recordMidi {
+            from {
+                border:4px solid white;
+            }
+
+            to {
+                border:4px solid red;
+            }
         }
 
         #recordMidi:not(:checked)+label {
             border-radius: 8px;
             padding: 4px;
             color: gray;
+            text-decoration: line-through;
         }
 
         #recordMidi:not(:checked)+label:hover {
