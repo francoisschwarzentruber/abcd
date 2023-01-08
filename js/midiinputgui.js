@@ -2,12 +2,12 @@
 
 /**
  * 
- * @param {*} i 
- * @returns the lilypond string for the midi note i
+ * @param {*} midiNote 
+ * @returns the lilypond string for the midi note midiNote
  */
-function imidiNote2Ly(i) {
+function imidiNote2Ly(midiNote) {
     const iC = 12;
-    const fromC = i - iC;
+    const fromC = midiNote - iC;
 
     function decorationOctave(octave) {
         const mid = 3;
@@ -19,8 +19,9 @@ function imidiNote2Ly(i) {
     }
 
 
-    function imidiNote082Ly(fromC) {
-        switch (fromC % 12) {
+    function imidiNote082Ly(midiNotefromC) {
+        
+        switch (midiNotefromC % 12) {
             case 0: return "c";
             case 1: return "c#";
             case 2: return "d";
@@ -38,7 +39,6 @@ function imidiNote2Ly(i) {
         }
     }
 
-    console.log(fromC)
     return imidiNote082Ly(fromC % 12) + decorationOctave(Math.floor(fromC / 12));
 }
 
