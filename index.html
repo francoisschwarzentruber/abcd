@@ -64,6 +64,8 @@
             width: 24px;
         }
 
+
+
         #buttonInsert {}
 
         #toolbarInsert {
@@ -79,16 +81,16 @@
             padding: 4px;
             color: white;
             background-color: red;
-            animation:recordMidi 1s alternate infinite;
+            animation: recordMidi 1s alternate infinite;
         }
 
         @keyframes recordMidi {
             from {
-                border:4px solid white;
+                border: 4px solid white;
             }
 
             to {
-                border:4px solid red;
+                border: 4px solid red;
             }
         }
 
@@ -103,6 +105,14 @@
             border-radius: 8px;
             padding: 4px;
             color: blue;
+        }
+
+
+        #help {
+            background-color: rgb(255, 255, 165);
+            border-radius:8px;
+            padding:8px;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -119,6 +129,7 @@
         <button id="buttonClean" title="indent the code (still in developpement)">🧹</button>
         <input checked type="checkbox" id="recordMidi">
         <label for="recordMidi" title="works on Chrome only">record Midi</label>
+        <a id="help" href="https://github.com/francoisschwarzentruber/abcd" target="_blank">?</a>
     </div>
     <div>
         <div id="editor"></div>
