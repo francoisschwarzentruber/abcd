@@ -107,15 +107,16 @@ buttonClean.onclick = clean;
  * @param {*} event
  * @description add a button in the list of buttons 
  */
-function addButton(text, event) {
+function addButton(text, hint, event) {
     const b = document.createElement("button");
     b.innerHTML = text;
+    b.title = hint;
     b.onclick = event;
     toolbarInsert.append(b);
 }
 
-function buttonInsert(s) {
-    addButton(s, () => {
+function buttonInsert(s, hint) {
+    addButton(s, hint, () => {
         editorInsert(s)
         editor.focus();
     });
@@ -156,10 +157,15 @@ function action8upOrDown(f) {
 button8up.onclick = () => action8upOrDown(str8up);
 button8down.onclick = () => action8upOrDown(str8down);
 
+buttonInsert("𝄞 ", "add a treble key");
+buttonInsert("𝄢 ", "add a treble key");
+buttonInsert("♭", "add flat");
+buttonInsert("♯", "add sharp");
+buttonInsert("😀 ", "add lyrics");
+buttonInsert("♩=120 ", "add tempo indication");
 
-["𝄞 ", "𝄢 ", "♭", "♯", "😀 ", "♩=120"].map(buttonInsert);
 
-addButton("chord", () => {
+addButton("chord", "write/transform into chord", () => {
     if (editor.getSelectedText() != "")
         editorReplaceSelection((selection) => "<" + selection + ">");
     else {

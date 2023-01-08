@@ -1,16 +1,20 @@
 class Voice {
 
-    data = ""
-    lyrics = ""
+    data = "";
+    lyrics = "";
+    empty = false;
 
-    add(data) { this.data += data; }
+    add(data) { this.data += data; this.empty = false; }
+
+    get isEmpty() { return this.empty }
+    addEmptyData(data) { this.data += data; }
     addLyrics(lyrics) { this.lyrics += lyrics }
 }
 
 
 
 class Staff {
-    voices = [];
+    voices = [new Voice(), new Voice(), new Voice(), new Voice()];
     isStartGroup = false;
     isEndGroup = false;
 
@@ -69,7 +73,7 @@ class Score {
     addToAllVoices(data) {
         for (const staff of this.staffs)
             for (const voice of staff.voices)
-                voice.add(data);
+                voice.addEmptyData(data);
     }
 
     addLyrics(istaff, ivoice, lyrics) {
@@ -94,36 +98,56 @@ function insertInvisibleRests(s, lilypondInvisibleRest) {
 */
 function toScore(lines) {
 
-    const score = new Score()
+    const score = new Score();
 
     let istaff = 0
     let ivoice = 0
     let sthAdded = false;
     let istaffBeginGroup = false;
 
+    /**
+     * 
+     * @param {*} str
+     * @description add str to all voices 
+     */
+    function addToAllVoices(str) {
+        score.addToAllVoices(str);
+        sthAdded = false;
+        istaff = 0
+        ivoice = 0
+    }
+
+    /**
+     * @description pass to the next staff
+     */
+    function nextStaff() {
+
+        for (let iv = ivoice; iv < score.staffs[istaff].voices.length; iv++)
+            score.staffs[istaff].voices[iv].addEmptyData(score.getLilypondInvisibleRest());
+
+        istaff += 1;
+        ivoice = 0;
+    }
+
     for (const line of lines.map((s) => s.trim()))
         if (line == "") {
             if (sthAdded) {
-                istaff += 1;
-                ivoice = 0;
+                nextStaff();
                 sthAdded = false;
             }
         }
-        else if (line == "|") {
-            score.addToAllVoices("|");
-            sthAdded = false;
-            istaff = 0
-            ivoice = 0
-        }
-        else if (line == "||") {
-            score.addToAllVoices(' \\bar "||" ');
-            sthAdded = false;
-            istaff = 0
-            ivoice = 0
-        }
-        else if (line == "{") {
+        else if (line == "|")
+            addToAllVoices("|");
+        else if (line == "||")
+            addToAllVoices(' \\bar "||" ');
+        else if (line == "||:" || line == "|:")
+            addToAllVoices(' \\bar ".|:" ');
+        else if (line == ":||" || line == ":|")
+            addToAllVoices(' \\bar ":|." ');
+        else if (line == ":||:" || line == ":|:")
+            addToAllVoices(' \\bar ":..:" ');
+        else if (line == "{")
             istaffBeginGroup = true;
-        }
         else if (line == "}") {
             score.staffs[istaff].setEndGroup();
         }
@@ -135,10 +159,8 @@ function toScore(lines) {
         }
         else {
             if (line.startsWith("𝄞") || line.startsWith("𝄢")) {
-                if (sthAdded) {
-                    istaff += 1
-                    ivoice = 0
-                }
+                if (sthAdded)
+                    nextStaff();
             }
 
             score.add(istaff, ivoice, line)
@@ -151,15 +173,20 @@ function toScore(lines) {
 
         }
 
-    return score
+    addToAllVoices(' \\bar "|."');
+    return score;
 
 }
 
-
-function extractTimeSignature(s) {
+/**
+ * 
+ * @param {*} str 
+ * @returns the time signature written in str (or undefined if there is no time signature in it)
+ */
+function extractTimeSignature(str) {
     for (const a of [1, 2, 3, 4, 5, 6, 7, 8, 9, 12])
         for (const b of [2, 4, 8, 16])
-            if (s.indexOf(`${a}/${b}`) >= 0)
+            if (str.indexOf(`${a}/${b}`) >= 0)
                 return { a, b };
     return undefined;
 }
@@ -173,12 +200,11 @@ function toLilypond(lines) {
 
     let voiceNumber = 0; //current index of a voice
 
-
     function replaceForLilypond(text) {
         s = text
 
         function accidentalsSurroundedBySpace(accident, n) { return " " + accident.repeat(n) + " "; }
-        
+
         for (const sharp of ["#", "♯"]) {
             s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 1), " \\key g \\major ");
             s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 2), " \\key d \\major ");
@@ -239,7 +265,8 @@ function toLilypond(lines) {
     function toLilypondStaff(istaff, staff) {
         let s = `\\new Staff = "staff${istaff}" <<\n`
         for (const voice of staff.voices)
-            s += toLilypondVoice(voice) + "\n"
+            if (!voice.isEmpty)
+                s += toLilypondVoice(voice) + "\n"
         s += ">>\n"
 
         return s
@@ -268,13 +295,11 @@ function toLilypond(lines) {
         return s
     }
 
-    score = toScore(lines)
+    const score = toScore(lines)
 
     return toLilypondScore(score)
 
 }
 
 
-function abcd2ly(s) {
-    return toLilypond(s.split("\n"))
-}
+function abcd2ly(s) { return toLilypond(s.split("\n")) }

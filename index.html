@@ -16,9 +16,6 @@
             left: 0;
         }
 
-
-
-
         #midi {
             position: absolute;
             top: 48px;
@@ -72,6 +69,26 @@
         #toolbarInsert {
             display: inline-block;
         }
+
+        #recordMidi {
+            display:none;
+        }
+        #recordMidi:checked+label {
+            border-radius: 8px;
+            padding:4px;
+            color:white;
+            background-color: red;
+        }
+        #recordMidi:not(:checked)+label {
+            border-radius: 8px;
+            padding:4px;
+            color:gray;
+        }
+        #recordMidi:not(:checked)+label:hover {
+            border-radius: 8px;
+            padding:4px;
+            color:blue;
+        }
     </style>
 </head>
 
@@ -83,8 +100,8 @@
 
         <input id="inputOctave" title="indicate the pitch shift (' or '' or ''' etc. or , or ,, or ,,, etc.)" value="'"
             maxlength="4"></input>
-        <button id="buttonUpdate">Update</button>
-        <button id="buttonClean">indent!</button>
+        <button id="buttonUpdate">Update (recompile)</button>
+        <button id="buttonClean" title="indent the code (still in developpement)">🧹</button>
         <input checked type="checkbox" id="recordMidi">
         <label for="recordMidi">record Midi</label>
     </div>
