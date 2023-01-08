@@ -116,6 +116,7 @@ function addButton(text, hint, event) {
 }
 
 function buttonInsert(s, hint) {
+    console.log("add button " + s)
     addButton(s, hint, () => {
         editorInsert(s)
         editor.focus();
