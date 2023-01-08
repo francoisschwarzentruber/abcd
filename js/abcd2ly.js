@@ -247,14 +247,15 @@ function toLilypond(lines) {
      */
     function toLilypondVoice(voice) {
         voiceNumber += 1
-        voiceName = "v" + voiceNumber;
-        s = '\\new Voice  = "' + voiceName + `"  { ` + replaceForLilypond(voice.data) + "} \n"
+        const voiceName = "v" + voiceNumber;
+        const voiceIndication = (voiceNumber == 1) ? "\\voiceOne" : ((voiceNumber == 2) ? "\\voiceTwo" : "");
+        s = '\\new Voice  = "' + voiceName + `"  { ` +
+            voiceIndication + " " + replaceForLilypond(voice.data) + "} \n"
 
         if (voice.lyrics != "")
             s += '\\new Lyrics \\lyricsto "' + voiceName + '" {\n ' + voice.lyrics + "\n}"
 
         return s
-
     }
 
     /**
