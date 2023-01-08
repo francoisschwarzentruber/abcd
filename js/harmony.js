@@ -1,72 +1,8 @@
-/**
- * A note or a silence
- * 
- * Fields:
- * note: between 0 and 7 (c, d, e, f, g, a, b)
- * isRest: true or false
- */
-class Element {
-    constructor(s) {
-        if (s == "")
-            throw "empty string";
-
-        if (!(["a", "b", "c", "d", "e", "f", "g", "r"].indexOf(s[0]) >= 0))
-            throw "not a note or a rest";
-
-        this.isRest = s[0] == "r";
-        if (!this.isRest)
-            this.note = lyNoteLetterToiNote7(s[0]);
-
-        s = s.substr(1);
-
-        this.accidental = 0;
-        if (s.startsWith("♯♯")) {
-            this.accidental = 2;
-        }
-        else if (s.startsWith("♯")) {
-            this.accidental = 1;
-        }
-        else if (s.startsWith("♭♭")) {
-            this.accidental = -2;
-        }
-        else if (s.startsWith("♭")) {
-            this.accidental = -1;
-        }
-
-        s = s.substr(Math.abs(this.accidental));
-
-        this.octave = 0; // by default
-        for (let i = 4; i >= 1; i--)
-            if (s.startsWith("'".repeat(i))) {
-                this.octave = i;
-                s = s.substr(i);
-                break;
-            }
-
-        for (let i = 4; i >= 1; i--)
-            if (s.startsWith(",".repeat(i))) {
-                this.octave = -i;
-                s = s.substr(i);
-                break;
-            }
-
-        this.duration = s;
-    }
-
-
-    toString() {
-        const letter = this.isRest ? "r" : iNote7ToLy(this.note);
-        const accidentalString = (this.accidental > 0 ? "♯".repeat(this.accidental) : "♭".repeat(-this.accidental));
-        const octaveString = ((this.isRest) ? "" : (this.octave > 0 ? "'".repeat(this.octave) : ",".repeat(-this.octave)))
-        return letter + accidentalString + octaveString + this.duration;
-    }
-}
-
 
 function mapToAllToken(str, f) {
     return str.replaceAll("<", " < ")
-        .replaceAll(">", " > ").
-        split(' ').map(f).join(' ').replaceAll(" < ", "<").replaceAll(" > ", ">");
+        .replaceAll(">", " > ")
+        .split(' ').map(f).join(' ').replaceAll(" < ", "<").replaceAll(" > ", ">");
 }
 
 
@@ -75,7 +11,7 @@ function str8up(str) {
         if (s == "") return s;
         try {
             const note = new Element(s);
-            note.octave++;
+            note.pitch.value += 7;
             return note.toString();
         }
         catch (e) {
@@ -93,7 +29,7 @@ function str8down(str) {
         if (s == "") return s;
         try {
             const note = new Element(s);
-            note.octave--;
+            note.pitch.value -= 7;
             return note.toString();
         }
         catch {
@@ -106,28 +42,71 @@ function str8down(str) {
 }
 
 
-function lyNoteLetterToiNote7(iNote) {
-    switch (iNote) {
-        case "c": return 0;
-        case "d": return 1;
-        case "e": return 2;
-        case "f": return 3;
-        case "g": return 4;
-        case "a": return 5;
-        case "b": return 6;
-    }
-    throw "error";
+
+
+/**
+ * 
+ * @param pitch1 
+ * @param pitch2 
+ * @return the sum of the two pitch.
+ * @example add(D, E) = F# because D = one tone, D = two tones => the result is three tones, so F#
+ */
+function add(pitch1, pitch2) {
+    let result = new Pitch(pitch1.value + pitch2.value, 0);
+    console.log(result.nbHalfTones)
+    console.log(pitch1.nbHalfTones)
+    console.log(pitch2.nbHalfTones)
+
+    let nbHalfTone = result.nbHalfTones - pitch1.nbHalfTones;
+    result.accidental = pitch2.nbHalfTones - nbHalfTone;
+    console.log(result.toString())
+    return result;
 }
 
-function iNote7ToLy(iNote) {
-    switch (iNote) {
-        case 0: return "c";
-        case 1: return "d";
-        case 2: return "e";
-        case 3: return "f";
-        case 4: return "g";
-        case 5: return "a";
-        case 6: return "b";
+/**
+* 
+* @param pitch 
+* @returns the same pitch but in the normal octave
+*/
+function modulo(pitch) {
+    return new Pitch(pitch.value % 7, pitch.accidental);
+}
+
+
+
+/**
+* 
+* @param pitch 
+* @param key 
+* @returns the same pitch but in the key (e.g. G# in Eb is Ab)
+*/
+function enharmonic(pitch, key) {
+    const pitch0e = imidiNote2Pitch(pitch.nbHalfTones - key.nbHalfTones);
+    return add(pitch0e, key);
+}
+
+/**
+* 
+* @param key : Pitch
+* @returns the array of accidentals in the key
+
+*/
+function getAccidentals(key) {
+    const array = [];
+    for (let i = 0; i < 7; i++) {
+        let newPitch = modulo(add(new Pitch(i, 0), key));
+        array[newPitch.value] = newPitch.accidental;
     }
-    throw "error";
+    return array;
+}
+
+
+/**
+ * @param pitch 
+ * @param key 
+ * @return the pitch with the accidental that is natural in the key
+ * @example accidentalize(C, E) => C# because C has a # in E major
+ */
+function accidentalize(pitch, key) {
+    return new Pitch(pitch.value, getAccidentals(key)[pitch.value7]);
 }

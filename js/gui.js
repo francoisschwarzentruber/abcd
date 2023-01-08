@@ -21,7 +21,7 @@ setInterval(() => { isSelection = (editor.getSelectedText() != "") }, 200);
  */
 
 
-window.onclick =  (event) => {
+window.onclick = (event) => {
     if (!event.target.matches('#buttonInsert')) {
         toolbarInsert.classList.remove("show");
     }
@@ -201,7 +201,26 @@ buttonUpdate.onclick = async () => {
 
 
 
+function currentKey() {
+    function findKey() {
+        const code = editor.getValue();
 
+        function accidentalsSurroundedBySpace(accident, n) { return " " + accident.repeat(n) + " "; }
+
+        for (const sharp of ["#", "♯", "♭", "b"]) {
+            for (let i = 7; i > 0; i--) {
+                if (code.indexOf(accidentalsSurroundedBySpace(sharp, i)) >= 0)
+                    return i * (((sharp == "#") || sharp == "♯") ? 1 : -1);
+            }
+
+        }
+        return 0;
+    }
+
+    const accidentals = findKey();
+
+    return lyToPitch(["c♭", "g♭", "d♭", "a♭", "e♭", "b♭", "f", "c", "g", "d", "a", "e", "b", "f#", "c#"][7 + accidentals]);
+}
 
 
 

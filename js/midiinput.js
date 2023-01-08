@@ -79,14 +79,17 @@ class MidiInput {
             console.log('MIDI data', data);
             switch (type) {
                 case 144: // noteOn message 
-                    MidiInput.onNoteOn(note, velocity);
+                    if (velocity == 0)
+                        MidiInput.onNoteOff(note, velocity);
+                    else
+                        MidiInput.onNoteOn(note, velocity);
                     break;
                 case 128: // noteOff message 
                     MidiInput.onNoteOff(note, velocity);
                     break;
             }
 
-            console.log('data', data, 'cmd', cmd, 'channel', channel);
+            //  console.log('data', data, 'cmd', cmd, 'channel', channel);
         }
     }
 }

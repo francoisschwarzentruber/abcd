@@ -38,7 +38,7 @@ class Score {
         */
 
     currentTimeSignature = { a: 4, b: 4 };
-
+    
 
     getLilypondInvisibleRest() {
         if (this.currentTimeSignature.a / this.currentTimeSignature.b == 3 / 4)
