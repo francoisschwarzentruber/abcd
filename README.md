@@ -74,3 +74,15 @@ produces the score
 
 
 
+
+
+# How to install on your server
+
+- make sure the folder scores has the permission to be written
+
+
+
+
+
+
+

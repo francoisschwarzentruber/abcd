@@ -45,6 +45,10 @@
         file_put_contents("$id.ly", $code, 0);
         $command = escapeshellcmd("lilypond $id.ly");
         system($command);
+      
+        $command = escapeshellcmd("lilypond -dbackend=svg -npl $id.ly");
+        system($command);
+      
     
     } catch (Exception $e) {
         echo 'Exception: ',  $e->getMessage(), "\n";

@@ -173,7 +173,7 @@ function toScore(lines) {
 
         }
 
-    addToAllVoices(' \\bar "|."');
+    //addToAllVoices(' \\bar "|."');
     return score;
 
 }
