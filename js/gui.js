@@ -178,27 +178,59 @@ addButton("chord", "write/transform into chord", () => {
 })
 
 
-/**
- * call the Lilypond compilation on the server side
- */
-buttonUpdate.onclick = async () => {
+
+
+async function compile(format) {
     const fd = new FormData();
     const abcd = editor.getValue();
     const ly = abcd2ly(abcd);
+    fd.append("format", format);
     fd.append("code", ly);
-    const response = await fetch("generatepdf.php", {
+
+    const response = await fetch("generate.php", {
         method: 'post',
         body: fd
     });
     if (response.ok) {
         const filenameID = await response.text();
-        output.src = filenameID + ".pdf";
-        document.getElementById("midiPlayer").src = filenameID + ".midi";
-        console.log(window.location.href + filenameID + ".midi")
+        console.log(filenameID)
+        return filenameID;
+    }
+}
+/**
+ * call the Lilypond compilation on the server side
+ */
+buttonUpdate.onclick = async () => {
+    const files = (await compile("png")).split(",");
+    const outputWrapper = document.getElementById("outputWrapper");
+    outputWrapper.innerHTML = "";
+    for (const filename of files) {
+        if (filename.endsWith(".png")) {
+            const img = document.createElement("img");
+            img.src = filename;
+            outputWrapper.appendChild(img);
+        }
+        else if (filename.endsWith(".midi")) {
+            document.getElementById("midiPlayer").src = filename;
+        }
     }
 }
 
 
+function download(filename) {
+    const a = document.createElement('a');
+    document.body.appendChild(a);
+    a.download = name;
+    a.href = filename;
+    a.target = "_blank";
+    a.click();
+    a.remove();
+}
+buttonDownload.onclick = async () => {
+    const filenameID = await compile("pdf");
+    download(window.location.href + filenameID + ".pdf");
+
+}
 
 
 

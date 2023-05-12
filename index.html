@@ -12,7 +12,7 @@
             position: absolute;
             top: 48px;
             right: 50%;
-            bottom: 0px;
+            bottom: 8px;
             left: 0;
         }
 
@@ -29,15 +29,13 @@
 
 
         #outputWrapper {
+            overflow: auto;
             position: absolute;
             top: 100px;
             left: 50%;
             right: 0;
             bottom: 0px;
         }
-
-        iframe {}
-
 
         button {
             font-size: 18px;
@@ -55,9 +53,13 @@
             background: #00a600;
             color: white;
             font-weight: bold;
-            left: 50%;
             border-radius: 0px 8px 8px 0px;
-            position: absolute
+        }
+
+        .right {
+            right: 0px;
+            top: 0px;
+            position:absolute;
         }
 
         #inputOctave {
@@ -110,8 +112,8 @@
 
         #help {
             background-color: rgb(255, 255, 165);
-            border-radius:8px;
-            padding:8px;
+            border-radius: 8px;
+            padding: 8px;
             text-decoration: none;
         }
     </style>
@@ -125,7 +127,10 @@
 
         <input id="inputOctave" title="indicate the pitch shift (' or '' or ''' etc. or , or ,, or ,,, etc.)" value="'"
             maxlength="4"></input>
-        <button id="buttonUpdate">Update (recompile)</button>
+        <div class="right">
+            <button id="buttonUpdate">Update</button>
+            <button id="buttonDownload">Download PDF 📥</button>
+        </div>
         <button id="buttonClean" title="indent the code (still in developpement)">🧹</button>
         <input checked type="checkbox" id="recordMidi">
         <label for="recordMidi" title="works on Chrome only">record Midi</label>
@@ -138,8 +143,7 @@
             </midi-player>
         </div>
         <div id="outputWrapper">
-            <iframe id="output" src="./tmp.pdf#toolbar=1&navpanes=0" width="100%" height="100%">
-            </iframe>
+          
         </div>
     </div>
     <script src="js/abcd2ly.js"></script>
