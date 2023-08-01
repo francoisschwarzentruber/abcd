@@ -48,15 +48,15 @@
    
 
         if($format == "png") {
-            $command = escapeshellcmd("lilypond $id.ly");
+            $command = escapeshellcmd("lilypond -l=ERROR  $id.ly");
             //$command = escapeshellcmd("lilypond -fpng $id.ly"); //does not work if several pages
             system($command);
             $command = escapeshellcmd("convert $id.pdf $id.png");
         }
         else if($format == "svg")
-        $command = escapeshellcmd("lilypond -fsvg $id.ly");
+        $command = escapeshellcmd("lilypond -l=ERROR -fsvg $id.ly");
         else
-           $command = escapeshellcmd("lilypond $id.ly");
+           $command = escapeshellcmd("lilypond -l=ERROR  $id.ly");
         system($command);
       
     
