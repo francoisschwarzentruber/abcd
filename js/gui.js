@@ -232,8 +232,8 @@ function download(filename) {
     a.remove();
 }
 buttonDownload.onclick = async () => {
-    const filenameID = await compile("pdf");
-    download(window.location.href + filenameID + ".pdf");
+    const filename = await compile("pdf");
+    download(window.location.href + filename);
 
 }
 
