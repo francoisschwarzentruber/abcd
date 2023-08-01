@@ -196,6 +196,11 @@ async function compile(format) {
         console.log(filenameID)
         return filenameID;
     }
+    else {
+        console.log("error: ")
+        console.log(response);
+
+    }
 }
 /**
  * call the Lilypond compilation on the server side

@@ -79,6 +79,10 @@ produces the score
 # How to install on your server
 
 - make sure the folder scores has the permission to be written
+- install imagemagick
+- make sure that imagemagick has the rights to convert pdf: `sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml`
+
+
 
 
 

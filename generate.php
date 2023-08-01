@@ -54,7 +54,7 @@
             $command = escapeshellcmd("convert $id.pdf $id.png");
         }
         else if($format == "svg")
-        $command = escapeshellcmd("lilypond -l=ERROR -fsvg $id.ly");
+            $command = escapeshellcmd("lilypond -l=ERROR -fsvg $id.ly");
         else
            $command = escapeshellcmd("lilypond -l=ERROR  $id.ly");
         system($command);
@@ -81,6 +81,3 @@
         echo("scores/$id.midi");
 
     }
-       
-   
-?>
