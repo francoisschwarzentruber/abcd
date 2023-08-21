@@ -51,7 +51,7 @@ class Pitch {
 
 
 
-    toString() {
+    toStringLy() {
         function iNote7ToLy(iNote) {
             switch (iNote) {
                 case 0: return "c";
