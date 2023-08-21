@@ -1,6 +1,6 @@
 const editor = ace.edit("editor");
 const synth = new Tone.Synth().toDestination();
-
+const abcjs = window.ABCJS;
 /**
  * reload the content from local storage
  */
@@ -28,7 +28,16 @@ window.onclick = (event) => {
 }
 
 
+editor.getSession().on('change', () => {
+    const abc = abcd2abc(editor.getValue());
+    /*abcjs.renderAbc("output", abc);
+    abcjs.renderMidi("midiPlayer", abc, {}, { generateInline: true }, {});*/
+    const visualObj = abcjs.renderAbc('output', abc)[0];
+    const synthControl = new abcjs.synth.SynthController();
+    synthControl.load("#audio", null, { displayRestart: true, displayPlay: true, displayProgress: true });
+    synthControl.setTune(visualObj, false);
 
+});
 /**
  * @description executed after the user types sth
  */
@@ -178,6 +187,10 @@ addButton("chord", "write/transform into chord", () => {
 })
 
 
+/*editor.getSession().on('change', function () {
+    abcd2Vexflow(editor.getValue());
+});*/
+
 
 
 async function compile(format) {
@@ -202,25 +215,6 @@ async function compile(format) {
 
     }
 }
-/**
- * call the Lilypond compilation on the server side
- */
-buttonUpdate.onclick = async () => {
-    const files = (await compile("png")).split(",");
-    const outputWrapper = document.getElementById("outputWrapper");
-    outputWrapper.innerHTML = "";
-    for (const filename of files) {
-        if (filename.endsWith(".png")) {
-            const img = document.createElement("img");
-            img.src = filename;
-            outputWrapper.appendChild(img);
-        }
-        else if (filename.endsWith(".midi")) {
-            document.getElementById("midiPlayer").src = filename;
-        }
-    }
-}
-
 
 function download(filename) {
     const a = document.createElement('a');

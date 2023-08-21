@@ -5,14 +5,17 @@
 <script
     src="https://cdn.jsdelivr.net/combine/npm/tone@14.7.58,npm/@magenta/music@1.23.1/es6/core.js,npm/focus-visible@5,npm/html-midi-player@1.5.0"></script>
 <script src="https://unpkg.com/tone"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="lib/abcjs-audio.css" media="all" type="text/css" />
+
 
 <head>
     <style>
         #editor {
             position: absolute;
             top: 48px;
-            right: 50%;
-            bottom: 8px;
+            right: 0px;
+            bottom: 50%;
             left: 0;
         }
 
@@ -28,12 +31,12 @@
         }
 
 
-        #outputWrapper {
+        #output {
             overflow: auto;
             position: absolute;
-            top: 100px;
-            left: 50%;
-            right: 0;
+            top: 50%;
+            left: 0px;
+            right: 0px;
             bottom: 0px;
         }
 
@@ -49,17 +52,12 @@
             scale: 0.95;
         }
 
-        #buttonUpdate {
-            background: #00a600;
-            color: white;
-            font-weight: bold;
-            border-radius: 0px 8px 8px 0px;
-        }
+
 
         .right {
             right: 0px;
             top: 0px;
-            position:absolute;
+            position: absolute;
         }
 
         #inputOctave {
@@ -116,6 +114,13 @@
             padding: 8px;
             text-decoration: none;
         }
+
+        #audio {
+            position: absolute;
+            left:0px;
+            right: 0px;
+            bottom: 0px;
+        }
     </style>
 </head>
 
@@ -128,25 +133,29 @@
         <input id="inputOctave" title="indicate the pitch shift (' or '' or ''' etc. or , or ,, or ,,, etc.)" value="'"
             maxlength="4"></input>
         <div class="right">
-            <button id="buttonUpdate">Update</button>
             <button id="buttonDownload">Download PDF 📥</button>
         </div>
         <button id="buttonClean" title="indent the code (still in developpement)">🧹</button>
         <input checked type="checkbox" id="recordMidi">
         <label for="recordMidi" title="works on Chrome only">record Midi</label>
         <a id="help" href="https://github.com/francoisschwarzentruber/abcd" target="_blank">?</a>
+        <div id="midi">
+
+        </div>
     </div>
     <div>
         <div id="editor"></div>
-        <div id="midi">
-            <midi-player id="midiPlayer" sound-font>
-            </midi-player>
+        <div id="output">
+
         </div>
-        <div id="outputWrapper">
-          
+        <div id="audio">
         </div>
     </div>
+    <script src="lib/abcjs-basic-min.js"></script>
+    <script src="lib/abcjs-basic-min.js"></script>
+    
     <script src="js/abcd2ly.js"></script>
+    <script src="js/abcd2abc.js"></script>
     <script src="js/element.js"></script>
     <script src="js/pitch.js"></script>
     <script src="js/harmony.js"></script>
