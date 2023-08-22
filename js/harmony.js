@@ -15,7 +15,6 @@ function str8up(str) {
             return note.toString();
         }
         catch (e) {
-            console.log(e)
             return s;
         }
 
@@ -33,7 +32,6 @@ function str8down(str) {
             return note.toString();
         }
         catch {
-            console.log(s)
             return s;
         }
 
@@ -53,13 +51,8 @@ function str8down(str) {
  */
 function add(pitch1, pitch2) {
     let result = new Pitch(pitch1.value + pitch2.value, 0);
-    console.log(result.nbHalfTones)
-    console.log(pitch1.nbHalfTones)
-    console.log(pitch2.nbHalfTones)
-
     let nbHalfTone = result.nbHalfTones - pitch1.nbHalfTones;
     result.accidental = pitch2.nbHalfTones - nbHalfTone;
-    console.log(result.toString())
     return result;
 }
 
@@ -91,11 +84,12 @@ function enharmonic(pitch, key) {
 * @returns the array of accidentals in the key
 */
 function getAccidentals(key) {
-    const array = [];
+    const array = [0, 0, 0, 0, 0, 0, 0];
     for (let i = 0; i < 7; i++) {
         let newPitch = modulo(add(new Pitch(i, 0), key));
         array[newPitch.value] = newPitch.accidental;
     }
+    console.log(array)
     return array;
 }
 

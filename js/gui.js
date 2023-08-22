@@ -172,7 +172,7 @@ button8down.onclick = () => action8upOrDown(str8down);
 buttonInsert("𝄞 ", "add a treble key");
 buttonInsert("𝄢 ", "add a treble key");
 buttonInsert("♭", "add flat");
-buttonInsert("♮", "add normal");
+//buttonInsert("♮", "add normal");
 buttonInsert("♯", "add sharp");
 buttonInsert("😀 ", "add lyrics");
 buttonInsert("♩=120 ", "add tempo indication");

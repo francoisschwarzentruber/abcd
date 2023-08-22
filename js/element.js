@@ -8,7 +8,6 @@
  */
 class Element {
     constructor(s) {
-        console.log(s)
         function lyNoteLetterToiNote7(iNote) {
             switch (iNote) {
                 case "c": return 0;
