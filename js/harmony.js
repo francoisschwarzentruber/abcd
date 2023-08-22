@@ -12,7 +12,7 @@ function str8up(str) {
         try {
             const note = new Element(s);
             note.pitch.value += 7;
-            return note.toString();
+            return note.toStringABC();
         }
         catch (e) {
             return s;
@@ -29,7 +29,7 @@ function str8down(str) {
         try {
             const note = new Element(s);
             note.pitch.value -= 7;
-            return note.toString();
+            return note.toStringABC();
         }
         catch {
             return s;
