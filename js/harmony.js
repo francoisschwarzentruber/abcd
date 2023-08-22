@@ -89,7 +89,6 @@ function enharmonic(pitch, key) {
 * 
 * @param key : Pitch
 * @returns the array of accidentals in the key
-
 */
 function getAccidentals(key) {
     const array = [];
@@ -107,6 +106,4 @@ function getAccidentals(key) {
  * @return the pitch with the accidental that is natural in the key
  * @example accidentalize(C, E) => C# because C has a # in E major
  */
-function accidentalize(pitch, key) {
-    return new Pitch(pitch.value, getAccidentals(key)[pitch.value7]);
-}
+function accidentalize(pitch, key) { return new Pitch(pitch.value, getAccidentals(key)[pitch.value7]); }

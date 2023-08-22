@@ -8,7 +8,7 @@
  */
 class Element {
     constructor(s) {
-
+        console.log(s)
         function lyNoteLetterToiNote7(iNote) {
             switch (iNote) {
                 case "c": return 0;
@@ -28,7 +28,7 @@ class Element {
         if (!(["a", "b", "c", "d", "e", "f", "g", "r"].indexOf(s[0]) >= 0))
             throw "not a note or a rest";
 
-        this.isRest = s[0] == "r";
+        this.isRest = (s[0] == "r");
 
         let value = 0;
         if (!this.isRest)
@@ -37,10 +37,10 @@ class Element {
         s = s.substr(1);
 
         let accidental = 0;
-        if (s.startsWith("♯♯")) {
+        if (s.startsWith("♯♯") || s.startsWith("##")) {
             accidental = 2;
         }
-        else if (s.startsWith("♯")) {
+        else if (s.startsWith("♯") || s.startsWith("#")) {
             accidental = 1;
         }
         else if (s.startsWith("♭♭")) {
@@ -49,7 +49,6 @@ class Element {
         else if (s.startsWith("♭")) {
             accidental = -1;
         }
-
         s = s.substr(Math.abs(accidental));
 
         let octave = 0; // by default
@@ -76,6 +75,11 @@ class Element {
 
     toString() {
         return (this.isRest ? "r" : this.pitch.toString()) + this.duration;
+    }
+
+    toStringABC() {
+        return (this.isRest ? "z" : this.pitch.toStringABC()) + this.duration;
+
     }
 }
 

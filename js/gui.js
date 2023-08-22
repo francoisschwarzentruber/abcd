@@ -53,7 +53,9 @@ editor.commands.on('afterExec', eventData => {
                 if (inputOctave.value.length > 0)
                     h += inputOctave.value.length * (inputOctave.value[0] == "'" ? 1 : -1);
 
-                const noteName = eventData.args + h;
+                    const realPitch = accidentalize(lyToPitch(eventData.args), currentKey());
+                    
+                    const noteName = realPitch.toStringTone() + h;
                 synth.triggerAttackRelease(noteName, "32n");
                 editor.session.insert(editor.getCursorPosition(), inputOctave.value + " ");
             }
@@ -234,6 +236,8 @@ buttonDownload.onclick = async () => {
 
 
 
+
+
 function currentKey() {
     function findKey() {
         const code = editor.getValue();
@@ -245,7 +249,6 @@ function currentKey() {
                 if (code.indexOf(accidentalsSurroundedBySpace(sharp, i)) >= 0)
                     return i * (((sharp == "#") || sharp == "♯") ? 1 : -1);
             }
-
         }
         return 0;
     }

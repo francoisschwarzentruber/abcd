@@ -52,18 +52,6 @@ class Pitch {
 
 
     toStringLy() {
-        function iNote7ToLy(iNote) {
-            switch (iNote) {
-                case 0: return "c";
-                case 1: return "d";
-                case 2: return "e";
-                case 3: return "f";
-                case 4: return "g";
-                case 5: return "a";
-                case 6: return "b";
-            }
-            throw "error";
-        }
         const accidentalString = (this.accidental > 0 ? "♯".repeat(this.accidental) : "♭".repeat(-this.accidental));
         const octaveString = ((this.isRest) ? "" : (this.octave > 0 ? "'".repeat(this.octave) : ",".repeat(-this.octave)))
 
@@ -71,4 +59,31 @@ class Pitch {
     }
 
 
+    toStringABC() {
+        const accidentalString = (this.accidental > 0 ? "^".repeat(this.accidental) : "_".repeat(-this.accidental));
+        const octaveString = ((this.isRest) ? "" : (this.octave > 0 ? "'".repeat(this.octave) : ",".repeat(-this.octave)))
+        return accidentalString + iNote7ToLy(this.value7) + octaveString;
+    }
+
+    toStringTone() {
+        const accidentalString = (this.accidental > 0 ?
+            "s".repeat(this.accidental) : "f".repeat(-this.accidental));
+        const octaveString = this.octave;
+        return iNote7ToLy(this.value7); + accidentalString + octaveString;
+    }
+
+}
+
+
+function iNote7ToLy(iNote) {
+    switch (iNote) {
+        case 0: return "c";
+        case 1: return "d";
+        case 2: return "e";
+        case 3: return "f";
+        case 4: return "g";
+        case 5: return "a";
+        case 6: return "b";
+    }
+    throw "error";
 }

@@ -162,7 +162,6 @@ function toScore(lines) {
                 if (sthAdded)
                     nextStaff();
             }
-
             score.add(istaff, ivoice, line)
             if (istaffBeginGroup) {
                 score.staffs[istaff].setStartGroup();
