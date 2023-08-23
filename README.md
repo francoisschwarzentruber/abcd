@@ -2,6 +2,9 @@
 
 A super simple textual language to represent **music scores**. The aim is to be natural to use like **markdown** for writing documents. The positions of the musical elements in the text is close to their real positions in the score. Technically, this repository provides a program, that preprocesses the file to produce an ABC string, and then produces the output with the library abc.js.  The name ABCD is a hint to the abc notation.
 
+Try it here: https://francoisschwarzentruber.github.io/abcd/
+
+
 # Motivation - Why?
 
 ## Why not graphical user interfaces?
@@ -45,14 +48,6 @@ produces the score
 
 
 If your text lines are too long, add a new line contaning | or || (for double bars).
-
-# Screeshot of the tool
-
-![image](https://user-images.githubusercontent.com/43071857/198897652-cad34c1f-cf4b-40bc-886a-8fd02ca13483.png)
-
-
-
-
 
 
 
