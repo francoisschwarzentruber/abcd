@@ -8,6 +8,7 @@
 
     #outputWrapper {
         display: block;
+        overflow: visible;
         position: relative;
         left: 0px;
         top: 0px;
