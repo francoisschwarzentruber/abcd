@@ -32,7 +32,9 @@ editor.getSession().on('change', () => {
     const abc = abcd2abc(editor.getValue());
     /*abcjs.renderAbc("output", abc);
     abcjs.renderMidi("midiPlayer", abc, {}, { generateInline: true }, {});*/
-    const visualObj = abcjs.renderAbc('output', abc)[0];
+    const visualObj = abcjs.renderAbc('output', abc, {
+        oneSvgPerLine: true
+    })[0];
     const synthControl = new abcjs.synth.SynthController();
     synthControl.load("#audio", null, { displayRestart: true, displayPlay: true, displayProgress: true });
     synthControl.setTune(visualObj, false);
@@ -53,9 +55,9 @@ editor.commands.on('afterExec', eventData => {
                 if (inputOctave.value.length > 0)
                     h += inputOctave.value.length * (inputOctave.value[0] == "'" ? 1 : -1);
 
-                    const realPitch = accidentalize(lyToPitch(eventData.args), currentKey());
-                    
-                    const noteName = realPitch.toStringTone() + h;
+                const realPitch = accidentalize(lyToPitch(eventData.args), currentKey());
+
+                const noteName = realPitch.toStringTone() + h;
                 synth.triggerAttackRelease(noteName, "32n");
                 editor.session.insert(editor.getCursorPosition(), inputOctave.value + " ");
             }
@@ -180,10 +182,10 @@ buttonInsert("♩=120 ", "add tempo indication");
 
 addButton("chord", "write/transform into chord", () => {
     if (editor.getSelectedText() != "")
-        editorReplaceSelection((selection) => "<" + selection + ">");
+        editorReplaceSelection((selection) => "[" + selection + "]");
     else {
         let pos = editor.getCursorPosition();
-        editor.session.insert(pos, "<>");
+        editor.session.insert(pos, "[]");
         editor.gotoLine(pos.row + 1, pos.column + 1);
     }
     editor.focus();
@@ -193,48 +195,6 @@ addButton("chord", "write/transform into chord", () => {
 /*editor.getSession().on('change', function () {
     abcd2Vexflow(editor.getValue());
 });*/
-
-
-
-async function compile(format) {
-    const fd = new FormData();
-    const abcd = editor.getValue();
-    const ly = abcd2ly(abcd);
-    fd.append("format", format);
-    fd.append("code", ly);
-
-    const response = await fetch("generate.php", {
-        method: 'post',
-        body: fd
-    });
-    if (response.ok) {
-        const filenameID = await response.text();
-        console.log(filenameID)
-        return filenameID;
-    }
-    else {
-        console.log("error: ")
-        console.log(response);
-
-    }
-}
-
-function download(filename) {
-    const a = document.createElement('a');
-    document.body.appendChild(a);
-    a.download = name;
-    a.href = filename;
-    a.target = "_blank";
-    a.click();
-    a.remove();
-}
-buttonDownload.onclick = async () => {
-    const filename = await compile("pdf");
-    download(window.location.href + filename);
-
-}
-
-
 
 
 

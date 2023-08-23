@@ -10,6 +10,7 @@
 
 
 <head>
+    <link rel="stylesheet" href="stylePrint.css">
     <style>
         #editor {
             position: absolute;
@@ -26,18 +27,20 @@
             right: 0;
         }
 
-        midi-player {
-            width: 100%;
-        }
 
-
-        #output {
+        #outputWrapper {
             overflow: auto;
             position: absolute;
             top: 50%;
             left: 0px;
             right: 0px;
             bottom: 0px;
+        }
+
+        #output {
+            overflow: visible;
+            width: fit-content;
+            height: fit-content;
         }
 
         button {
@@ -117,44 +120,46 @@
 
         #audio {
             position: absolute;
-            left:0px;
+            left: 0px;
             right: 0px;
-            bottom: 0px;
+            top: 50%;
         }
     </style>
 </head>
 
 <body>
-    <div>
+    <div id="toolbar">
         <div id="toolbarInsert"></div>
         <button title="shift one octave down" id="button8down">8↓</button>
         <button title="shift one octave up" id="button8up">8↑</button>
 
         <input id="inputOctave" title="indicate the pitch shift (' or '' or ''' etc. or , or ,, or ,,, etc.)" value="'"
             maxlength="4"></input>
-        <div class="right">
-            <button id="buttonDownload">Download PDF 📥</button>
-        </div>
         <button id="buttonClean" title="indent the code (still in developpement)">🧹</button>
         <input checked type="checkbox" id="recordMidi">
         <label for="recordMidi" title="works on Chrome only">record Midi</label>
+        <button onclick="window.print()">Print</button>
+
         <a id="help" href="https://github.com/francoisschwarzentruber/abcd" target="_blank">?</a>
+
         <div id="midi">
 
         </div>
     </div>
     <div>
         <div id="editor"></div>
-        <div id="output">
+        <div id="outputWrapper">
+            <div id="output"></div>
+        </div>
 
-        </div>
-        <div id="audio">
-        </div>
+
+    </div>
+    <div id="audio">
+    </div>
     </div>
     <script src="lib/abcjs-basic-min.js"></script>
     <script src="lib/abcjs-basic-min.js"></script>
-    
-    <script src="js/abcd2ly.js"></script>
+
     <script src="js/abcd2abc.js"></script>
     <script src="js/element.js"></script>
     <script src="js/pitch.js"></script>

@@ -12,7 +12,7 @@ function str8up(str) {
         try {
             const note = new Element(s);
             note.pitch.value += 7;
-            return note.toStringABC();
+            return note.toStringLy();
         }
         catch (e) {
             return s;
@@ -29,7 +29,7 @@ function str8down(str) {
         try {
             const note = new Element(s);
             note.pitch.value -= 7;
-            return note.toStringABC();
+            return note.toStringLy();
         }
         catch {
             return s;
@@ -89,7 +89,6 @@ function getAccidentals(key) {
         let newPitch = modulo(add(new Pitch(i, 0), key));
         array[newPitch.value] = newPitch.accidental;
     }
-    console.log(array)
     return array;
 }
 

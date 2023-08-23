@@ -24,14 +24,15 @@ class Element {
         if (s == "")
             throw "empty string";
 
-        if (!(["a", "b", "c", "d", "e", "f", "g", "r"].indexOf(s[0]) >= 0))
+        const letterNote = s[0];
+        if (!(["a", "b", "c", "d", "e", "f", "g", "r"].indexOf(letterNote.toLowerCase()) >= 0))
             throw "not a note or a rest";
 
-        this.isRest = (s[0] == "r");
+        this.isRest = (letterNote == "r");
 
         let value = 0;
         if (!this.isRest)
-            value = lyNoteLetterToiNote7(s[0]);
+            value = lyNoteLetterToiNote7(letterNote.toLowerCase());
 
         s = s.substr(1);
 
@@ -64,6 +65,11 @@ class Element {
                 s = s.substr(i);
                 break;
             }
+
+        //if lowercase
+        if (letterNote == letterNote.toUpperCase())
+            octave--;
+
         value += octave * 7;
         this.pitch = new Pitch(value, accidental);
         this.duration = s;
@@ -72,8 +78,8 @@ class Element {
 
 
 
-    toString() {
-        return (this.isRest ? "r" : this.pitch.toString()) + this.duration;
+    toStringLy() {
+        return (this.isRest ? "r" : this.pitch.toStringLy()) + this.duration;
     }
 
     toStringABC() {
