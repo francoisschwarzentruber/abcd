@@ -35,6 +35,8 @@
             border-radius: 7px;
             margin: 2px;
             padding: 4px;
+            height: 32px;
+
         }
 
         button:active {
@@ -51,6 +53,8 @@
 
         #inputOctave {
             width: 24px;
+            height: 32px;
+            border: none;
         }
 
 
@@ -102,11 +106,24 @@
             border-radius: 8px;
             padding: 8px;
             text-decoration: none;
+            right: 0px;
+            position: absolute;
         }
 
         #audio {
             position: absolute;
-            left: 0px;
+            left: 68px;
             right: 0px;
             top: 50%;
+            filter: invert(1);
+            border-top: 4px solid gray;
         }
+
+        #buttonPrint {
+            position: absolute;
+            left: 0px;
+            width: 64px;
+            top: 50%;
+        }
+
+        #print {}

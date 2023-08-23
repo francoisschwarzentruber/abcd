@@ -37,8 +37,7 @@ window.onclick = (event) => {
     }
 }
 
-
-editor.getSession().on('change', () => {
+function update() {
     const abcd = editor.getValue();
     setId(abcd.split("\n")[0].trim());
     const abc = abcd2abc(abcd);
@@ -50,8 +49,10 @@ editor.getSession().on('change', () => {
     const synthControl = new abcjs.synth.SynthController();
     synthControl.load("#audio", null, { displayRestart: true, displayPlay: true, displayProgress: true });
     synthControl.setTune(visualObj, false);
+}
+editor.getSession().on('change', update);
 
-});
+update();
 /**
  * @description executed after the user types sth
  */

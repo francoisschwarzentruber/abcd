@@ -6,11 +6,14 @@
  * @returns the lilypond string for the midi note midiNote
  */
 function imidiNote2Pitch(midiNote) {
-    const iC = 12;
+    const iC = 0;
     const midiNotefromC = midiNote - iC;
-
+    let octave = Math.floor(midiNotefromC / 12);
+    console.log(octave)
     let midi12 = midiNotefromC % 12;
-    if (midi12 < 0) midi12 = midi12 + 12;
+    if (midi12 < 0) {
+        midi12 = midi12 + 12;
+    }
 
 
     /**
@@ -30,8 +33,6 @@ function imidiNote2Pitch(midiNote) {
         }
     }
 
-
-
     /**
      * 
      * @param midi12 (between 0 and 11)
@@ -39,25 +40,23 @@ function imidiNote2Pitch(midiNote) {
      * 
      */
     function midi12ToAccidental(midi12) { return [1, 3, 6, 8, 10].indexOf(midi12) >= 0 ? 1 : 0; }
-
-
-    return new Pitch(midi12ToPitch7(midi12), midi12ToAccidental(midi12));
+    console.log(midi12ToPitch7(midi12) + octave * 7)
+    return new Pitch(midi12ToPitch7(midi12) + octave * 7,
+        midi12ToAccidental(midi12));
 }
 
 
 
-function imidiNote2Ly(midiNote) {
-    const pitch = imidiNote2Pitch(midiNote);
+function imidiNote2Ly(midiNoteRelative) {
+    const pitch = imidiNote2Pitch(midiNoteRelative);
     const key = currentKey();
-    console.log(pitch.toString())
+    console.log(pitch.toStringLy())
 
-    console.log(key.toString())
+    console.log(key.toStringLy())
     const pitchCorrected = enharmonic(pitch, key);
-    return pitchCorrected.toString();
+    console.log(pitchCorrected.toStringLy())
+    return pitchCorrected.toStringLy();
 }
-
-
-
 
 
 
@@ -71,11 +70,11 @@ MidiInput.setEventListenerNoteOff((inote) => {
             editorInsert(" " + notes[0]);
         }
         else {
-            editorInsert(" <" + notes.join(" ") + ">");
+            editorInsert(" [" + notes.join(" ") + "]");
         }
         notes = [];
     }
 });
 
-MidiInput.setEventListenerNoteOn((inote) => { notes.push(imidiNote2Ly(inote)); nbnotes++; });
+MidiInput.setEventListenerNoteOn((inote) => { console.log(inote); notes.push(imidiNote2Ly(inote - 60)); nbnotes++; });
 MidiInput.start();

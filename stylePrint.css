@@ -2,7 +2,8 @@
 
     #toolbar,
     #audio,
-    #editor {
+    #editor,
+    #buttonPrint {
         display: none;
     }
 
