@@ -1,17 +1,27 @@
-# abcd
+# ABCD Notation
 
-A super simple ASCII format to represent music scores. Technically, this repository provides a program, that preprocesses the file to produce a Lilypond file, and then run the Lilypond engraver to produce a PDF.
+A super simple textual language to represent **music scores**. The aim is to be natural to use like **markdown** for writing documents. The positions of the musical elements in the text is close to their real positions in the score. Technically, this repository provides a program, that preprocesses the file to produce an ABC string, and then produces the output with the library abc.js.  The name ABCD is a hint to the abc notation.
 
-# Motivation
-Why? Because in wysiwyg software, you never know where to click. Among, textual langages, the abc notation is simple but  not sufficiently powerful. Otherwise Lilypond is awesome, but combersome to write. In particular, all the information concerning a single measure is spread out in the Lilypond source. The name abcd is a hint to the abc notation. So technically abcd files are just compiled into Lilypond!
+# Motivation - Why?
+
+## Why not graphical user interfaces?
+In wysiwyg software, like Musescore, Finale, etc. you never know where to click.
+
+## Why textual languages?
+The only thing to learn with a textual language is the language. Everyone knows how to use a text editor. Existing textual langages (like abc and lilypond) are very powerful. 
+
+## Why a new textual language?
+Existing languages are difficult to use. The project aims at providing an easier to use textual language. Here are the main points:
+- Both languages (ABC, Lilypond) have cryptic notations like `[K:bass]` or `\voice...`. In particular, adding a voice, a staff or lyrics is a bit tricky in both languages, while it is obvious in ABCD.
+- Both in ABC and Lilypong, all the information concerning a single measure is spread out in the source.
 
 
 # Basic example
 
 A file containing
 
-        𝄞 2/4    e'2   |  d'4  r4
-        𝄢     r4 c4 |  c8 c8 c4
+        𝄞 2/4    e'2   |  d'  r
+        𝄢        r  c  |  c/ c/ c
 
 produces the score
 
@@ -24,14 +34,14 @@ produces the score
 
 | Feature           | How to do it in the .abcd language |
 | ----------------- | --------------------------- |
-| Notes and rests   | use of the Lilypond format  |
-| Chords            | put notes between < and >   |
+| Notes and rests   | like in ABC except that accidentals are written after the note like in Lilypond (e.g. `c#,`)  |
+| Uplets            | Add `(3` like in ABC |
+| Chords            | put notes between [ and ]  |
 |  add a new voice  |    just write in a new line |
 |  add a new staff  |  add an empty line or a line starting with 𝄞 or 𝄢          |
 |  add treble clef  |    write 𝄞                  |
 |  add bass clef    |   write 𝄢                   |
 |  add lyrics       |  start a line with 💬 or 😀  | 
-| add tempo         | add ♩=150                   |
 
 
 If your text lines are too long, add a new line contaning | or || (for double bars).
@@ -40,47 +50,6 @@ If your text lines are too long, add a new line contaning | or || (for double ba
 
 ![image](https://user-images.githubusercontent.com/43071857/198897652-cad34c1f-cf4b-40bc-886a-8fd02ca13483.png)
 
-
-
-# Example
-
-A file containing 
-
-        𝄞    e''2.
-        😀  ohh
-        𝄞 3/4  c''4 d''8 d''8 e''4
-        😀     la    vie est  très
-        𝄞 <<e'8 g'8>> e'8 e'8 e'8 f'8. a'16 
-        c'1
-        𝄢 c4    r2
-
-        |
-        r2.
-
-             f''2.
-        😀  belle
-
-        b'4 c''4 c''4
-
-        a2  𝄞 g'4
-
-        |
-
-
-        
-produces the score
-
-![image](https://user-images.githubusercontent.com/43071857/197391020-418f9fc6-9396-4359-9333-ac7ee72bfd43.png)
-
-
-
-
-
-# How to install on your server
-
-- make sure the folder scores has the permission to be written
-- install imagemagick
-- make sure that imagemagick has the rights to convert pdf: `sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml`
 
 
 
