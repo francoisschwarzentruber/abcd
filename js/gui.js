@@ -154,7 +154,6 @@ function editorReplaceSelection(f) {
 }
 
 
-
 function editorInsert(str) {
     const r = editor.selection.getRange();
     editor.session.replace(r, str);

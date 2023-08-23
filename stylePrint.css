@@ -1,0 +1,21 @@
+@media print {
+
+    #toolbar,
+    #audio,
+    #editor {
+        display: none;
+    }
+
+    #outputWrapper {
+        display: block;
+        position: relative;
+        left: 0px;
+        top: 0px;
+        width: auto;
+        height: auto;
+    }
+
+    [fill="#ff0000"] {
+        fill: currentColor;
+    }
+}

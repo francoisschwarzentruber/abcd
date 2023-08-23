@@ -75,17 +75,8 @@ class Element {
         this.duration = s;
     }
 
-
-
-
-    toStringLy() {
-        return (this.isRest ? "r" : this.pitch.toStringLy()) + this.duration;
-    }
-
-    toStringABC() {
-        return (this.isRest ? "z" : this.pitch.toStringABC()) + this.duration;
-
-    }
+    toStringLy() { return (this.isRest ? "r" : this.pitch.toStringLy()) + this.duration; }
+    toStringABC() { return (this.isRest ? "z" : this.pitch.toStringABC()) + this.duration; }
 }
 
 
