@@ -33,7 +33,7 @@ produces the score
 
 
  
-# Features
+# Quick Language description
 
 | Feature           | How to do it in the .abcd language |
 | ----------------- | --------------------------- |
@@ -54,3 +54,10 @@ If your text lines are too long, add a new line contaning | or || (for double ba
 
 
 
+# Features of the editor
+
+- real-time update of the score while modifying the code (like HedgeDoc for editing markdown)
+- Listening to the audio (MIDI)
+- Printing
+- Loading/saving in the local storage of the browser
+- Input from a MIDI device (in Chrome only) 
