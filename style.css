@@ -1,0 +1,112 @@
+        #editor {
+            position: absolute;
+            top: 48px;
+            right: 0px;
+            bottom: 50%;
+            left: 0;
+        }
+
+        #midi {
+            position: absolute;
+            top: 48px;
+            left: 50%;
+            right: 0;
+        }
+
+
+        #outputWrapper {
+            overflow: auto;
+            position: absolute;
+            top: 50%;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+        }
+
+        #output {
+            overflow: visible;
+            width: fit-content;
+            height: fit-content;
+        }
+
+        button {
+            font-size: 18px;
+            border: 1px solid black;
+            border-radius: 7px;
+            margin: 2px;
+            padding: 4px;
+        }
+
+        button:active {
+            scale: 0.95;
+        }
+
+
+
+        .right {
+            right: 0px;
+            top: 0px;
+            position: absolute;
+        }
+
+        #inputOctave {
+            width: 24px;
+        }
+
+
+
+        #buttonInsert {}
+
+        #toolbarInsert {
+            display: inline-block;
+        }
+
+        #recordMidi {
+            display: none;
+        }
+
+        #recordMidi:checked+label {
+            border-radius: 8px;
+            padding: 4px;
+            color: white;
+            background-color: red;
+            animation: recordMidi 1s alternate infinite;
+        }
+
+        @keyframes recordMidi {
+            from {
+                border: 4px solid white;
+            }
+
+            to {
+                border: 4px solid red;
+            }
+        }
+
+        #recordMidi:not(:checked)+label {
+            border-radius: 8px;
+            padding: 4px;
+            color: gray;
+            text-decoration: line-through;
+        }
+
+        #recordMidi:not(:checked)+label:hover {
+            border-radius: 8px;
+            padding: 4px;
+            color: blue;
+        }
+
+
+        #help {
+            background-color: rgb(255, 255, 165);
+            border-radius: 8px;
+            padding: 8px;
+            text-decoration: none;
+        }
+
+        #audio {
+            position: absolute;
+            left: 0px;
+            right: 0px;
+            top: 50%;
+        }
