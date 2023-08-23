@@ -7,7 +7,11 @@ const abcjs = window.ABCJS;
 
 let storedValue = load();
 if (storedValue == undefined)
-    storedValue = "My new song\nMozart\n\n𝄞  ♯♯  3/4 a/ a/ (3 b♭ b♭ b♭ f#- | f#2  \n😀 Li fe is beau ti ful,      |  yes \n𝄞  ♯♯  3/4  r [c e♭']3 | d r  \n𝄢           A,4 |  ";
+    storedValue = getId() + "\nMozart\n\n𝄞  ♯♯  3/4 a/ a/ (3 b♭ b♭ b♭ f#- | f#2  \n😀 Li fe is beau ti ful,      |  yes \n𝄞  ♯♯  3/4  r [c e♭']3 | d r  \n𝄢           A,4 |  ";
+
+let lines = storedValue.split("\n");
+lines[0] = getId();
+storedValue = lines.join("\n");
 editor.setValue(storedValue, -1);//-1 means cursor at the beginning
 
 
