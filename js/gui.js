@@ -4,8 +4,14 @@ const abcjs = window.ABCJS;
 /**
  * reload the content from local storage
  */
-editor.setValue(localStorage.getItem("save") ? localStorage.getItem("save") : "𝄞  ♯♯  3/4  e''2.", -1); //-1 means cursor at the beginning
-setInterval(() => localStorage.setItem("save", editor.getValue()), 5000);
+
+let storedValue = load();
+if (storedValue == undefined)
+    storedValue = "My new song\nMozart\n\n𝄞  ♯♯  3/4 a/ a/ (3 b♭ b♭ b♭ f#- | f#2  \n😀 Li fe is beau ti ful,      |  yes \n𝄞  ♯♯  3/4  r [c e♭']3 | d r  \n𝄢           A,4 |  ";
+editor.setValue(storedValue, -1);//-1 means cursor at the beginning
+
+
+setInterval(() => save(editor.getValue()), 5000);
 
 /**
  * we store whether there is (was) a selection
@@ -29,7 +35,9 @@ window.onclick = (event) => {
 
 
 editor.getSession().on('change', () => {
-    const abc = abcd2abc(editor.getValue());
+    const abcd = editor.getValue();
+    setId(abcd.split("\n")[0].trim());
+    const abc = abcd2abc(abcd);
     /*abcjs.renderAbc("output", abc);
     abcjs.renderMidi("midiPlayer", abc, {}, { generateInline: true }, {});*/
     const visualObj = abcjs.renderAbc('output', abc, {
@@ -107,7 +115,8 @@ function clean() {
         alignLines(lines, ibegin, lines.length - 1);
         return lines;
     }
-    editor.setValue(reorganiseLines(code.split("\n")).join("\n"), -1);
+    const lines = code.split("\n");
+    editor.setValue([lines[0], lines[1], ...reorganiseLines(lines.slice(2))].join("\n"), -1);
 }
 
 buttonClean.onclick = clean;
