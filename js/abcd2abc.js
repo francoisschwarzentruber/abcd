@@ -65,6 +65,10 @@ class ScoreStructure {
 }
 
 
+function startsWithKey(line) {
+    return line.startsWith("𝄞") || line.startsWith("𝄢")
+}
+
 function abcd2abc(abcd) {
     const abc = [];
     abc.push("X:1");
@@ -80,6 +84,8 @@ function abcd2abc(abcd) {
     for (; i < lines.length; i++) {
         let line = lines[i].trim();
         if (line != "") {
+            if (startsWithKey(line))
+                break;
             if (i == 0)
                 abc.push("T:" + line);//title
             else {
@@ -106,7 +112,7 @@ function abcd2abc(abcd) {
             abc.push("w: " + line.substr(2));
         }
         else {
-            if (line.startsWith("𝄞") || line.startsWith("𝄢"))
+            if (startsWithKey(line))
                 scoreStructure.newStaff();
 
             const key = currentKey();
@@ -158,7 +164,7 @@ function abcd2abc(abcd) {
                             note = new Element(token);
                         }
                         catch {
-//                            console.log("TOKEN LEAVED AS IT IS: " + token)
+                            //                            console.log("TOKEN LEAVED AS IT IS: " + token)
                             return token;
                         }
 

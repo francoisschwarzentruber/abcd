@@ -5,17 +5,37 @@ const abcjs = window.ABCJS;
  * reload the content from local storage
  */
 
-let storedValue = load();
+buttonLoad.onclick = () => {
+    const newid = prompt("Which music scores already stored in your browser do you want to load?");
+    if (newid != null) {
+        if (Save.exists(newid)) {
+            Save.setId(newid);
+            editor.setValue(Save.load(), -1)
+
+        }
+        else {
+            alert("No document with name '" + newid + "' found!")
+        }
+    }
+}
+
+
+buttonSave.onclick = () => {
+    const newid = prompt("What name do you want to give to this score?", Save.getId());
+    Save.setId(newid);
+    Save.save();
+}
+
+let storedValue = Save.load();
 if (storedValue == undefined)
-    storedValue = getId() + "\nMozart\n\n𝄞  ♯♯  3/4 a/ a/ (3 b♭ b♭ b♭ f#- | f#2  \n😀 Li fe is beau ti ful,      |  yes \n𝄞  ♯♯  3/4  r [c e♭']3 | d r  \n𝄢           A,4 |  ";
+    storedValue = Save.getId() + "\nMozart\n\n𝄞  ♯♯  3/4 a/ a/ (3 b♭ b♭ b♭ f#- | f#2  \n😀 Li fe is beau ti ful,      |  yes \n𝄞  ♯♯  3/4  r [c e♭']3 | d r  \n𝄢           A,4 |  ";
 
 let lines = storedValue.split("\n");
-lines[0] = getId();
 storedValue = lines.join("\n");
 editor.setValue(storedValue, -1);//-1 means cursor at the beginning
 
 
-setInterval(() => save(editor.getValue()), 5000);
+setInterval(() => Save.save(editor.getValue()), 5000);
 
 /**
  * we store whether there is (was) a selection
@@ -39,7 +59,6 @@ window.onclick = (event) => {
 
 function update() {
     const abcd = editor.getValue();
-    setId(abcd.split("\n")[0].trim());
     const abc = abcd2abc(abcd);
     /*abcjs.renderAbc("output", abc);
     abcjs.renderMidi("midiPlayer", abc, {}, { generateInline: true }, {});*/
