@@ -60,7 +60,7 @@ function update() {
     const abcd = editor.getValue();
     const abc = abcd2abc(abcd);
 
-    console.log(abc)
+    // console.log(abc)
     const visualObj = abcjs.renderAbc('output', abc, {
         oneSvgPerLine: true
     })[0];
@@ -82,13 +82,16 @@ editor.commands.on('afterExec', eventData => {
         const wholelinetxt = editor.session.getLine(currline);
         if (!wholelinetxt.startsWith("😀"))
             if (['a', 'b', 'c', 'd', 'e', 'f', 'g'].indexOf(eventData.args) >= 0) {
-                let h = 3;
+                let h = 0;
                 if (inputOctave.value.length > 0)
                     h += inputOctave.value.length * (inputOctave.value[0] == "'" ? 1 : -1);
+                const pitch = lyToPitch(eventData.args);
+                pitch.value += 7 * h;
+                const realPitch = accidentalize(pitch, currentKey());
 
-                const realPitch = accidentalize(lyToPitch(eventData.args), currentKey());
+                const noteName = realPitch.toStringTone();
 
-                const noteName = realPitch.toStringTone() + h;
+                console.log(noteName)
                 synth.triggerAttackRelease(noteName, "32n");
                 editor.session.insert(editor.getCursorPosition(), inputOctave.value + " ");
             }

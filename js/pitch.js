@@ -65,9 +65,9 @@ class Pitch {
 
     toStringTone() {
         const accidentalString = (this.accidental > 0 ?
-            "s".repeat(this.accidental) : "f".repeat(-this.accidental));
-        const octaveString = this.octave;
-        return iNote7ToLy(this.value7) + accidentalString + octaveString;
+            "#".repeat(this.accidental) : "b".repeat(-this.accidental));
+        const octaveString = this.octave + 4;
+        return iNote7ToLy(this.value7).toUpperCase() + accidentalString + octaveString;
     }
 
 }
