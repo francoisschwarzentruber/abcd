@@ -10,8 +10,7 @@ buttonLoad.onclick = () => {
     if (newid != null) {
         if (Save.exists(newid)) {
             Save.setId(newid);
-            editor.setValue(Save.load(), -1)
-
+            editor.setValue(Save.load(), -1);
         }
         else {
             alert("No document with name '" + newid + "' found!")
@@ -60,8 +59,8 @@ window.onclick = (event) => {
 function update() {
     const abcd = editor.getValue();
     const abc = abcd2abc(abcd);
-    /*abcjs.renderAbc("output", abc);
-    abcjs.renderMidi("midiPlayer", abc, {}, { generateInline: true }, {});*/
+
+    console.log(abc)
     const visualObj = abcjs.renderAbc('output', abc, {
         oneSvgPerLine: true
     })[0];

@@ -64,6 +64,60 @@ class ScoreStructure {
     }
 }
 
+function strToArrayOfLines(str) {
+    const measures = str.split("|");
+    const A = [];
+    while (measures.length > 0) {
+        let B = [];
+        for (let i = 0; i < 4; i++) {
+            if (measures.length > 0)
+                B.push(measures.shift());
+        }
+        A.push(B.join("|") + (measures.length > 0 ? "|" : ""))
+    }
+    return A;
+}
+
+class Voice {
+
+    constructor(i, data) {
+        this.i = i;
+        this.data = data;
+        this.lyrics = [];
+    }
+
+
+    addLyrics(lyric) { this.lyrics.push(lyric); }
+
+    toStringABC() {
+
+
+
+        const data = strToArrayOfLines(this.data);
+        const lyrics = this.lyrics.map(strToArrayOfLines);
+
+        let A = [];
+        while (!(data.length == 0 && lyrics.every((l) => l.length == 0))) {
+            if (data.length > 0) A.push(data.shift());
+            for (const l of lyrics) if (l.length > 0) A.push("w:" + l.shift());
+        }
+
+        return `V:V${this.i}\n[V:V${this.i}]` + A.join("\n");
+    }
+}
+
+
+class ScoreData {
+    constructor() {
+        this.voices = [];
+        this.currentVoice = undefined;
+    }
+    addVoice(i, data) { this.currentVoice = new Voice(i, data); this.voices.push(this.currentVoice); }
+    addLyrics(lyrics) { this.currentVoice.addLyrics(lyrics); }
+
+    toStringABC() { return this.voices.map((v) => v.toStringABC()).join("\n"); }
+}
+
 
 function startsWithKey(line) {
     return line.startsWith("𝄞") || line.startsWith("𝄢")
@@ -73,7 +127,7 @@ function abcd2abc(abcd) {
     const abc = [];
     abc.push("X:1");
     abc.push("L:1/4");
-    abc.push("K:c");
+    abc.push("I:linebreak <none>"); //no linebreak explicitely specified in the code 
     abc.push("%%propagate-accidentals not");
 
     const iScoreInABC = abc.length - 1;
@@ -97,6 +151,10 @@ function abcd2abc(abcd) {
     }
 
     let scoreStructure = new ScoreStructure();
+    let scoreData = new ScoreData();
+    let data = {};
+
+    const storeData = (i, line) => { data[i] = line }
 
     for (; i < lines.length; i++) {
         let line = lines[i].trim();
@@ -109,7 +167,7 @@ function abcd2abc(abcd) {
             scoreStructure.addStaffSymbol(line);
         }
         else if (line.startsWith("💬") || line.startsWith("😀")) {
-            abc.push("w: " + line.substr(2));
+            scoreData.addLyrics(line.substr(2));
         }
         else {
             if (startsWithKey(line))
@@ -188,14 +246,7 @@ function abcd2abc(abcd) {
                     .join("[")).join(" ")
             })
 
-
-            for (let im = 4; im < measures.length; im += 4) {
-                measures[im] = "\n" + measures[im];
-            }
-
-            let lineOutput = measures.join("|");
-
-            let s = lineOutput;
+            let s = measures.join("|");
             s = s.replaceAll("𝄢", "[K:F bass]");
             s = s.replaceAll("𝄞", "[K:treble]");
             s = s.replaceAll("/ ", "/");
@@ -225,10 +276,9 @@ function abcd2abc(abcd) {
                 s = s.replaceAll(accidentalsSurroundedBySpace(flat, 7), " [K:Cb] ");
             }
             scoreStructure.addVoice(i);
-            abc.push(`V:V${i}`);
-            abc.push(`[V:V${i}]` + s);
+            scoreData.addVoice(i, s);
         }
     } //endfor
     abc[iScoreInABC] = (scoreStructure.toStringABC());
-    return abc.join("\n");
+    return abc.join("\n") + "\n" + scoreData.toStringABC();
 }
