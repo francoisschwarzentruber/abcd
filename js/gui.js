@@ -1,4 +1,4 @@
-const editor = ace.edit("editor");
+
 const synth = new Tone.Synth().toDestination();
 const abcjs = window.ABCJS;
 /**
@@ -10,7 +10,7 @@ buttonLoad.onclick = () => {
     if (newid != null) {
         if (Save.exists(newid)) {
             Save.setId(newid);
-            editor.setValue(Save.load(), -1);
+            editor.text = Save.load();//editor.setValue(Save.load(), -1);
         }
         else {
             alert("No document with name '" + newid + "' found!")
@@ -31,16 +31,9 @@ if (storedValue == undefined)
 
 let lines = storedValue.split("\n");
 storedValue = lines.join("\n");
-editor.setValue(storedValue, -1);//-1 means cursor at the beginning
+editor.text = storedValue
 
-
-setInterval(() => Save.save(editor.getValue()), 5000);
-
-/**
- * we store whether there is (was) a selection
- */
-let isSelection = false;
-setInterval(() => { isSelection = (editor.getSelectedText() != "") }, 200);
+setInterval(() => Save.save(editor.text), 5000);
 
 
 /**
@@ -57,7 +50,7 @@ window.onclick = (event) => {
 }
 
 function update() {
-    const abcd = editor.getValue();
+    const abcd = editor.text;
     const abc = abcd2abc(abcd);
 
     // console.log(abc)
@@ -68,13 +61,13 @@ function update() {
     synthControl.load("#audio", null, { displayRestart: true, displayPlay: true, displayProgress: true });
     synthControl.setTune(visualObj, false);
 }
-editor.getSession().on('change', update);
-
+editor.onchange = update;
 update();
 /**
  * @description executed after the user types sth
  */
-editor.commands.on('afterExec', eventData => {
+
+/*editor.commands.on('afterExec', eventData => {
     if (eventData.command.name === 'insertstring') {
         if (isSelection)
             return;
@@ -96,14 +89,14 @@ editor.commands.on('afterExec', eventData => {
                 editor.session.insert(editor.getCursorPosition(), inputOctave.value + " ");
             }
     }
-});
+});*/
 
 
 /**
  * clean the code, align the symbols |
  */
 function clean() {
-    const code = editor.getValue();
+    const code = editor.text;
 
     function alignLines(lines, ibegin, iend) {
         console.log(ibegin, iend)
@@ -142,7 +135,7 @@ function clean() {
         return lines;
     }
     const lines = code.split("\n");
-    editor.setValue([lines[0], lines[1], ...reorganiseLines(lines.slice(2))].join("\n"), -1);
+    editor.text = [lines[0], lines[1], ...reorganiseLines(lines.slice(2))].join("\n");
 }
 
 buttonClean.onclick = clean;
@@ -166,7 +159,7 @@ function addButton(text, hint, event) {
 function buttonInsert(s, hint) {
     console.log("add button " + s)
     addButton(s, hint, () => {
-        editorInsert(s)
+        editor.write(s)
         editor.focus();
     });
 }
@@ -195,12 +188,14 @@ function editorInsert(str) {
 }
 
 function action8upOrDown(f) {
-    if (editor.getSelectedText() == "") {
+    editor.focus();
+   /* if (editor.getSelectedText() == "") {
         inputOctave.value = f("a" + inputOctave.value).substr(1);
     }
     else
         editorReplaceSelection(f);
-}
+*/
+    }
 
 button8up.onclick = () => action8upOrDown(str8up);
 button8down.onclick = () => action8upOrDown(str8down);
@@ -230,7 +225,7 @@ addButton("chord", "write/transform into chord", () => {
 
 function currentKey() {
     function findKey() {
-        const code = editor.getValue();
+        const code = editor.text;
 
         function accidentalsSurroundedBySpace(accident, n) { return " " + accident.repeat(n) + " "; }
 

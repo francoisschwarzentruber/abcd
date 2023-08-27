@@ -247,7 +247,7 @@ function abcd2abc(abcd) {
             })
 
             let s = measures.join("|");
-            s = s.replaceAll("𝄢", "[K:F bass]");
+            s = s.replaceAll("𝄢", "[K:bass]");
             s = s.replaceAll("𝄞", "[K:treble]");
             s = s.replaceAll("/ ", "/");
 
