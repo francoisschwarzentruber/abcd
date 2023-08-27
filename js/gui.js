@@ -226,10 +226,6 @@ addButton("chord", "write/transform into chord", () => {
 })
 
 
-/*editor.getSession().on('change', function () {
-    abcd2Vexflow(editor.getValue());
-});*/
-
 
 
 function currentKey() {
