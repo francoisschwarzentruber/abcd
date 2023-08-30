@@ -1,3 +1,9 @@
+const instrumentToMIDITable = {
+    "piano": 1,
+    "flute": 74,
+    "violin": 41
+}
+
 class Staff {
     constructor() {
         this.isStartGroup = false;
@@ -80,9 +86,10 @@ function strToArrayOfLines(str) {
 
 class Voice {
 
-    constructor(i, data) {
+    constructor(i, data, instrument) {
         this.i = i;
         this.data = data;
+        this.instrument = instrument;
         this.lyrics = [];
     }
 
@@ -90,9 +97,6 @@ class Voice {
     addLyrics(lyric) { this.lyrics.push(lyric); }
 
     toStringABC() {
-
-
-
         const data = strToArrayOfLines(this.data);
         const lyrics = this.lyrics.map(strToArrayOfLines);
 
@@ -102,7 +106,15 @@ class Voice {
             for (const l of lyrics) if (l.length > 0) A.push("w:" + l.shift());
         }
 
-        return `V:V${this.i}\n[V:V${this.i}]` + A.join("\n");
+        return `V:V${this.i}\n` + this.instrumentToABC() + `[V:V${this.i}]` + A.join("\n");
+    }
+
+
+    instrumentToABC() {
+        if (this.instrument)
+            return "%%MIDI program " + instrumentToMIDITable[this.instrument] + "\n";
+        else
+            return "";
     }
 }
 
@@ -112,15 +124,25 @@ class ScoreData {
         this.voices = [];
         this.currentVoice = undefined;
     }
-    addVoice(i, data) { this.currentVoice = new Voice(i, data); this.voices.push(this.currentVoice); }
+    addVoice(i, data, instrument) { this.currentVoice = new Voice(i, data, instrument); this.voices.push(this.currentVoice); }
     addLyrics(lyrics) { this.currentVoice.addLyrics(lyrics); }
 
     toStringABC() { return this.voices.map((v) => v.toStringABC()).join("\n"); }
 }
 
+function isStaffLine(line) {
+    if (line.startsWith("𝄞") || line.startsWith("𝄢"))
+        return { content: line };
 
-function startsWithKey(line) {
-    return line.startsWith("𝄞") || line.startsWith("𝄢")
+    const words = line.split(" ");
+    const firstWord = words[0].toLowerCase();
+    const content = words.splice(1).join(" ");
+
+    if (instrumentToMIDITable[firstWord] != undefined & (content.startsWith("𝄞") || content.startsWith("𝄢"))) {
+        return { instrument: firstWord, content };
+    }
+
+    return false;
 }
 
 function abcd2abc(abcd) {
@@ -138,7 +160,7 @@ function abcd2abc(abcd) {
     for (; i < lines.length; i++) {
         let line = lines[i].trim();
         if (line != "") {
-            if (startsWithKey(line))
+            if (isStaffLine(line))
                 break;
             if (i == 0)
                 abc.push("T:" + line);//title
@@ -152,9 +174,7 @@ function abcd2abc(abcd) {
 
     let scoreStructure = new ScoreStructure();
     let scoreData = new ScoreData();
-    let data = {};
-
-    const storeData = (i, line) => { data[i] = line }
+    let currentInstrument = undefined;
 
     for (; i < lines.length; i++) {
         let line = lines[i].trim();
@@ -170,10 +190,17 @@ function abcd2abc(abcd) {
             scoreData.addLyrics(line.substr(2));
         }
         else {
-            if (startsWithKey(line))
-                scoreStructure.newStaff();
 
-            const key = currentKey();
+            if (isStaffLine(line)) {
+                scoreStructure.newStaff();
+                const infoStaff = isStaffLine(line);
+                line = infoStaff.content;
+                if (infoStaff.instrument)
+                    currentInstrument = infoStaff.instrument;
+            }
+
+
+
 
             function strToTonalityNumber(str) {
                 function accidentalsSurroundedBySpace(accident, n) { return accident.repeat(n); }
@@ -276,7 +303,8 @@ function abcd2abc(abcd) {
                 s = s.replaceAll(accidentalsSurroundedBySpace(flat, 7), " [K:Cb] ");
             }
             scoreStructure.addVoice(i);
-            scoreData.addVoice(i, s);
+            scoreData.addVoice(i, s, currentInstrument);
+
         }
     } //endfor
     abc[iScoreInABC] = (scoreStructure.toStringABC());

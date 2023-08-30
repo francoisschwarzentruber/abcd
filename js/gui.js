@@ -25,6 +25,19 @@ buttonSave.onclick = () => {
     Save.save();
 }
 
+
+buttonExportMIDI.onclick = () => {
+    const abcd = editor.text;
+    const abc = abcd2abc(abcd);
+    const a = document.createElement("a");
+    a.id = "midi-download";
+    document.body.appendChild = a;
+    var midi = ABCJS.synth.getMidiFile(abc, { midiOutputType: "encoded" })
+    a.setAttribute("href", midi)
+    a.click();
+}
+
+
 let storedValue = Save.load();
 if (storedValue == undefined)
     storedValue = Save.getId() + "\nMozart\n\n𝄞  ♯♯  3/4 a/ a/ (3 b♭ b♭ b♭ f#- | f#2  \n😀 Li fe is beau ti ful,      |  yes \n𝄞  ♯♯  3/4  r [c e♭']3 | d r  \n𝄢           A,4 |  ";
@@ -53,7 +66,7 @@ function update() {
     const abcd = editor.text;
     const abc = abcd2abc(abcd);
 
-    // console.log(abc)
+    console.log(abc)
     const visualObj = abcjs.renderAbc('output', abc, {
         oneSvgPerLine: true
     })[0];
@@ -167,35 +180,21 @@ function buttonInsert(s, hint) {
 
 
 
-/**
- * 
- * @param {*} f
- * @description replace the selection by f(selection) 
- */
-function editorReplaceSelection(f) {
-    const r = editor.selection.getRange();
-
-    const end = editor.session.replace(r, f(editor.getSelectedText()));
-    editor.selection.setRange({
-        start: r.start, end: end
-    });
-}
 
 
 function editorInsert(str) {
-    const r = editor.selection.getRange();
-    editor.session.replace(r, str);
+    editor.write(str);
 }
 
 function action8upOrDown(f) {
     editor.focus();
-   /* if (editor.getSelectedText() == "") {
-        inputOctave.value = f("a" + inputOctave.value).substr(1);
-    }
-    else
-        editorReplaceSelection(f);
-*/
-    }
+    /* if (editor.getSelectedText() == "") {
+         inputOctave.value = f("a" + inputOctave.value).substr(1);
+     }
+     else
+         editorReplaceSelection(f);
+ */
+}
 
 button8up.onclick = () => action8upOrDown(str8up);
 button8down.onclick = () => action8upOrDown(str8down);
@@ -210,13 +209,7 @@ buttonInsert("♩=120 ", "add tempo indication");
 
 
 addButton("chord", "write/transform into chord", () => {
-    if (editor.getSelectedText() != "")
-        editorReplaceSelection((selection) => "[" + selection + "]");
-    else {
-        let pos = editor.getCursorPosition();
-        editor.session.insert(pos, "[]");
-        editor.gotoLine(pos.row + 1, pos.column + 1);
-    }
+    editor("[]");
     editor.focus();
 })
 
