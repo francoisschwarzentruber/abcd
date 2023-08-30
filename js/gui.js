@@ -30,11 +30,30 @@ buttonExportMIDI.onclick = () => {
     const abcd = editor.text;
     const abc = abcd2abc(abcd);
     const a = document.createElement("a");
-    a.id = "midi-download";
-    document.body.appendChild = a;
-    var midi = ABCJS.synth.getMidiFile(abc, { midiOutputType: "encoded" })
-    a.setAttribute("href", midi)
+    a.id = "downloadA";
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    const midi = ABCJS.synth.getMidiFile(abc, { midiOutputType: "encoded" })
+    a.setAttribute("href", midi);
+    a.setAttribute("download", "myfile.mid");
+
     a.click();
+    document.body.removeChild(a);
+}
+
+buttonExportABC.onclick = () => {
+    const abcd = editor.text;
+    const abc = abcd2abc(abcd);
+    const a = document.createElement("a");
+    a.id = "downloadA";
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    const content = 'data:text/plain;charset=utf-8,' + encodeURIComponent(abc);
+    a.setAttribute("href", content);
+    a.setAttribute("download", "myfile.abc");
+    a.click();
+    document.body.removeChild(a);
+
 }
 
 

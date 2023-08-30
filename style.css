@@ -128,3 +128,17 @@
         }
 
         #print {}
+
+
+
+        .toolbarPart {
+            background: #DDDDBB;
+            display: inline-block;
+            padding: 2px;
+            margin:3px;
+        }
+
+
+        body {
+            margin: 0px;
+        }

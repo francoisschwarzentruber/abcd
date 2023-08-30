@@ -1,7 +1,13 @@
 const instrumentToMIDITable = {
     "piano": 1,
     "flute": 74,
-    "violin": 41
+    "violin": 41,
+    "cello": 42
+}
+
+//if not present, by default it is 𝄞
+const instrumentToStandardKey = {
+    "cello": "𝄢"
 }
 
 class Staff {
@@ -136,11 +142,33 @@ function isStaffLine(line) {
 
     const words = line.split(" ");
     const firstWord = words[0].toLowerCase();
-    const content = words.splice(1).join(" ");
+    let content = words.splice(1).join(" ").trim();
 
-    if (instrumentToMIDITable[firstWord] != undefined & (content.startsWith("𝄞") || content.startsWith("𝄢"))) {
+    if (instrumentToMIDITable[firstWord] != undefined) {
+        if (!(content.startsWith("𝄞") || content.startsWith("𝄢")))
+            content = (instrumentToStandardKey[firstWord] ? instrumentToStandardKey[firstWord] : "𝄞") + " " + content;
         return { instrument: firstWord, content };
     }
+
+
+
+
+
+    return false;
+}
+
+
+/**
+ * 
+ * @returns true if line is of the form "flute {" or "piano   {   "
+ */
+function isStaffInstrumentAndOpenCurlyBracket(line) {
+    const words = line.split(" ");
+    const firstWord = words[0].toLowerCase();
+    const content = words.splice(1).join(" ").trim();
+
+    if (content == "{" && instrumentToMIDITable[firstWord] != undefined)
+        return { instrument: firstWord };
 
     return false;
 }
@@ -182,7 +210,11 @@ function abcd2abc(abcd) {
         if (line.split("|").every((m) => m.trim() == "")) {
             scoreStructure.newStaff();
         }
-
+        else if (isStaffInstrumentAndOpenCurlyBracket(line)) {
+            const infoStaff = isStaffInstrumentAndOpenCurlyBracket(line);
+            currentInstrument = infoStaff.instrument;
+            scoreStructure.addStaffSymbol("{");
+        }
         else if (["[", "]", "{", "}"].indexOf(line) >= 0) {
             scoreStructure.addStaffSymbol(line);
         }

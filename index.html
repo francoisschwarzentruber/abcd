@@ -4,9 +4,9 @@
 <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.12.3/src-noconflict/ace.min.js"></script>
 <script
     src="https://cdn.jsdelivr.net/combine/npm/tone@14.7.58,npm/@magenta/music@1.23.1/es6/core.js,npm/focus-visible@5,npm/html-midi-player@1.5.0"></script>
-    <script src="https://unpkg.com/tone"></script>
-    <script src="https://unpkg.com/tone"></script>
-    <script src="https://cdn.jsdelivr.net/gh/francoisschwarzentruber/textmapeditor@latest/textmapeditor.js"></script>
+<script src="https://unpkg.com/tone"></script>
+<script src="https://unpkg.com/tone"></script>
+<script src="https://cdn.jsdelivr.net/gh/francoisschwarzentruber/textmapeditor@latest/textmapeditor.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="lib/abcjs-audio.css" media="all" type="text/css" />
 
@@ -19,15 +19,22 @@
 
 <body>
     <div id="toolbar">
-        <button id="buttonLoad">Load</button>
-        <button id="buttonSave">Save</button>
-        <button id="buttonExportMIDI">Export MIDI</button>
-        <div id="toolbarInsert"></div>
-        <button title="shift one octave down" id="button8down">8↓</button>
-        <button title="shift one octave up" id="button8up">8↑</button>
+        <span class="toolbarPart">
+            <button id="buttonLoad">Load</button>
+            <button id="buttonSave">Save</button>
+            Export:
+            <button id="buttonExportMIDI">MIDI</button>
+            <button id="buttonExportABC">ABC</button>
+        </span>
+        <div class="toolbarPart" id="toolbarInsert"></div>
 
-        <input id="inputOctave" title="indicate the pitch shift (' or '' or ''' etc. or , or ,, or ,,, etc.)" value="'"
-            maxlength="4"></input>
+        <span class="toolbarPart">
+            <button title="shift one octave down" id="button8down">8↓</button>
+            <button title="shift one octave up" id="button8up">8↑</button>
+
+            <input id="inputOctave" title="indicate the pitch shift (' or '' or ''' etc. or , or ,, or ,,, etc.)"
+                value="'" maxlength="4"></input>
+        </span>
         <button id="buttonClean" title="indent the code (still in developpement)">🧹</button>
         <input checked type="checkbox" id="recordMidi">
         <label for="recordMidi" title="works on Chrome only">record Midi</label>
