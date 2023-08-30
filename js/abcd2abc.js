@@ -1,8 +1,25 @@
 const instrumentToMIDITable = {
     "piano": 1,
-    "flute": 74,
+    "harpsichord": 7,
+    "clavinet": 8,
+    "celesta": 9,
+    "glockenspiel": 10,
+    "guitar": 25,
     "violin": 41,
-    "cello": 42
+    "viola": 42,
+    "cello": 43,
+    "contrabass": 44,
+    "trumpet": 57,
+    "trombone": 58,
+    "tuba": 59,
+    "oboe": 69,
+    "bassoon": 71,
+    "clarinet": 72,
+    "piccolo": 73,
+    "flute": 74,
+    "recorder": 75,
+    "whistle": 79,
+    "ocarina": 80
 }
 
 //if not present, by default it is 𝄞
@@ -180,8 +197,9 @@ function abcd2abc(abcd) {
     abc.push("I:linebreak <none>"); //no linebreak explicitely specified in the code 
     abc.push("%%propagate-accidentals not");
 
-    const iScoreInABC = abc.length - 1;
     abc.push("%%score "); // to be modified after the abcd code has been analyzed
+    const iScoreInABC = abc.length - 1;
+
     const lines = abcd.split("\n");
 
     let i = 0;
