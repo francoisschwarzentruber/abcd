@@ -7,7 +7,7 @@ Try it here: https://francoisschwarzentruber.github.io/abcd/
  
 # Quick Language description
 
-| Feature           | How to do it in the .abcd language |
+| Feature           | How to do it in ABCD |
 | ----------------- | --------------------------- |
 | Notes and rests   | like in ABC except that accidentals are written after the note like in Lilypond (e.g. `c#,`)  |
 | Uplets            | Add `(3` like in ABC |
