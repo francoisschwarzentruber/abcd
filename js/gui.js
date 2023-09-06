@@ -130,26 +130,26 @@ update();
 function clean() {
     const code = editor.text;
 
-    function alignLines(lines, ibegin, iend) {
-        console.log(ibegin, iend)
+    function alignLines(lines, lbegin, lend) {
+        console.log(lbegin, lend)
         const splits = [];
         const measureLength = [];
 
-        for (let i = ibegin; i <= iend; i++) {
-            splits[i] = lines[i].split("|").map((s) => s.trim());
+        for (let l = lbegin; l <= lend; l++) {
+            splits[l] = lines[l].split("|").map((s, i) => (i == 0) ? s.trimRight() : s.trim());
 
-            for (let j = 0; j < splits[i].length; j++) {
-                if (j > measureLength.length - 1)
+            for (let m = 0; m < splits[l].length; m++) {
+                if (m > measureLength.length - 1)
                     measureLength.push(1);
-                measureLength[j] = Math.max(measureLength[j], splits[i][j].length);
+                measureLength[m] = Math.max(measureLength[m], [...splits[l][m]].length);
             }
         }
 
-        for (let i = ibegin; i <= iend; i++) {
-            for (let j = 0; j < splits[i].length; j++) {
-                splits[i][j] = splits[i][j].padEnd(measureLength[j], " ");
+        for (let l = lbegin; l <= lend; l++) {
+            for (let m = 0; m < splits[l].length; m++) {
+                splits[l][m] = splits[l][m].padEnd(measureLength[m], " ");
             }
-            lines[i] = splits[i].join(" | ");
+            lines[l] = splits[l].join(" | ");
         }
     }
 
