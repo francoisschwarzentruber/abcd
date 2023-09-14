@@ -131,13 +131,12 @@ function clean() {
     const code = editor.text;
 
     function alignLines(lines, lbegin, lend) {
-        console.log(lbegin, lend)
         const splits = [];
         const measureLength = [];
 
         for (let l = lbegin; l <= lend; l++) {
             splits[l] = lines[l].split("|").map((s, i) => (i == 0) ? s.trimRight() : s.trim());
-
+            console.log(splits)
             for (let m = 0; m < splits[l].length; m++) {
                 if (m > measureLength.length - 1)
                     measureLength.push(1);
@@ -147,7 +146,8 @@ function clean() {
 
         for (let l = lbegin; l <= lend; l++) {
             for (let m = 0; m < splits[l].length; m++) {
-                splits[l][m] = splits[l][m].padEnd(measureLength[m], " ");
+                const nbSpacesToAdd = measureLength[m]-[...splits[l][m]].length;
+                splits[l][m] = splits[l][m] + " ".repeat(nbSpacesToAdd);
             }
             lines[l] = splits[l].join(" | ");
         }
