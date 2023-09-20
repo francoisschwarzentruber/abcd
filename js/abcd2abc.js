@@ -37,9 +37,7 @@ class Staff {
         this.voices = [];
     }
 
-    addVoice(i) {
-        this.voices.push(i);
-    }
+    addVoice(i) { this.voices.push(i); }
 
     toStringABC() {
         if (this.voices.length == 1)
@@ -169,11 +167,6 @@ function isStaffLine(line) {
             content = (instrumentToStandardKey[firstWord] ? instrumentToStandardKey[firstWord] : "𝄞") + " " + content;
         return { instrument: firstWord, content };
     }
-
-
-
-
-
     return false;
 }
 

@@ -149,7 +149,8 @@ function clean() {
                 const nbSpacesToAdd = measureLength[m]-[...splits[l][m]].length;
                 splits[l][m] = splits[l][m] + " ".repeat(nbSpacesToAdd);
             }
-            lines[l] = splits[l].join(" | ");
+            lines[l] = splits[l].join(" | ").replaceAll(" |   | ", " || ").replaceAll(" | ]", " |]")
+            .replaceAll(": || :", ":||:").replaceAll(": |", ":|").replaceAll("| :", "|:")
         }
     }
 
