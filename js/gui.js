@@ -81,8 +81,15 @@ window.onclick = (event) => {
     }
 }
 
+
+let previousABCD = "";
 function update() {
+
     const abcd = editor.text;
+    if (abcd == previousABCD)
+        return;
+
+    previousABCD = abcd;
     const abc = abcd2abc(abcd);
 
     console.log(abc)
@@ -146,11 +153,11 @@ function clean() {
 
         for (let l = lbegin; l <= lend; l++) {
             for (let m = 0; m < splits[l].length; m++) {
-                const nbSpacesToAdd = measureLength[m]-[...splits[l][m]].length;
+                const nbSpacesToAdd = measureLength[m] - [...splits[l][m]].length;
                 splits[l][m] = splits[l][m] + " ".repeat(nbSpacesToAdd);
             }
             lines[l] = splits[l].join(" | ").replaceAll(" |   | ", " || ").replaceAll(" | ]", " |]")
-            .replaceAll(": || :", ":||:").replaceAll(": |", ":|").replaceAll("| :", "|:")
+                .replaceAll(": || :", ":||:").replaceAll(": |", ":|").replaceAll("| :", "|:")
         }
     }
 

@@ -15,8 +15,6 @@ class MidiInput {
 
 
     static start() {
-
-
         function onMIDISuccess(midiAccess) {
             midi = midiAccess;
             midi.onstatechange = (event) => {

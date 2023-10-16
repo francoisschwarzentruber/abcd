@@ -267,7 +267,7 @@ function abcd2abc(abcd) {
 
             let measures = line.split("|");
             let currentTonalityTonicMaj = new Pitch(0, 0);
-            measures = measures.map((M) => {
+            measures = measures.map((measureStr) => {
                 let accidentals = {};
 
                 const getCurrentAccidental = (pitch) => {
@@ -314,8 +314,7 @@ function abcd2abc(abcd) {
 
                     }
                 };
-
-                return M.split(" ").map((A) => A.split("[").map((B) => B.split("]").map(transformToken).join("]"))
+                return RhythmGuess.guess(measureStr).split(" ").map((A) => A.split("[").map((B) => B.split("]").map(transformToken).join("]"))
                     .join("[")).join(" ")
             })
 
