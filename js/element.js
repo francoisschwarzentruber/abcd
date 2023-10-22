@@ -72,37 +72,14 @@ class Element {
 
         value += octave * 7;
         this.pitch = new Pitch(value, accidental);
-        this.durationInformationStr = s;
+        this.duration = new Duration(s);
     }
 
-    setDuration(d) {
-        function exp2sym(i) {
-            if (i == 0)
-                return "4";
-            if (i == 1)
-                return "2";
-            if (i == 2)
-                return "";
+    setDuration(d) {         this.duration = new Duration(d);}
 
-            return "/".repeat(i - 2);
-        }
-
-        for (let num of [1, 3]) {
-            for (let i = 0; i < 6; i++) {
-                const possibleDuration = num / (2 ** i);
-                if (d == possibleDuration) {
-                    console.log(d)
-                    this.durationInformationStr = "" + (num == 3 ? "3" : "") + exp2sym(num != 1 ?( i)  : i);
-                }
-            }
-
-        }
-
-    }
-
-    toStringLy() { return (this.isRest ? "r" : this.pitch.toStringLy()) + this.durationInformationStr; }
-    toStringABC() { return (this.isRest ? "z" : this.pitch.toStringABC()) + this.durationInformationStr; }
-    toStringABCD() { return (this.isRest ? "z" : this.pitch.toStringABCD()) + this.durationInformationStr; }
+    toStringLy() { return (this.isRest ? "r" : this.pitch.toStringLy()) + this.duration.toString(); }
+    toStringABC() { return (this.isRest ? "z" : this.pitch.toStringABC()) + this.duration.toString(); }
+    toStringABCD() { return (this.isRest ? "z" : this.pitch.toStringABCD()) + this.duration.toString(); }
 }
 
 

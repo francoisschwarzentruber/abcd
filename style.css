@@ -115,7 +115,7 @@
             position: absolute;
             left: 68px;
             right: 0px;
-            top: 50%;
+            bottom: 0px;
             filter: invert(1);
             border-top: 4px solid gray;
         }
@@ -124,7 +124,7 @@
             position: absolute;
             left: 0px;
             width: 64px;
-            top: 50%;
+            bottom: 0%;
         }
 
         #print {}
