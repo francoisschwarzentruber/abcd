@@ -34,6 +34,7 @@ The syntax is highly inspired from ABC and Lilypond.
 |  add a new staff  |  add an empty line or a line starting with 𝄞 or 𝄢          |
 | Lyrics       |  start a line with 💬 or 😀  | 
 | specify an instrument | start the line with the name of an instrument (e.g. `piano`, `flute`, `violin`, `cello`) |
+| Change tempo   | write `♩=120`   |
 
 
 # Features of the editor
