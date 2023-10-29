@@ -282,9 +282,11 @@ function abcd2abc(abcd) {
                 }
 
 
-                const transformToken = (token) => {
+                const abcdToken2abcToken = (token) => {
                     if (token == "") return token;
 
+                    if (token.startsWith("♩="))
+                        return "[Q:1/4=" + token.substr(2) + "]";
                     if (strToTonalityNumber(token)) {
                         currentTonalityTonicMaj = tonalityNumberToTonicMajor(strToTonalityNumber(token));
                         console.log("TONALITY: " + currentTonalityTonicMaj)
@@ -320,7 +322,7 @@ function abcd2abc(abcd) {
                         .map((B) => B.split("]")
                             .map((C) => C.split("{")
                                 .map((D) => D.split("}")
-                                    .map(transformToken)
+                                    .map(abcdToken2abcToken)
                                     .join("}")).join("{")).join("]")).join("[")).join(" ")
             })
 
