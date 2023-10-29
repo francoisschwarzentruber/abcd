@@ -1,24 +1,38 @@
-# ABCD Notation
+# ABCD - 🎵 The Markdown Notation for Music 🎵 
 
 A super simple textual language to represent **music scores**. The aim is to be natural to use like **markdown** for writing documents. The positions of the musical elements in the text is close to their real positions in the score. Technically, this repository provides a program, that preprocesses the file to produce an ABC string, and then produces the output with the library abc.js.  The name ABCD is a hint to the abc notation. This repository also comes with an **music score editor**.
 
 Try it here: https://francoisschwarzentruber.github.io/abcd/
 
+
+# Videos
+
+- First video: https://youtu.be/LbuEGCJSX0U
+- Guessing the rhythm: https://youtu.be/ubqu0Pkwsnc
+- Changing instruments: https://youtu.be/eb8vtVFGyhk
+
+
  
 # Quick Language description
 
+The syntax is highly inspired from ABC and Lilypond.
+
 | Feature           | How to do it in ABCD |
 | ----------------- | --------------------------- |
-| Notes and rests   | like in ABC except that accidentals are written after the note like in Lilypond (e.g. `c#,`)  |
-| Uplets            | Add `(3` like in ABC |
-| Chords            | put notes between [ and ]  |
-|  add a new voice  |    just write in a new line |
-|  add a new staff  |  add an empty line or a line starting with 𝄞 or 𝄢          |
 |  add treble clef  |    write 𝄞                  |
 |  add bass clef    |   write 𝄢                   |
-|  add lyrics       |  start a line with 💬 or 😀  | 
+| Notes and rests   | write letters `a`, `b`, `c`, Add `'` or `,` for changing the octavia  |
+| Accidentals       |  write `#`, `♭`, `##`, `♭♭`  |
+| Rests             | write `r`                 |
+| Measures separations |  write `\|`, `\|\|`, `\|:`, `:\|`, `:\|:`, `\|]`  |
+| Rhythm             | It is guessed from whitespaces, but you can mention with `2`, `1`, `/`, `.`, `..`, etc. |
+ | Uplets            | Add `(3` like in the ABC notation |
+| Chords            | put notes between [ and ]  |
+| Appoggiatura      | put notes between { and }  |  
+|  add a new voice  |    just write in a new line |
+|  add a new staff  |  add an empty line or a line starting with 𝄞 or 𝄢          |
+| Lyrics       |  start a line with 💬 or 😀  | 
 | specify an instrument | start the line with the name of an instrument (e.g. `piano`, `flute`, `violin`, `cello`) |
-
 
 
 # Features of the editor
