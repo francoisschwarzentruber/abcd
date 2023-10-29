@@ -21,12 +21,67 @@ class Element {
             throw "error";
         }
 
+
+        function eatAccidental(s) {
+            let accidental = undefined;
+            if (s.startsWith("♯♯") || s.startsWith("##")) {
+                accidental = 2;
+            }
+            else if (s.startsWith("♯") || s.startsWith("#")) {
+                accidental = 1;
+            }
+            else if (s.startsWith("♭♭")) {
+                accidental = -2;
+            }
+            else if (s.startsWith("♭")) {
+                accidental = -1;
+            }
+            s = s.substr(Math.abs(accidental));
+            return [s, accidental];
+        }
+
+
+        function eatLetterNote(s) {
+            const letterNote = s[0];
+            if (!(["a", "b", "c", "d", "e", "f", "g", "r"].indexOf(letterNote.toLowerCase()) >= 0))
+                return [s, undefined];
+            return [s.substr(1), letterNote];
+        }
+
+        function eatOctaves(s) {
+            let octave = 0; // by default
+            for (let i = 4; i >= 1; i--)
+                if (s.startsWith("'".repeat(i))) {
+                    octave = i;
+                    s = s.substr(i);
+                    break;
+                }
+
+            for (let i = 4; i >= 1; i--)
+                if (s.startsWith(",".repeat(i))) {
+                    octave = -i;
+                    s = s.substr(i);
+                    break;
+                }
+            return [s, octave];
+        }
+
+
+
+
         if (s == "")
             throw "empty string";
 
-        const letterNote = s[0];
+        let letterNote = undefined;
+        let accidental = undefined;
+
+        [s, accidental] = eatAccidental(s);
+        [s, letterNote] = eatLetterNote(s);
         if (!(["a", "b", "c", "d", "e", "f", "g", "r"].indexOf(letterNote.toLowerCase()) >= 0))
             throw "not a note or a rest";
+
+        if (accidental == undefined)
+            [s, accidental] = eatAccidental(s);
 
         this.isRest = (letterNote == "r");
 
@@ -34,37 +89,8 @@ class Element {
         if (!this.isRest)
             value = lyNoteLetterToiNote7(letterNote.toLowerCase());
 
-        s = s.substr(1);
-
-        let accidental = 0;
-        if (s.startsWith("♯♯") || s.startsWith("##")) {
-            accidental = 2;
-        }
-        else if (s.startsWith("♯") || s.startsWith("#")) {
-            accidental = 1;
-        }
-        else if (s.startsWith("♭♭")) {
-            accidental = -2;
-        }
-        else if (s.startsWith("♭")) {
-            accidental = -1;
-        }
-        s = s.substr(Math.abs(accidental));
-
-        let octave = 0; // by default
-        for (let i = 4; i >= 1; i--)
-            if (s.startsWith("'".repeat(i))) {
-                octave = i;
-                s = s.substr(i);
-                break;
-            }
-
-        for (let i = 4; i >= 1; i--)
-            if (s.startsWith(",".repeat(i))) {
-                octave = -i;
-                s = s.substr(i);
-                break;
-            }
+        let octave;
+        [s, octave] = eatOctaves(s);
 
         //if lowercase
         if (letterNote == letterNote.toUpperCase())
@@ -75,7 +101,7 @@ class Element {
         this.duration = new Duration(s);
     }
 
-    setDuration(d) {         this.duration = new Duration(d);}
+    setDuration(d) { this.duration = new Duration(d); }
 
     toStringLy() { return (this.isRest ? "r" : this.pitch.toStringLy()) + this.duration.toString(); }
     toStringABC() { return (this.isRest ? "z" : this.pitch.toStringABC()) + this.duration.toString(); }

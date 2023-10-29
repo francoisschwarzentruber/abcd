@@ -11,8 +11,8 @@ class RhythmGuess {
                 if (str == "") {
                     if (isElement) {
                         nbSpacesArray[elements.length - 1]++;
-                        nbSpaces++;
                     }
+                    nbSpaces++;
                 }
                 else {
                     let element = str;
@@ -42,7 +42,7 @@ class RhythmGuess {
 
 
             function solveMain() {
-                for (let precision = 3; precision < 7; precision++) {
+                for (let precision = 5; precision < 7; precision++) {
                     const possibleDurations = elements.map(
                         (e, i) => {
                             if (typeof (elements[i]) != "string") {
@@ -51,7 +51,9 @@ class RhythmGuess {
                                     factor = 1 / nupletValue;
                                     nupletCount--;
                                 }
-                                return getPossibleDurations(e, nbSpacesArray[i] / (factor * nbSpaces), precision).map((x) => x * factor);
+                                const proportion = Math.log2(nbSpacesArray[i]) / Math.log2(factor * nbSpaces);
+                                console.log("PROPORTION: " + proportion)
+                                return getPossibleDurations(e, proportion, precision).map((x) => x * factor);
                             }
                             else {
                                 if (isNupletSymbol(e)) {
@@ -63,6 +65,7 @@ class RhythmGuess {
                         });
 
                     try {
+                        console.log(possibleDurations)
                         return solve(possibleDurations, signature);
                     }
                     catch (e) {
@@ -73,7 +76,7 @@ class RhythmGuess {
             }
 
 
-    
+
             const durations = solveMain();
             for (let i = 0; i < elements.length; i++) {
                 const e = elements[i]
@@ -123,12 +126,21 @@ class RhythmGuess {
 function tokenize(abcdStr) {
     const tokens = [];
     let isBracket = false;
+    let bracketType = "[";
     let bracketToken = "";
 
+
     const L = abcdStr.split(" ");
+    console.log(L)
+
     for (const chunk of L) {
         if (!isBracket) {
-            if (chunk.startsWith("[")) {
+            if (chunk.startsWith("[") && chunk.endsWith("]"))
+                tokens.push(chunk);
+            else if (chunk.startsWith("{") && chunk.endsWith("}"))
+                tokens.push(chunk);
+            else if (chunk.startsWith("[") || chunk.startsWith("{")) {
+                bracketType = chunk[0];
                 bracketToken = chunk + " ";
                 isBracket = true;
             }
@@ -136,7 +148,8 @@ function tokenize(abcdStr) {
                 tokens.push(chunk);
         }
         else {
-            if (chunk.indexOf("]") >= 0) {
+            const getClosedBracket = (openBracket) => (openBracket == "[") ? "]" : "}" ;
+            if (chunk.indexOf(getClosedBracket(bracketType)) >= 0) {
                 bracketToken += chunk;
                 tokens.push(bracketToken);
                 isBracket = false;
@@ -145,7 +158,7 @@ function tokenize(abcdStr) {
                 bracketToken += chunk + " ";
         }
     }
-
+    console.log(tokens)
     return tokens;
 }
 
@@ -184,19 +197,24 @@ function getPossibleDurations(element, ratio, precision) {
     if (durationStr == "1.")
         return [3 / 8];
 
+    if (durationStr == "/.")
+    return [3 / 16];
+
     if (durationStr.startsWith("7") || durationStr.startsWith(".."))
         num = 7;
     else if (durationStr.startsWith("3") || durationStr.startsWith("."))
         num = 3;
 
-    if (durationStr == "/")
+
+    if ((durationStr == "/") || (durationStr == "♪"))
         istart = 3;
 
     if (durationStr == "//")
         istart = 4;
 
-    if (durationStr == "///")
+    if ((durationStr == "///") || (durationStr == "𝅬"))
         istart = 5;
+
 
     for (let i = istart; i < precision; i++)
         A.push(num / (2 ** i));

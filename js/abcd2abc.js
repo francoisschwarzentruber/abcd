@@ -284,6 +284,7 @@ function abcd2abc(abcd) {
 
                 const transformToken = (token) => {
                     if (token == "") return token;
+
                     if (strToTonalityNumber(token)) {
                         currentTonalityTonicMaj = tonalityNumberToTonicMajor(strToTonalityNumber(token));
                         console.log("TONALITY: " + currentTonalityTonicMaj)
@@ -314,8 +315,13 @@ function abcd2abc(abcd) {
 
                     }
                 };
-                return RhythmGuess.guess(measureStr).split(" ").map((A) => A.split("[").map((B) => B.split("]").map(transformToken).join("]"))
-                    .join("[")).join(" ")
+                return RhythmGuess.guess(measureStr).split(" ")
+                    .map((A) => A.split("[")
+                        .map((B) => B.split("]")
+                            .map((C) => C.split("{")
+                                .map((D) => D.split("}")
+                                    .map(transformToken)
+                                    .join("}")).join("{")).join("]")).join("[")).join(" ")
             })
 
             let s = measures.join("|");

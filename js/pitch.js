@@ -1,5 +1,5 @@
 class Pitch {
-    constructor(value, accidental) { this.value = value; this.accidental = accidental; }
+    constructor(value, accidental) { this.value = value; this.accidental = accidental ? accidental : 0; }
 
     get value7() {
         let x = this.value % 7;

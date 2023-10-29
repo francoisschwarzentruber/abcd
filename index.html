@@ -26,10 +26,12 @@
             Export:
             <button id="buttonExportMIDI">MIDI</button>
             <button id="buttonExportABC">ABC</button>
+            <button id="buttonPrint" onclick="window.print()">Print</button>
+
         </span>
         <div class="toolbarPart" id="toolbarInsert"></div>
 
-        <span class="toolbarPart">
+        <span hidden="hidden" class="toolbarPart">
             <button title="shift one octave down" id="button8down">8↓</button>
             <button title="shift one octave up" id="button8up">8↑</button>
 
@@ -52,8 +54,7 @@
         <div id="outputWrapper">
             <div id="output"></div>
         </div>
-        <button id="buttonPrint" onclick="window.print()">Print</button>
-
+        
 
     </div>
     <div id="audio">

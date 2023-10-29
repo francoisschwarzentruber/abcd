@@ -175,7 +175,16 @@ function clean() {
         return lines;
     }
     const lines = code.split("\n");
-    editor.text = [lines[0], lines[1], ...reorganiseLines(lines.slice(2))].join("\n");
+
+    editor.text = [...reorganiseLines(lines)].join("\n");
+
+    /*
+    if (isStaffLine(lines[0]))
+        editor.text = [...reorganiseLines(lines.slice(2))].join("\n");
+    else if (isStaffLine(lines[1]))
+        editor.text = [lines[0], ...reorganiseLines(lines.slice(2))].join("\n");
+    else
+        editor.text = [lines[0], lines[1], ...reorganiseLines(lines.slice(2))].join("\n");*/
 }
 
 buttonClean.onclick = clean;
@@ -236,7 +245,7 @@ buttonInsert("♩=120 ", "add tempo indication");
 
 
 addButton("chord", "write/transform into chord", () => {
-    editor("[]");
+    editor.write("[]");
     editor.focus();
 })
 
