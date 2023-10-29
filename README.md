@@ -28,6 +28,7 @@ The syntax is highly inspired from ABC and Lilypond.
 | Rhythm             | It is guessed from whitespaces, but you can mention with `2`, `1`, `/`, `.`, `..`, etc. |
  | Uplets            | Add `(3` like in the ABC notation |
 | Chords            | put notes between [ and ]  |
+| Dynamics         | `!mp!` etc. |
 | Appoggiatura      | put notes between { and }  |  
 |  add a new voice  |    just write in a new line |
 |  add a new staff  |  add an empty line or a line starting with 𝄞 or 𝄢          |
