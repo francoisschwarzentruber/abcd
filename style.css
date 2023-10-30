@@ -1,6 +1,6 @@
         #editor {
             position: absolute;
-            top: 48px;
+            top: 76px;
             right: 0px;
             bottom: 50%;
             left: 0;
@@ -115,7 +115,6 @@
             position: absolute;
             left: 0px;
             right: 0px;
-            bottom: 0px;    
             filter: invert(1);
             border-top: 4px solid gray;
         }

@@ -285,6 +285,11 @@ function abcd2abc(abcd) {
                 const abcdToken2abcToken = (token) => {
                     if (token == "") return token;
 
+                    switch (token) {
+                        case "𝄢", "f:": return "[K:bass]";
+                        case "𝄞", "g:": return "[K:treble]";
+                    }
+                     
                     if (token.startsWith("♩="))
                         return "[Q:1/4=" + token.substr(2) + "]";
                     if (strToTonalityNumber(token)) {

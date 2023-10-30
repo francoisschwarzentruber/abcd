@@ -67,8 +67,6 @@ class Element {
         }
 
 
-
-
         if (s == "")
             throw "empty string";
 
@@ -88,6 +86,9 @@ class Element {
         let value = 0;
         if (!this.isRest)
             value = lyNoteLetterToiNote7(letterNote.toLowerCase());
+
+        if (s == ":")
+            throw "not a note";
 
         let octave;
         [s, octave] = eatOctaves(s);
