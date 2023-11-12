@@ -30,6 +30,12 @@ const instrumentToStandardKey = {
     "cello": "𝄢"
 }
 
+
+
+function isTimeSignature(str) {
+    return ["1/2", "1/4", "2/2", "2/4", "3/4", "5/4", "7/4", "3/8", "4/4", "6/4", "6/8", "12/8"].indexOf(str) >= 0;
+}
+
 class Staff {
     constructor() {
         this.isStartGroup = false;
@@ -267,6 +273,8 @@ function abcd2abc(abcd) {
 
             let measures = line.split("|");
             let currentTonalityTonicMaj = new Pitch(0, 0);
+            let currentTimeSignature = 1; // bydefaut
+
             measures = measures.map((measureStr) => {
                 let accidentals = {};
 
@@ -281,15 +289,25 @@ function abcd2abc(abcd) {
                     }
                 }
 
+                let timeSignatureRead = undefined;
+                let alreadyOneNote = false;
 
                 const abcdToken2abcToken = (token) => {
                     if (token == "") return token;
+
+                    if (isTimeSignature(token)) {
+                        timeSignatureRead = eval(token);
+                        if (!alreadyOneNote)
+                            currentTimeSignature = timeSignatureRead;
+                        return "[M: " + token + "]";
+
+                    }
 
                     switch (token) {
                         case "𝄢", "f:": return "[K:bass]";
                         case "𝄞", "g:": return "[K:treble]";
                     }
-                     
+
                     if (token.startsWith("♩="))
                         return "[Q:1/4=" + token.substr(2) + "]";
                     if (strToTonalityNumber(token)) {
@@ -307,6 +325,7 @@ function abcd2abc(abcd) {
                             return token;
                         }
 
+                        alreadyOneNote = true;
                         const currentA = getCurrentAccidental(note.pitch);
                         const noteA = note.pitch.accidental;
                         note.pitch.accidental = 0;
@@ -322,22 +341,36 @@ function abcd2abc(abcd) {
 
                     }
                 };
-                return RhythmGuess.guess(measureStr).split(" ")
+
+
+
+                function readSignature(measureStr) {
+                    measureStr.split(" ").map(abcdToken2abcToken);
+                }
+
+                readSignature(measureStr);
+
+                const result = RhythmGuess.guess(measureStr, currentTimeSignature).split(" ")
                     .map((A) => A.split("[")
                         .map((B) => B.split("]")
                             .map((C) => C.split("{")
                                 .map((D) => D.split("}")
                                     .map(abcdToken2abcToken)
                                     .join("}")).join("{")).join("]")).join("[")).join(" ")
+
+                if (timeSignatureRead != undefined)
+                    currentTimeSignature = timeSignatureRead;
+
+                return result;
             })
+
+
 
             let s = measures.join("|");
             s = s.replaceAll("𝄢", "[K:bass]");
             s = s.replaceAll("𝄞", "[K:treble]");
             s = s.replaceAll("/ ", "/");
 
-            for (const timeSignature of ["2/2", "2/4", "3/4", "3/8", "4/4", "6/4", "6/8"])
-                s = s.replaceAll(timeSignature, "[M: " + timeSignature + "]");
 
             function accidentalsSurroundedBySpace(accident, n) { return " " + accident.repeat(n) + " "; }
 

@@ -42,7 +42,7 @@ class RhythmGuess {
 
 
             function solveMain() {
-                for (let precision = 5; precision < 7; precision++) {
+                for (let precision = 3; precision < 7; precision++) {
                     const possibleDurations = elements.map(
                         (e, i) => {
                             if (typeof (elements[i]) != "string") {
