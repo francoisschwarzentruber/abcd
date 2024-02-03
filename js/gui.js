@@ -1,5 +1,14 @@
 
-const synth = new Tone.Synth().toDestination();
+let synth;
+
+try {
+    synth = new Tone.Synth().toDestination();
+}
+catch (e) {
+    console.error(e);
+}
+
+
 const abcjs = window.ABCJS;
 /**
  * reload the content from local storage
@@ -26,9 +35,9 @@ buttonSave.onclick = () => {
 }
 
 
-buttonExportMIDI.onclick = () => {
+buttonExportMIDI.onclick = async () => {
     const abcd = editor.text;
-    const abc = abcd2abc(abcd);
+    const abc = await abcd2abc(abcd);
     const a = document.createElement("a");
     a.id = "downloadA";
     a.style.display = 'none';
@@ -41,9 +50,9 @@ buttonExportMIDI.onclick = () => {
     document.body.removeChild(a);
 }
 
-buttonExportABC.onclick = () => {
+buttonExportABC.onclick = async () => {
     const abcd = editor.text;
-    const abc = abcd2abc(abcd);
+    const abc = await abcd2abc(abcd);
     const a = document.createElement("a");
     a.id = "downloadA";
     a.style.display = 'none';
@@ -83,14 +92,14 @@ window.onclick = (event) => {
 
 
 let previousABCD = "";
-function update() {
+async function update() {
 
     const abcd = editor.text;
     if (abcd == previousABCD)
         return;
 
     previousABCD = abcd;
-    const abc = abcd2abc(abcd);
+    const abc = await abcd2abc(abcd);
 
     console.log(abc)
     const visualObj = abcjs.renderAbc('output', abc, {

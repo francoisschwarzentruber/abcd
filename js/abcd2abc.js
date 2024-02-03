@@ -192,7 +192,7 @@ function isStaffInstrumentAndOpenCurlyBracket(line) {
     return false;
 }
 
-function abcd2abc(abcd) {
+async function abcd2abc(abcd) {
     const abc = [];
     abc.push("X:1");
     abc.push("L:1/4");
@@ -275,7 +275,7 @@ function abcd2abc(abcd) {
             let currentTonalityTonicMaj = new Pitch(0, 0);
             let currentTimeSignature = 1; // bydefaut
 
-            measures = measures.map((measureStr) => {
+            measures = await Promise.all(measures.map(async (measureStr) => {
                 let accidentals = {};
 
                 const getCurrentAccidental = (pitch) => {
@@ -343,14 +343,18 @@ function abcd2abc(abcd) {
                 };
 
 
-
+                /**
+                 * 
+                 * @param {*} measureStr
+                 * @description read in advance the signature for eventually update currentTimeSignature before the full 
+                 */
                 function readSignature(measureStr) {
                     measureStr.split(" ").map(abcdToken2abcToken);
                 }
 
                 readSignature(measureStr);
 
-                const result = RhythmGuess.guess(measureStr, currentTimeSignature).split(" ")
+                const result = (await RhythmGuess.getRhythm(measureStr, currentTimeSignature)).split(" ")
                     .map((A) => A.split("[")
                         .map((B) => B.split("]")
                             .map((C) => C.split("{")
@@ -362,7 +366,7 @@ function abcd2abc(abcd) {
                     currentTimeSignature = timeSignatureRead;
 
                 return result;
-            })
+            }));
 
 
 
