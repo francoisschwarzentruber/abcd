@@ -1,23 +1,36 @@
 const memo = {};
 
-
+/**
+ * 
+ * @param {*} abcdStr 
+ * @param {*} signature 
+ * @param {*} result
+ * @example abcdStr = "a  b ", signature = 1, result = "a2 b2 "
+ * @description store the result of guessing rhythm so that we do not call the solver again and again 
+ */
 function storeMemo(abcdStr, signature, result) {
     memo[signature + abcdStr] = result;
 }
+
+
 class RhythmGuess {
-    static async getRhythm(abcdStr, signature = 1) {
+    static async getRhythm(abcdStr, signature = "4/4") {
         if (memo[signature + abcdStr])
             return memo[signature + abcdStr];
 
-        return await RhythmGuess.guess(abcdStr, signature);;
+        return await RhythmGuess.inferRhythm(abcdStr, signature);
     }
+
+
     /**
      * 
      * @param {*} abcdStr, a string representing the content of a voice of a measure
      * @param {*} signature, the duration of the measure. 1 = a whole note
      * @returns a string where each elemnt (note or rest) has a duration
      */
-    static async guess(abcdStr, signature = 1) {
+    static async inferRhythm(abcdStr, signature) {
+        const signatureValue = eval(signature);
+        console.log(`inferRhythm(${abcdStr}, ${signature})`)
         abcdStr = abcdStr.trimLeft();
         if (abcdStr == "") return "";
 
@@ -53,6 +66,7 @@ class RhythmGuess {
                     const value = isStringNupletSymbol(token);
                     const element = new NupletSymbolElement(value);
                     elements.push(element);
+                    nbSpacesArray.push(0);
                 }
                 else {
                     let element = new StringElement(token);
@@ -63,7 +77,7 @@ class RhythmGuess {
                         try { element = new Element(token); } catch (e) { isElement = false; };
                     elements.push(element);
                     if (isElement) nbSpaces++;
-                    nbSpacesArray.push(isElement ? 1 : 0);
+                    nbSpacesArray.push(isElement ? 1 + (token.indexOf(".") >= 0) ? 0.5 : 0 : 0);
                 }
             });
 
@@ -154,7 +168,12 @@ class RhythmGuess {
             let t = 0;
             return elements.map((e, i) => {
                 t += durationsSolution[i];
-                return e.toStringABCD() + (isEq(Math.floor(t * 4), t * 4) ? " " : "");
+
+                let splittingDuration = 0.25; //
+
+                if (signature == "6/8")
+                    splittingDuration = 1.5 / 4;
+                return e.toStringABCD() + (isEq(Math.floor(t / splittingDuration), t / splittingDuration) ? " " : "");
             }).join(" ");
 
         }
@@ -168,7 +187,7 @@ class RhythmGuess {
             console.log("possibleDurations", possibleDurations)
 
 
-            const durationsSolution = await solve(elements.map((e) => e.dhat), possibleDurations, signature);
+            const durationsSolution = await solve(elements.map((e) => e.dhat), possibleDurations, signatureValue);
             setDurations(elements, durationsSolution);
             const abcdResult = elementsToABCD(elements, durationsSolution);
             storeMemo(abcdStr, signature, abcdResult);
@@ -307,6 +326,7 @@ function getPossibleDurations(element, ratio, precision = 7) {
     for (let i = istart; i < precision; i++)
         A.push(num / (2 ** i));
 
+
     return A.sort((a, b) => Math.abs(a - ratio) - Math.abs(b - ratio));
 }
 
@@ -317,19 +337,25 @@ function isEq(a, b) {
 }
 
 
-async function solve(dhats, possibleDurations, signature) {
-
+/**
+ * 
+ * @param {*} dhats 
+ * @param {*} possibleDurations 
+ * @param {*} signatureValue 
+ * @returns array of durations 
+ * @description it calls the LP solver in Python (server side)
+ */
+async function solve(dhats, possibleDurations, signatureValue) {
     var url = '/your/url';
     var formData = new FormData();
-    const strJSON = JSON.stringify({ dhats, possibleDurations, signature });
-    formData.append('input', JSON.stringify({ dhats, possibleDurations, signature }));
+    const strJSON = JSON.stringify({ dhats, possibleDurations, signature: signatureValue });
+    formData.append('input', JSON.stringify({ dhats, possibleDurations, signature: signatureValue }));
 
     const f = await fetch("./guessRhythm/guessRhythm.php", { method: 'POST', body: formData });
     const txt = await f.text();
     const lines = txt.split("\n");
     const array = JSON.parse(lines[lines.length - 2]);
     return array;
-
 }
 
 

@@ -20,9 +20,19 @@
 </head>
 
 <body>
+    <dialog id="dialogOpen">
+        <p>Open an existing already saved score:</p>
+        <select name="cars" id="selectFilename">
+        </select>
+        <button id="dialogOpenButtonOpen">Open</button>
+        <button id="dialogOpenButtonCancel">Cancel</button>
+    </dialog>
+
+
+
     <div id="toolbar">
         <span class="toolbarPart">
-            <button id="buttonLoad">Load</button>
+            <button id="buttonDialogOpen">Load</button>
             <button id="buttonSave">Save</button>
             Export:
             <button id="buttonExportMIDI">MIDI</button>

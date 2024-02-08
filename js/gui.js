@@ -14,8 +14,10 @@ const abcjs = window.ABCJS;
  * reload the content from local storage
  */
 
-buttonLoad.onclick = () => {
-    const newid = prompt("Which music scores already stored in your browser do you want to load?");
+dialogOpenButtonOpen.onclick = () => {
+    console.log("azeaze")
+    dialogOpen.close();
+    newid = selectFilename.value;
     if (newid != null) {
         if (Save.exists(newid)) {
             Save.setId(newid);
@@ -25,6 +27,28 @@ buttonLoad.onclick = () => {
             alert("No document with name '" + newid + "' found!")
         }
     }
+
+}
+
+
+dialogOpenButtonCancel.onclick = () => {
+    dialogOpen.close();
+}
+
+buttonDialogOpen.onclick = () => {
+    selectFilename.innerHTML = "";
+
+    for (const key in localStorage) if (key.startsWith("save:")) {
+        const filename = key.substring("save:".length + 1)
+        const option = document.createElement("option");
+        option.value = filename;
+        option.text = filename;
+        selectFilename.add(option);
+    }
+
+
+    dialogOpen.showModal();
+
 }
 
 

@@ -27,11 +27,11 @@ function durationFractionToStr(d) {
         return "/".repeat(i - 2);
     }
 
-    for (let num of [1, 3]) {
+    for (let num of [1, 3, 7]) {
         for (let i = 0; i < 6; i++) {
             const possibleDuration = num / (2 ** i);
             if (d == possibleDuration) {
-                return "" + (num == 3 ? "3" : "") + exp2sym(num != 1 ? (i) : i);
+                return "" + (num != 1 ? num : "") + exp2sym(num != 1 ? (i) : i);
             }
         }
 

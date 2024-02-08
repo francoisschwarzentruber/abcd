@@ -5,7 +5,7 @@ import sys
 
 
 
-def solve(dhat, arrayOfDurations):
+def solve(dhat, arrayOfDurations, signature):
     solver = pywraplp.Solver.CreateSolver("SAT") #Mixed-integer linear programming
     
     if not solver:
@@ -33,7 +33,7 @@ def solve(dhat, arrayOfDurations):
         for j in range(len(arrayOfDurations[i])):
             ct.SetCoefficient(booleanVars[i][j], coeff*arrayOfDurations[i][j])
 
-    ct = solver.Constraint(1, 1, "total duration")
+    ct = solver.Constraint(signature, signature, "total duration")
     for i in range(n):
         addDi(ct, i, 1)
 
@@ -76,7 +76,7 @@ def main():
     arg = sys.argv[1].replace('\\', '')  
     print(arg)
     input = json.loads(arg)
-    print(solve(input["dhats"], input["possibleDurations"]))
+    print(solve(input["dhats"], input["possibleDurations"], input["signature"]))
 
 if __name__ == "__main__":
     main()

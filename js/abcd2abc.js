@@ -296,9 +296,10 @@ async function abcd2abc(abcd) {
                     if (token == "") return token;
 
                     if (isTimeSignature(token)) {
-                        timeSignatureRead = eval(token);
-                        if (!alreadyOneNote)
+                        timeSignatureRead = token;
+                        if (!alreadyOneNote) {
                             currentTimeSignature = timeSignatureRead;
+                        }
                         return "[M: " + token + "]";
 
                     }
