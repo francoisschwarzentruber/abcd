@@ -280,11 +280,13 @@ async function abcd2abc(abcd) {
 
                 const getCurrentAccidental = (pitch) => {
                     const ppure = new Pitch(pitch.value, 0);
-                    if (accidentals[ppure.toStringABC()]) {
+                    if (accidentals[ppure.toStringABC()]) { 
+                        console.log(accidentals)
                         return accidentals[ppure.toStringABC()];
                     }
                     else {
                         const p = accidentalize(ppure, currentTonalityTonicMaj);
+                        console.log("looking for the tonality")
                         return p.accidental;
                     }
                 }
@@ -328,16 +330,19 @@ async function abcd2abc(abcd) {
 
                         alreadyOneNote = true;
                         const currentA = getCurrentAccidental(note.pitch);
-                        const noteA = note.pitch.accidental;
+                        const noteAccidental = note.pitch.accidental;
                         note.pitch.accidental = 0;
                         const ppure = new Pitch(note.pitch.value, 0);
-                        accidentals[ppure.toStringABC()] = noteA;
+                        accidentals[ppure.toStringABC()] = noteAccidental;
 
-                        if (currentA == noteA)
+                        console.log(noteAccidental)
+
+                        console.log((currentA == noteAccidental))
+                        if (currentA == noteAccidental)
                             return note.toStringABC();
                         else {
-                            note.pitch.accidental = noteA;
-                            return ((noteA == 0) ? "=" : "") + note.toStringABC();
+                            note.pitch.accidental = noteAccidental;
+                            return ((noteAccidental == 0) ? "=" : "") + note.toStringABC();
                         }
 
                     }
@@ -354,6 +359,7 @@ async function abcd2abc(abcd) {
                 }
 
                 readSignature(measureStr);
+                accidentals = {}; //reintialize accidentals because of side effect of readSignature
 
                 const result = (await RhythmGuess.getRhythm(measureStr, currentTimeSignature)).split(" ")
                     .map((A) => A.split("[")

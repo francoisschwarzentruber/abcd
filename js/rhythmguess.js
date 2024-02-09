@@ -190,6 +190,7 @@ class RhythmGuess {
             const durationsSolution = await solve(elements.map((e) => e.dhat), possibleDurations, signatureValue);
             setDurations(elements, durationsSolution);
             const abcdResult = elementsToABCD(elements, durationsSolution);
+            console.log(abcdResult)
             storeMemo(abcdStr, signature, abcdResult);
             return abcdResult;
 
