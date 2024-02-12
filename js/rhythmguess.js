@@ -76,7 +76,7 @@ class RhythmGuess {
                         try { element = new Element(token); } catch (e) { isElement = false; };
                     elements.push(element);
                     if (isElement) nbSpaces++;
-                    nbSpacesArray.push(isElement ? 1 + (token.indexOf(".") >= 0) ? 0.5 : 0 : 0);
+                    nbSpacesArray.push(isElement ? (1 + ((token.indexOf(".") >= 0) ? 0.5 : 0)) : 0);
                 }
             });
 
@@ -211,7 +211,7 @@ class RhythmGuess {
             const durationsSolution = await solve(elements.map((e) => e.dhat), possibleDurations, signatureValue);
             setDurations(elements, durationsSolution);
             const abcdResult = elementsToABCD(elements, durationsSolution);
-            console.log(abcdResult)
+            console.log("result of the inference: ", durationsSolution, abcdResult)
             storeMemo(abcdStr, signature, abcdResult);
             return abcdResult;
 

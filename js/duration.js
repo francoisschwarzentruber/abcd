@@ -34,8 +34,6 @@ function durationFractionToStr(d) {
 
     for (let n of [1, 3, 7]) {
         for (let i = 0; i < 6; i++) {
-
-
             const possibleDuration = n / (2 ** i);
             if (d == possibleDuration) {
                 const num = n;

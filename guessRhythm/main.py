@@ -48,19 +48,22 @@ def solve(dhat, arrayOfDurations, signature):
 
     for i in range(n):
         for j in range(n):
-            if i != j and dhat[i] >= dhat[j]:
-                errorVar = solver.NumVar(0, inf, "error when di is smaller than dj")
-                ct = solver.Constraint(0, inf, "di is generally greater than dj")
-                addDi(ct, i, 1)
-                addDi(ct, j, -1)
-                #ct is the constraint di - dj + err >= 0
-                ct.SetCoefficient(errorVar, 1)
-                objective.SetCoefficient(errorVar, 1)
+                if dhat[i] >= dhat[j]:
+                    errorVar = solver.NumVar(0, inf, "error when di is smaller than dj")
+                    ct = solver.Constraint(0, inf, "di is generally greater than dj")
+                    ct.SetCoefficient(errorVar, 1)
+                    addDi(ct, i, 1)
+                    addDi(ct, j, -1)
+                    #ct is the constraint di - dj + err >= 0
+                    #ct is the constraint err >= dj - di
+                    objective.SetCoefficient(errorVar, 1)
+
+                  
                 
     #makes that unprobable durations are more and more costly            
     for i in range(n):
         for j in range(len(arrayOfDurations[i])):
-            objective.SetCoefficient(booleanVars[i][j], j)
+            objective.SetCoefficient(booleanVars[i][j], 0) #j
 
     print(f"Solving with {solver.SolverVersion()}")
     solver.Solve()
