@@ -56,7 +56,11 @@ def solve(dhat, arrayOfDurations, signature):
                 #ct is the constraint di - dj + err >= 0
                 ct.SetCoefficient(errorVar, 1)
                 objective.SetCoefficient(errorVar, 1)
-
+                
+    #makes that unprobable durations are more and more costly            
+    for i in range(n):
+        for j in range(len(arrayOfDurations[i])):
+            objective.SetCoefficient(booleanVars[i][j], j)
 
     print(f"Solving with {solver.SolverVersion()}")
     solver.Solve()

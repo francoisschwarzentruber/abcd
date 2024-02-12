@@ -27,13 +27,12 @@ class RhythmGuess {
      * @param {*} abcdStr, a string representing the content of a voice of a measure
      * @param {*} signature, the duration of the measure. 1 = a whole note
      * @returns a string where each elemnt (note or rest) has a duration
+     * @description if the string does not contain any note/rest/chord, then it adds a "x" with its duration at the end
      */
     static async inferRhythm(abcdStr, signature) {
         const signatureValue = eval(signature);
         console.log(`inferRhythm(${abcdStr}, ${signature})`)
         abcdStr = abcdStr.trimLeft();
-
-        if (abcdStr == "") return "";
 
         function tokenToElements(tokens) {
 
@@ -191,7 +190,7 @@ class RhythmGuess {
 
                 let splittingDuration = 0.25; //
 
-                if (signature == "6/8")
+                if (["6/8", "9/8", "3/8", "12/8"].indexOf(signature) >= 0)
                     splittingDuration = 1.5 / 4;
                 return e.toStringABCD() + (isEq(Math.floor(t / splittingDuration), t / splittingDuration) ? " " : "");
             }).join(" ");
@@ -236,7 +235,7 @@ function tokenize(abcdStr) {
     let bracketType = "[";
     let bracketToken = "";
 
-    abcdStr = abcdStr.replaceAll("(", " ( ");
+    abcdStr = abcdStr.replaceAll(/\([^0-9]/g, (s) => " ( " + s.substr(1));
     abcdStr = abcdStr.replaceAll(")", " ) ");
     abcdStr = abcdStr.replaceAll("-", " - ");
 
@@ -325,29 +324,32 @@ function getPossibleDurations(element, ratio, precision = 7) {
     if (durationStr == "2.")
         return [3 / 4];
 
+    if (durationStr == "2..")
+        return [3 / 4];
+
     if (durationStr == "1")
         return [1 / 4];
 
     if (durationStr == "1.")
         return [3 / 8];
 
-    if (durationStr == "/.")
-        return [3 / 16];
+    if (durationStr == "1.")
+        return [7 / 16];
 
-    if (durationStr.startsWith("7") || durationStr.startsWith(".."))
+    if (durationStr.startsWith("7") || durationStr.endsWith(".."))
         num = 7;
-    else if (durationStr.startsWith("3") || durationStr.startsWith("."))
+    else if (durationStr.startsWith("3") || durationStr.endsWith("."))
         num = 3;
 
 
-    if ((durationStr == "/") || (durationStr == "♪"))
-        istart = 3;
-
-    if (durationStr == "//")
-        istart = 4;
-
-    if ((durationStr == "///") || (durationStr == "𝅬"))
+    if (durationStr.startsWith("////"))
+        istart = 6;
+    else if (durationStr.startsWith("///") || (durationStr == "𝅬"))
         istart = 5;
+    else if (durationStr.startsWith("//"))
+        istart = 4;
+    else if ((durationStr.startsWith("/")) || (durationStr == "♪"))
+        istart = 3;
 
 
     for (let i = istart; i < precision; i++)

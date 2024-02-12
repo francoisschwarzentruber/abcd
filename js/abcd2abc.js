@@ -160,6 +160,14 @@ class ScoreData {
     toStringABC() { return this.voices.map((v) => v.toStringABC()).join("\n"); }
 }
 
+
+/**
+ * 
+ * @param {*} line 
+ * @returns false if the line is not a staff line, otherwise returns an object containing the information of the line
+ * {content: content without the instrument name, instrument: (optional) instrument name}
+ * @description a staffline is a line starting with a key or starting with an instrument name followed by a key
+ */
 function isStaffLine(line) {
     if (line.startsWith("𝄞") || line.startsWith("𝄢"))
         return { content: line };
