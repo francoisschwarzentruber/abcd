@@ -29,6 +29,7 @@ def solve(dhat, arrayOfDurations, signature):
         for j in range(len(arrayOfDurations[i])):
             ct.SetCoefficient(booleanVars[i][j], 1)
 
+## add the "virtual" variable di (duration of the i-th note) multiplied by coeff to the constraint ct
     def addDi(ct, i, coeff):
         for j in range(len(arrayOfDurations[i])):
             ct.SetCoefficient(booleanVars[i][j], coeff*arrayOfDurations[i][j])
@@ -41,7 +42,7 @@ def solve(dhat, arrayOfDurations, signature):
 
     print("Number of constraints =", solver.NumConstraints())
 
-    # Create the objective function, 3 * x + y.
+
     objective = solver.Objective()
     objective.SetMinimization()
 
@@ -52,6 +53,7 @@ def solve(dhat, arrayOfDurations, signature):
                 ct = solver.Constraint(0, inf, "di is generally greater than dj")
                 addDi(ct, i, 1)
                 addDi(ct, j, -1)
+                #ct is the constraint di - dj + err >= 0
                 ct.SetCoefficient(errorVar, 1)
                 objective.SetCoefficient(errorVar, 1)
 

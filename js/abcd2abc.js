@@ -286,7 +286,7 @@ async function abcd2abc(abcd) {
                     }
                     else {
                         const p = accidentalize(ppure, currentTonalityTonicMaj);
-                        console.log("looking for the tonality")
+                       // console.log("looking for the tonality")
                         return p.accidental;
                     }
                 }

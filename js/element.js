@@ -43,7 +43,7 @@ class Element {
 
         function eatLetterNote(s) {
             const letterNote = s[0];
-            if (!(["a", "b", "c", "d", "e", "f", "g", "r"].indexOf(letterNote.toLowerCase()) >= 0))
+            if (!(["a", "b", "c", "d", "e", "f", "g", "r", "x"].indexOf(letterNote.toLowerCase()) >= 0))
                 return [s, undefined];
             return [s.substr(1), letterNote];
         }
@@ -70,22 +70,22 @@ class Element {
         if (s == "")
             throw "empty string";
 
-        let letterNote = undefined;
+        let letter = undefined;
         let accidental = undefined;
 
         [s, accidental] = eatAccidental(s);
-        [s, letterNote] = eatLetterNote(s);
-        if (!(["a", "b", "c", "d", "e", "f", "g", "r"].indexOf(letterNote.toLowerCase()) >= 0))
+        [s, letter] = eatLetterNote(s);
+        if (!(["a", "b", "c", "d", "e", "f", "g", "r", "x"].indexOf(letter.toLowerCase()) >= 0))
             throw "not a note or a rest";
 
         if (accidental == undefined)
             [s, accidental] = eatAccidental(s);
 
-        this.isRest = (letterNote == "r");
+        this.isRest = (letter == "r") || (letter == "x");
 
         let value = 0;
         if (!this.isRest)
-            value = lyNoteLetterToiNote7(letterNote.toLowerCase());
+            value = lyNoteLetterToiNote7(letter.toLowerCase());
 
         if (s == ":")
             throw "not a note";
@@ -94,19 +94,20 @@ class Element {
         [s, octave] = eatOctaves(s);
 
         //if lowercase
-        if (letterNote == letterNote.toUpperCase())
+        if (letter == letter.toUpperCase())
             octave--;
 
         value += octave * 7;
+        this.letter = letter;
         this.pitch = new Pitch(value, accidental);
         this.duration = new Duration(s);
     }
 
     setDuration(d) { this.duration = new Duration(d); }
 
-    toStringLy() { return (this.isRest ? "r" : this.pitch.toStringLy()) + this.duration.toString(); }
-    toStringABC() { return (this.isRest ? "z" : this.pitch.toStringABC()) + this.duration.toString(); }
-    toStringABCD() { return (this.isRest ? "z" : this.pitch.toStringABCD()) + this.duration.toString(); }
+    toStringLy() { return (this.isRest ? this.letter : this.pitch.toStringLy()) + this.duration.toString(); }
+    toStringABC() { return (this.isRest ? (this.letter == "r" ? "z" : this.letter) : this.pitch.toStringABC()) + this.duration.toString(); }
+    toStringABCD() { return (this.isRest ? this.letter : this.pitch.toStringABCD()) + this.duration.toString(); }
 }
 
 

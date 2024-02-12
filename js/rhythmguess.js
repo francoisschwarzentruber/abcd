@@ -32,8 +32,8 @@ class RhythmGuess {
         const signatureValue = eval(signature);
         console.log(`inferRhythm(${abcdStr}, ${signature})`)
         abcdStr = abcdStr.trimLeft();
-        if (abcdStr == "") return "";
 
+        if (abcdStr == "") return "";
 
         function tokenToElements(tokens) {
 
@@ -98,6 +98,26 @@ class RhythmGuess {
         }
 
 
+
+
+
+
+        /**
+         * 
+         * @param {*} elements
+         * @returns elements unchanged if elements contain notes or rests
+         * elements + a rest 
+         */
+        function addFakeRestIfMeasureIsEmpty(elements) {
+            if (elements.some((el) => el instanceof Element || el instanceof Chord))
+                return elements;
+            else {
+                const extraRest = new Element("x")
+                elements.push(extraRest);
+                extraRest.dhat = 1;
+                return elements;
+            }
+        }
 
         function computePossibleDurations(elements) {
             let nupletValue = undefined;
@@ -178,13 +198,15 @@ class RhythmGuess {
 
         }
 
+
+        //main
         try {
             const tokens = tokenize(abcdStr);
-            const elements = tokenToElements(tokens);
+            const elements = addFakeRestIfMeasureIsEmpty(tokenToElements(tokens));
             const possibleDurations = computePossibleDurations(elements);
             console.log(abcdStr)
-            console.log("elements", elements)
-            console.log("possibleDurations", possibleDurations)
+            //   console.log("elements", elements)
+            // console.log("possibleDurations", possibleDurations)
 
 
             const durationsSolution = await solve(elements.map((e) => e.dhat), possibleDurations, signatureValue);
@@ -213,6 +235,10 @@ function tokenize(abcdStr) {
     let isBracket = false;
     let bracketType = "[";
     let bracketToken = "";
+
+    abcdStr = abcdStr.replaceAll("(", " ( ");
+    abcdStr = abcdStr.replaceAll(")", " ) ");
+    abcdStr = abcdStr.replaceAll("-", " - ");
 
     const L = abcdStr.split(" ");
     console.log(L)
@@ -361,8 +387,8 @@ async function solve(dhats, possibleDurations, signatureValue) {
 
 
 
-/*
-async function solve(dhats, D, signature) {
+
+async function solveQuickAndDirty(dhats, D, signature) {
     console.log("dhats", dhats)
     const solution = [];
     function solveRec(D, i, subTotal) {
@@ -401,11 +427,11 @@ async function solve(dhats, D, signature) {
                 newD[i] = up(newD[i], [solution[j]]);
                 console.log(newD[i])
             }
-          else if (dhats[i] > dhats[j])
-              newD[i] = up(newD[i], D[i].filter((d) => d >= solution[j]));
-          else if (dhats[i] < dhats[j])
-              newD[i] = up(newD[i], D[i].filter((d) => d <= solution[j]));
-          
+            else if (dhats[i] > dhats[j])
+                newD[i] = up(newD[i], D[i].filter((d) => d >= solution[j]));
+            else if (dhats[i] < dhats[j])
+                newD[i] = up(newD[i], D[i].filter((d) => d <= solution[j]));
+
 
         for (const v of newD[i]) {
             solution[i] = v;
@@ -421,4 +447,4 @@ async function solve(dhats, D, signature) {
         return solution;
     else
         throw "impossible to solve";
-}*/
+}
