@@ -175,7 +175,7 @@ function clean() {
         const measureLength = [];
 
         for (let l = lbegin; l <= lend; l++) {
-            splits[l] = lines[l].split("|").map((s, i) => (i == 0) ? s.trimRight() : s.trim());
+            splits[l] = lines[l].split("|"); //.map((s, i) => (i == 0) ? s.trimRight() : s.trim());
             console.log(splits)
             for (let m = 0; m < splits[l].length; m++) {
                 if (m > measureLength.length - 1)
@@ -240,7 +240,8 @@ function addButton(text, hint, event) {
 
 function buttonInsert(s, hint) {
     console.log("add button " + s)
-    addButton(s, hint, () => {
+    addButton(s, hint, (evt) => {
+        evt.srcElement.blur();
         editor.write(s)
         editor.focus();
     });
@@ -256,6 +257,7 @@ function editorInsert(str) {
 }
 
 function action8upOrDown(f) {
+    
     editor.focus();
     /* if (editor.getSelectedText() == "") {
          inputOctave.value = f("a" + inputOctave.value).substr(1);
