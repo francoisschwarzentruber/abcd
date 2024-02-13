@@ -60,10 +60,7 @@ def solve(dhat, arrayOfDurations, signature):
 
                   
                 
-    #makes that unprobable durations are more and more costly            
-    for i in range(n):
-        for j in range(len(arrayOfDurations[i])):
-            objective.SetCoefficient(booleanVars[i][j], 0) #j
+  
 
     print(f"Solving with {solver.SolverVersion()}")
     solver.Solve()
