@@ -203,10 +203,6 @@ class RhythmGuess {
             const tokens = tokenize(abcdStr);
             const elements = addFakeRestIfMeasureIsEmpty(tokenToElements(tokens));
             const possibleDurations = computePossibleDurations(elements);
-            console.log(abcdStr)
-            //   console.log("elements", elements)
-            // console.log("possibleDurations", possibleDurations)
-
 
             const durationsSolution = await solve(elements.map((e) => e.dhat), possibleDurations, signatureValue);
             setDurations(elements, durationsSolution);
@@ -216,8 +212,7 @@ class RhythmGuess {
             return abcdResult;
 
         } catch (e) {
-            console.log(e);
-            return abcdStr;
+            return abcdStr + ' [Q:"error: inconsistent_rhythm"] ';
         }
     }
 
@@ -371,7 +366,7 @@ function isEq(a, b) {
  * @param {*} dhats 
  * @param {*} possibleDurations 
  * @param {*} signatureValue 
- * @returns array of durations 
+ * @returns array of durations, or 0 if no solution
  * @description it calls the LP solver in Python (server side)
  */
 async function solve(dhats, possibleDurations, signatureValue) {
@@ -383,7 +378,11 @@ async function solve(dhats, possibleDurations, signatureValue) {
     const f = await fetch("./guessRhythm/guessRhythm.php", { method: 'POST', body: formData });
     const txt = await f.text();
     const lines = txt.split("\n");
+    console.log(txt)
     const array = JSON.parse(lines[lines.length - 2]);
+
+    if(array == "0")
+        throw "no solution"
     return array;
 }
 

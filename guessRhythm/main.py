@@ -3,8 +3,13 @@ import json
 import sys
 
 
+###
+# input: dhat: approximative durations
+# arrayOfDurations: array of possible durations
+# signature: total time of a measure
 
-
+# returns "0" if no solution, or the array that gives the duration for each note
+###
 def solve(dhat, arrayOfDurations, signature):
     solver = pywraplp.Solver.CreateSolver("SAT") #Mixed-integer linear programming
     
@@ -63,18 +68,22 @@ def solve(dhat, arrayOfDurations, signature):
   
 
     print(f"Solving with {solver.SolverVersion()}")
-    solver.Solve()
+    status = solver.Solve()
 
-    print("Solution:")
-    print("Objective value =", objective.Value())
+    if status == pywraplp.Solver.OPTIMAL:
 
-    d = []
-    for i in range(n):
-        for j in range(len(arrayOfDurations[i])):
-            if booleanVars[i][j].solution_value() == 1:
-                d.append(arrayOfDurations[i][j])
+        print("Solution:")
+        print("Objective value =", objective.Value())
 
-    return d
+        d = []
+        for i in range(n):
+            for j in range(len(arrayOfDurations[i])):
+                if booleanVars[i][j].solution_value() == 1:
+                    d.append(arrayOfDurations[i][j])
+
+        return d
+    else:
+        return "0"   #no solution
 
 
 
