@@ -1,6 +1,7 @@
 from ortools.linear_solver import pywraplp
 import json
 import sys
+import func_timeout
 
 
 ###
@@ -91,7 +92,13 @@ def main():
     arg = sys.argv[1].replace('\\', '')  
     print(arg)
     input = json.loads(arg)
-    print(solve(input["dhats"], input["possibleDurations"], input["signature"]))
+    try:
+        solution = func_timeout.func_timeout(2, solve, args=(input["dhats"], input["possibleDurations"], input["signature"]))
+        #solve(input["dhats"], input["possibleDurations"], input["signature"])
+        print(solution)
+    except Exception as e:
+        print(e)
+        print(0)
 
 if __name__ == "__main__":
     main()

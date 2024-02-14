@@ -361,6 +361,7 @@ function isEq(a, b) {
 }
 
 
+const solve = window.location.href.indexOf("github") ? solveQuickAndDirty : solveWithLP//solveQuickAndDirty;
 /**
  * 
  * @param {*} dhats 
@@ -369,7 +370,7 @@ function isEq(a, b) {
  * @returns array of durations, or 0 if no solution
  * @description it calls the LP solver in Python (server side)
  */
-async function solve(dhats, possibleDurations, signatureValue) {
+async function solveWithLP(dhats, possibleDurations, signatureValue) {
     var url = '/your/url';
     var formData = new FormData();
     const strJSON = JSON.stringify({ dhats, possibleDurations, signature: signatureValue });
@@ -381,12 +382,26 @@ async function solve(dhats, possibleDurations, signatureValue) {
     console.log(txt)
     const array = JSON.parse(lines[lines.length - 2]);
 
-    if(array == "0")
+    if (array == "0")
         throw "no solution"
     return array;
 }
 
-
+/**
+ * up([1, 2, 4, 5,3], [3, 4])
+ * */
+function up(durations, bests) {
+    return durations.sort((a, b) => {
+        if ((bests.indexOf(a) >= 0) && (bests.indexOf(b) >= 0))
+            return bests.indexOf(a) >= bests.indexOf(b);
+        else if (bests.indexOf(a) >= 0)
+            return -1;
+        else if (bests.indexOf(b) >= 0)
+            return 1;
+        else
+            return 0;
+    })
+}
 
 
 async function solveQuickAndDirty(dhats, D, signature) {
@@ -405,28 +420,12 @@ async function solveQuickAndDirty(dhats, D, signature) {
         const newD = D;
         newD[i] = [...newD[i]];
 
-        function up(durations, bests) {
-            return durations;
-            return durations.sort((a, b) => {
-                if ((bests.indexOf(a) >= 0) && (bests.indexOf(b) >= 0))
-                    return bests.indexOf(a) <= bests.indexOf(b);
-                else if (bests.indexOf(a) >= 0)
-                    return -1;
-                else if (bests.indexOf(b) >= 0)
-                    return 1;
-                else
-                    return 0;
-            })
-        }
+
 
 
         for (j = 0; j < i; j++)
             if (dhats[j] == dhats[i]) {
-                console.log("up")
-                console.log(solution[j])
-                console.log(D[i])
                 newD[i] = up(newD[i], [solution[j]]);
-                console.log(newD[i])
             }
             else if (dhats[i] > dhats[j])
                 newD[i] = up(newD[i], D[i].filter((d) => d >= solution[j]));
