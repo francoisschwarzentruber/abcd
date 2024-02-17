@@ -1,13 +1,4 @@
 
-let synth;
-
-try {
-    synth = new Tone.Synth().toDestination();
-}
-catch (e) {
-    console.error(e);
-}
-
 
 const abcjs = window.ABCJS;
 /**

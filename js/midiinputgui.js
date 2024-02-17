@@ -72,9 +72,23 @@ MidiInput.setEventListenerNoteOff((inote) => {
         else {
             editorInsert(" [" + notes.join(" ") + "]");
         }
+
+        playNotes(notes);
+
         notes = [];
     }
 });
+
+
+function playNotes(notes) {
+        PlayNote.play(notes);
+}
+
+
+
+function playNote(note) {
+
+}
 
 MidiInput.setEventListenerNoteOn((inote) => { console.log(inote); notes.push(imidiNote2Ly(inote - 60)); nbnotes++; });
 MidiInput.start();

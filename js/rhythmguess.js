@@ -86,6 +86,8 @@ class RhythmGuess {
             for (const x of nbSpacesArray)
                 nbSpaces += x;
 
+            if (nbSpaces == 0) nbSpaces = 1;
+
             for (let i = 0; i < elements.length; i++)
                 elements[i].dhat = nbSpacesArray[i] / nbSpaces;
 
@@ -361,7 +363,7 @@ function isEq(a, b) {
 }
 
 
-const solve = window.location.href.indexOf("github") ? solveQuickAndDirty : solveWithLP//solveQuickAndDirty;
+const solve = window.location.href.indexOf("github")>=0 ? solveQuickAndDirty : solveWithLP//solveQuickAndDirty;
 /**
  * 
  * @param {*} dhats 

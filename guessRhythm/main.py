@@ -56,7 +56,7 @@ def solve(dhat, arrayOfDurations, signature):
         for j in range(n):
                 if dhat[i] >= dhat[j]:
                     errorVar = solver.NumVar(0, inf, "error when di is smaller than dj")
-                    ct = solver.Constraint(0, inf, "di is generally greater than dj")
+                    ct = solver.Constraint(0.0000001, inf, "di is generally greater than dj")
                     ct.SetCoefficient(errorVar, 1)
                     addDi(ct, i, 1)
                     addDi(ct, j, -1)
