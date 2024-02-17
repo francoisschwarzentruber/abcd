@@ -1,4 +1,6 @@
 
+let beginningTimeForAChord;
+
 
 /**
  * 
@@ -60,35 +62,47 @@ function imidiNote2Ly(midiNoteRelative) {
 
 
 
+function dtToNbSpaces(dt) {
+    console.log(dt)
+    if (dt > 1000)
+        return 4;
+    if (dt > 500)
+        return 3;
+    if (dt > 250)
+        return 2;
+    if (dt > 125)
+        return 1;
+    return 0;
+}
+
 let notes = [];
 let nbnotes = 0;
 
 MidiInput.setEventListenerNoteOff((inote) => {
     nbnotes--;
     if (nbnotes == 0) {
+        const dt = Date.now() - beginningTimeForAChord;
+        const nbSpaces = dtToNbSpaces(dt);
+        const spaces = " ".repeat(nbSpaces);
         if (notes.length == 1) {
-            editorInsert(" " + notes[0]);
+            editorInsert(" " + notes[0] + spaces);
         }
         else {
-            editorInsert(" [" + notes.join(" ") + "]");
+            editorInsert(" [" + notes.join(" ") + "]" + spaces);
         }
 
-        playNotes(notes);
+        PlayNote.play(notes);
 
         notes = [];
     }
 });
 
 
-function playNotes(notes) {
-        PlayNote.play(notes);
-}
 
-
-
-function playNote(note) {
-
-}
-
-MidiInput.setEventListenerNoteOn((inote) => { console.log(inote); notes.push(imidiNote2Ly(inote - 60)); nbnotes++; });
+MidiInput.setEventListenerNoteOn((inote) => {
+    if (nbnotes == 0) {
+        beginningTimeForAChord = Date.now();
+    }
+    console.log(inote); notes.push(imidiNote2Ly(inote - 60)); nbnotes++;
+});
 MidiInput.start();

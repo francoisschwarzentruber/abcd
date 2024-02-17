@@ -1,3 +1,8 @@
+/**
+ * 
+ * @param {*} note 
+ * @example 'a,' => "A3"
+ */
 function noteABCDToToneJS(note) {
     const pitch = lyToPitch(note);
     const noteName = pitch.toStringTone();
@@ -5,6 +10,11 @@ function noteABCDToToneJS(note) {
 }
 
 class PlayNote {
+    /**
+     * 
+     * @param {*} notes
+     *  @exemple notes = ['a', 'c#,']
+     */
     static play(notes) {
         console.log(notes)
         const notesToneJS = notes.map(noteABCDToToneJS);
