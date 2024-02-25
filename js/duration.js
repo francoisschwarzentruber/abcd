@@ -30,9 +30,10 @@ function durationFractionToStr(d) {
     switch (d) {
         case 1.5: return "6";
         case 1: return "4";
+        case 0.75: return "3";
     }
 
- 
+
 
     for (let n of [1, 3, 7]) {
         for (let i = 0; i <= 6; i++) {

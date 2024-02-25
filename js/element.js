@@ -56,14 +56,14 @@ class Element {
             if (s.startsWith("fa"))
                 return [s.substr(2), "f"];
             if (s.startsWith("sol"))
-                return [s.substr(2), "g"];
+                return [s.substr(3), "g"];
             if (s.startsWith("la"))
                 return [s.substr(2), "a"];
             if (s.startsWith("si"))
                 return [s.substr(2), "b"];
             if (s.startsWith("_"))
                 return [s.substr(1), "r"];
-            
+
             const letterNote = s[0];
             if (!(["a", "b", "c", "d", "e", "f", "g", "r", "x"].indexOf(letterNote.toLowerCase()) >= 0))
                 return [s, undefined];
