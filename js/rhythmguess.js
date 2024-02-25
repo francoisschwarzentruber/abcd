@@ -141,7 +141,7 @@ class RhythmGuess {
                         }
                         const proportion = e.dhat / factor;
                         console.log("PROPORTION: " + proportion)
-                        return getPossibleDurations(e, proportion).map((x) => x * factor);
+                        return getPossibleDurations(e, proportion, signature).map((x) => x * factor);
                     }
                 });
         }
@@ -199,13 +199,11 @@ class RhythmGuess {
 
         }
 
-
         //main
         try {
             const tokens = tokenize(abcdStr);
             const elements = addFakeRestIfMeasureIsEmpty(tokenToElements(tokens));
             const possibleDurations = computePossibleDurations(elements);
-
             const durationsSolution = await solve(elements.map((e) => e.dhat), possibleDurations, signatureValue);
             setDurations(elements, durationsSolution);
             const abcdResult = elementsToABCD(elements, durationsSolution);
@@ -214,6 +212,7 @@ class RhythmGuess {
             return abcdResult;
 
         } catch (e) {
+            console.error(e);
             return abcdStr + ' [Q:"error: inconsistent_rhythm"] ';
         }
     }
@@ -305,8 +304,8 @@ class NupletSymbolElement {
 }
 
 
-function getPossibleDurations(element, ratio, precision = 7) {
-    let A = [];
+function getPossibleDurations(element, ratio, signature) {
+    let A = [eval(signature)]; // the signature itself should always be a possibility (e.g. one single note)
     let num = 1;
     let istart = 0;
 
@@ -348,22 +347,19 @@ function getPossibleDurations(element, ratio, precision = 7) {
     else if ((durationStr.startsWith("/")) || (durationStr == "♪"))
         istart = 3;
 
-
+    const precision = 7;
     for (let i = istart; i < precision; i++)
         A.push(num / (2 ** i));
-
 
     return A.sort((a, b) => Math.abs(a - ratio) - Math.abs(b - ratio));
 }
 
 
 
-function isEq(a, b) {
-    return Math.abs(a - b) < 0.00001;
-}
+function isEq(a, b) { return Math.abs(a - b) < 0.00001; }
 
 
-const solve = window.location.href.indexOf("github")>=0 ? solveQuickAndDirty : solveWithLP//solveQuickAndDirty;
+const solve = window.location.href.indexOf("github") >= 0 ? solveQuickAndDirty : solveWithLP//solveQuickAndDirty;
 /**
  * 
  * @param {*} dhats 
