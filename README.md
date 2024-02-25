@@ -1,6 +1,8 @@
 # ABCD - 🎵 The Markdown Notation for Music 🎵 
 
-A super simple textual language to represent **music scores**. The aim is to be natural to use like **markdown** for writing documents. The positions of the musical elements in the text is close to their real positions in the score. Technically, this repository provides a program, that preprocesses the file to produce an ABC string, and then produces the output with the library abc.js.  The name ABCD is a hint to the abc notation. This repository also comes with an **music score editor**.
+A super simple textual language, called ABCD, to represent **music scores**. This repository also comes with an **music score editor** for that language. The aim is to be natural to use like **markdown** for writing documents. The positions of the musical elements in the text is close to their real positions in the score. It makes easy to add instruments, change keys, add voices, add lyrics. Its main feature is **rhythm inference**: you do not need to tediously specify the duration of each note; the system tries to guess the most natural rhythm from the specification.  The name ABCD is a hint to the abc notation. 
+
+
 
 Try it here: https://francoisschwarzentruber.github.io/abcd/
 
@@ -77,4 +79,6 @@ Existing languages are difficult to learn. The project aims at providing an easi
 - Both in ABC and Lilypond, all the information concerning a single measure is spread out in the source.
 
 
+# How does it work behind the scene?
+Technically, this repository provides a program, that preprocesses an input in ABCD to produce an ABC string, and then produces the output with the library abc.js. Meanwhile it calls a solver for solving rhythm inference.  
 
