@@ -41,7 +41,29 @@ class Element {
         }
 
 
+        /**
+         * 
+         * @param {*} s 
+         * @returns [the rest to be parsed, the letter]
+         */
         function eatLetterNote(s) {
+            if (s.startsWith("do"))
+                return [s.substr(2), "c"];
+            if (s.startsWith("ré"))
+                return [s.substr(2), "d"];
+            if (s.startsWith("mi"))
+                return [s.substr(2), "e"];
+            if (s.startsWith("fa"))
+                return [s.substr(2), "f"];
+            if (s.startsWith("sol"))
+                return [s.substr(2), "g"];
+            if (s.startsWith("la"))
+                return [s.substr(2), "a"];
+            if (s.startsWith("si"))
+                return [s.substr(2), "b"];
+            if (s.startsWith("_"))
+                return [s.substr(1), "r"];
+            
             const letterNote = s[0];
             if (!(["a", "b", "c", "d", "e", "f", "g", "r", "x"].indexOf(letterNote.toLowerCase()) >= 0))
                 return [s, undefined];

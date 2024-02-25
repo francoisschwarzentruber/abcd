@@ -267,7 +267,9 @@ function tokenize(abcdStr) {
     return tokens;
 }
 
-
+/**
+ * class to represent a chord
+ */
 class Chord {
     constructor(str) {
         this.notesStr = str.substr(0, str.indexOf("]") + 1);
@@ -280,7 +282,9 @@ class Chord {
 }
 
 
-
+/**
+ * class for any element (which is not a note or a rest)
+ */
 class StringElement {
     constructor(string) {
         this.string = string;
@@ -292,7 +296,9 @@ class StringElement {
 }
 
 
-
+/**
+ * class for a symbol e.g. "(3", "(5"
+ */
 class NupletSymbolElement {
     constructor(value) {
         this.value = value;
@@ -303,7 +309,13 @@ class NupletSymbolElement {
     }
 }
 
-
+/**
+ * 
+ * @param {*} element a musical element (class Element) 
+ * @param {*} ratio an estimation of the duration of the element
+ * @param {*} signature the signature (e.g. "3/4") of a full measure
+ * @returns an array of possible durations
+ */
 function getPossibleDurations(element, ratio, signature) {
     let A = [eval(signature)]; // the signature itself should always be a possibility (e.g. one single note)
     let num = 1;
