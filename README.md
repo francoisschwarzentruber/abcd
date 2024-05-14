@@ -12,6 +12,7 @@ Try it here: https://francoisschwarzentruber.github.io/abcd/
 - First video: https://youtu.be/LbuEGCJSX0U
 - Guessing the rhythm: https://youtu.be/ubqu0Pkwsnc
 - Changing instruments: https://youtu.be/eb8vtVFGyhk
+- Writing the two first measures of the theme of the sonata K.~545 from W.A. Mozart: https://youtu.be/fur0cubEubo
 
 
  
