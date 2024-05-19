@@ -199,12 +199,21 @@ class RhythmGuess {
 
         }
 
+        let isDurationMeasureSmallerThanSignatureForSure = false;
         //main
         try {
             const tokens = tokenize(abcdStr);
             const elements = addFakeRestIfMeasureIsEmpty(tokenToElements(tokens));
             const possibleDurations = computePossibleDurations(elements);
-            const durationsSolution = await solve(elements.map((e) => e.dhat), possibleDurations, signatureValue);
+
+            if (possibleDurations.map((durs) => Math.max(...durs)).reduce((a, b) => a + b, 0) < signatureValue)
+                isDurationMeasureSmallerThanSignatureForSure = true;
+            
+            let durationsSolution;
+            if (possibleDurations.every((durs) => durs.length == 1))
+                durationsSolution = possibleDurations.map((durs) => durs[0]);
+            else
+                durationsSolution = await solve(elements.map((e) => e.dhat), possibleDurations, signatureValue);
             setDurations(elements, durationsSolution);
             const abcdResult = elementsToABCD(elements, durationsSolution);
             console.log("result of the inference: ", durationsSolution, abcdResult)
@@ -213,7 +222,11 @@ class RhythmGuess {
 
         } catch (e) {
             console.error(e);
-            return abcdStr + ' [Q:"error: inconsistent_rhythm"] ';
+
+            if (isDurationMeasureSmallerThanSignatureForSure) // in case of of anacrusis, we do not show an error
+                return abcdStr;
+            else
+                return abcdStr + ' [Q:"error: inconsistent_rhythm"] ';
         }
     }
 
@@ -317,7 +330,7 @@ class NupletSymbolElement {
  * @returns an array of possible durations
  */
 function getPossibleDurations(element, ratio, signature) {
-    let A = [eval(signature)]; // the signature itself should always be a possibility (e.g. one single note)
+    let A = [];
     let num = 1;
     let istart = 0;
 
@@ -362,6 +375,13 @@ function getPossibleDurations(element, ratio, signature) {
     const precision = 7;
     for (let i = istart; i < precision; i++)
         A.push(num / (2 ** i));
+
+    // the signature itself should always be a possibility (e.g. one single note)
+    if (durationStr == "") {
+        const signatureEval = eval(signature);
+        if (A.indexOf(signatureEval) == -1)
+            A.push(signatureEval);
+    }
 
     return A.sort((a, b) => Math.abs(a - ratio) - Math.abs(b - ratio));
 }

@@ -4,6 +4,7 @@
             right: 0px;
             bottom: 50%;
             left: 0;
+            border: 1px solid black;
         }
 
         #midi {
@@ -32,12 +33,16 @@
 
         button {
             font-size: 18px;
-            border: 1px solid black;
+            border: 0px solid black;
             border-radius: 7px;
             margin: 2px;
             padding: 4px;
             height: 32px;
+            background: rgba(0, 0, 0, 0.1);
+        }
 
+        button:hover {
+            background: rgba(0, 0, 0, 0.2);
         }
 
         button:active {
@@ -121,17 +126,22 @@
 
 
 
-
+        #toolbar {
+            border-radius: 16px;
+            background: #e4e4ff;
+        }
 
         .toolbarPart {
-            background: #DDDDBB;
             display: inline-block;
             padding: 2px;
-            margin:3px;
+            margin: 3px;
+            border-right: 1px solid;
+            padding-right: 8px;
         }
 
 
         body {
             margin: 0px;
-            user-select: none; /* Standard syntax */
+            user-select: none;
+            /* Standard syntax */
         }
