@@ -116,9 +116,13 @@ async function update() {
     previousABCD = abcd;
     const abc = await abcd2abc(abcd);
 
-    console.log(abc)
+    function clickListener(abcelem, tuneNumber, classes, analysis, drag, mouseEvent) {
+        console.log(abcelem);
+        console.log(analysis);
+    }
     const visualObj = abcjs.renderAbc('output', abc, {
-        oneSvgPerLine: true
+        oneSvgPerLine: true,
+        clickListener: clickListener
     })[0];
     const synthControl = new abcjs.synth.SynthController();
     synthControl.load("#audio", null, { displayRestart: true, displayPlay: true, displayProgress: true });
@@ -177,7 +181,7 @@ function clean() {
 
         for (let l = lbegin; l <= lend; l++) {
             for (let m = 0; m < splits[l].length; m++) {
-                const nbSpacesToAdd = measureLength[m] - [...splits[l][m]].length-1;
+                const nbSpacesToAdd = measureLength[m] - [...splits[l][m]].length - 1;
                 splits[l][m] = splits[l][m] + " ".repeat(nbSpacesToAdd);
             }
             lines[l] = splits[l].join(" | ").replaceAll(" |   | ", " || ").replaceAll(" | ]", " |]")
@@ -248,7 +252,7 @@ function editorInsert(str) {
 }
 
 function action8upOrDown(f) {
-    
+
     editor.focus();
     /* if (editor.getSelectedText() == "") {
          inputOctave.value = f("a" + inputOctave.value).substr(1);

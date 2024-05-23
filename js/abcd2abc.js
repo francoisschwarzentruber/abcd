@@ -201,38 +201,50 @@ function isStaffInstrumentAndOpenCurlyBracket(abcdLine) {
 }
 
 async function abcd2abc(abcd) {
-    const abc = [];
-    abc.push("X:1");
-    abc.push("L:1/4");
-    abc.push("I:linebreak <none>"); //no linebreak explicitely specified in the code 
-    abc.push("%%propagate-accidentals not");
 
-    abc.push("%%score "); // to be modified after the abcd code has been analyzed
-    const iScoreInABC = abc.length - 1;
+    function getABCPreambule(lines) {
+        const abc = [];
+        abc.push("X:1");
+        abc.push("L:1/4");
+        abc.push("I:linebreak <none>"); //no linebreak explicitely specified in the code 
+        abc.push("%%propagate-accidentals not");
+        abc.push("%%barnumbers 1");
 
-    const lines = abcd.split("\n");
+        let i = 0;
 
-    let i = 0;
-    for (; i < lines.length; i++) {
-        let line = lines[i].trim();
-        if (line != "") {
-            if (isStaffLine(line))
-                break;
-            if (i == 0)
-                abc.push("T:" + line);//title
-            else {
-                abc.push("C:" + line);//composer
-                i++;
-                break;
+        while (true) {
+            let line = lines[0].trim();
+            if (line != "") {
+                if (isStaffLine(line))
+                    return abc;
+                lines.shift();
+                if (i == 0) {
+                    abc.push("T:" + line);//title
+                    i++;
+                }
+                else {
+                    abc.push("C:" + line);//composer
+                    return abc;
+                }
             }
         }
     }
+
+
+    const lines = abcd.split("\n");
+    const abc = getABCPreambule(lines);
+
+    const iScoreInABC = abc.length - 1;
+
+
+
+
 
     let scoreStructure = new ScoreStructure();
     let scoreData = new ScoreData();
     let currentInstrument = undefined;
 
-    for (; i < lines.length; i++) {
+    for (let i = 0; i < lines.length; i++) {
         let line = lines[i].trim();
 
         if (line.split("|").every((m) => m.trim() == "")) {
@@ -288,13 +300,13 @@ async function abcd2abc(abcd) {
 
                 const getCurrentAccidental = (pitch) => {
                     const ppure = new Pitch(pitch.value, 0);
-                    if (accidentals[ppure.toStringABC()]) { 
+                    if (accidentals[ppure.toStringABC()]) {
                         console.log(accidentals)
                         return accidentals[ppure.toStringABC()];
                     }
                     else {
                         const p = accidentalize(ppure, currentTonalityTonicMaj);
-                       // console.log("looking for the tonality")
+                        // console.log("looking for the tonality")
                         return p.accidental;
                     }
                 }
@@ -417,6 +429,6 @@ async function abcd2abc(abcd) {
 
         }
     } //endfor
-    abc[iScoreInABC] = (scoreStructure.toStringABC());
+    abc.push(scoreStructure.toStringABC());
     return abc.join("\n") + "\n" + scoreData.toStringABC();
 }
