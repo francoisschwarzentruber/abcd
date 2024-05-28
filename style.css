@@ -2,7 +2,7 @@
             position: absolute;
             top: 76px;
             right: 0px;
-            bottom: 50%;
+            bottom: 60%;
             left: 0;
             border: 1px solid black;
         }
@@ -18,7 +18,7 @@
         #outputWrapper {
             overflow: auto;
             position: absolute;
-            top: 50%;
+            top: 40%;
             left: 0px;
             right: 0px;
             bottom: 0px;

@@ -202,7 +202,7 @@ function isStaffInstrumentAndOpenCurlyBracket(abcdLine) {
 
 async function abcd2abc(abcd) {
 
-    function getABCPreambule(lines) {
+    function getABCLinesPreambule(lines) {
         const abc = [];
         abc.push("X:1");
         abc.push("L:1/4");
@@ -212,7 +212,7 @@ async function abcd2abc(abcd) {
 
         let i = 0;
 
-        while (true) {
+        while (lines.length > 0) {
             let line = lines[0].trim();
             if (line != "") {
                 if (isStaffLine(line))
@@ -227,18 +227,15 @@ async function abcd2abc(abcd) {
                     return abc;
                 }
             }
+            else
+                lines.shift();
         }
+        return abc;
     }
 
 
     const lines = abcd.split("\n");
-    const abc = getABCPreambule(lines);
-
-    const iScoreInABC = abc.length - 1;
-
-
-
-
+    const abc = getABCLinesPreambule(lines);
 
     let scoreStructure = new ScoreStructure();
     let scoreData = new ScoreData();
@@ -296,6 +293,9 @@ async function abcd2abc(abcd) {
             let currentTimeSignature = 1; // bydefaut
 
             measures = await Promise.all(measures.map(async (measureStr) => {
+                if (measureStr == "") // DO NOT REMOVE. It enables to handle "||"
+                    return "";
+
                 let accidentals = {};
 
                 const getCurrentAccidental = (pitch) => {
@@ -355,9 +355,6 @@ async function abcd2abc(abcd) {
                         const ppure = new Pitch(note.pitch.value, 0);
                         accidentals[ppure.toStringABC()] = noteAccidental;
 
-                        console.log(noteAccidental)
-
-                        console.log((currentA == noteAccidental))
                         if (currentA == noteAccidental)
                             return note.toStringABC();
                         else {

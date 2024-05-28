@@ -52,8 +52,6 @@ class RhythmGuess {
             const nbSpacesArray = [];
             let isElement = false;
             const elements = []; //array of Element, Chord or string :)
-            console.log("tokens: ", tokens);
-
 
             tokens.map((token) => {
                 if (token == "") {
@@ -249,7 +247,6 @@ function tokenize(abcdStr) {
     abcdStr = abcdStr.replaceAll("-", " - ");
 
     const L = abcdStr.split(" ");
-    console.log(L)
 
     for (const chunk of L) {
         if (!isBracket) {
@@ -276,7 +273,6 @@ function tokenize(abcdStr) {
                 bracketToken += chunk + " ";
         }
     }
-    console.log(tokens)
     return tokens;
 }
 

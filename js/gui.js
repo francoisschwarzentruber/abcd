@@ -15,7 +15,7 @@ dialogOpenButtonOpen.onclick = () => {
             editor.text = Save.load();//editor.setValue(Save.load(), -1);
         }
         else {
-            alert("No document with name '" + newid + "' found!")
+            alert("No document with id name '" + newid + "' found!")
         }
     }
 
@@ -44,7 +44,7 @@ buttonDialogOpen.onclick = () => {
 
 
 buttonSave.onclick = () => {
-    const newid = prompt("What name do you want to give to this score?", Save.getId());
+    const newid = prompt("What id name do you want to give to this score?", Save.getId());
     Save.setId(newid);
     Save.save();
 }
@@ -128,6 +128,7 @@ async function update() {
     synthControl.load("#audio", null, { displayRestart: true, displayPlay: true, displayProgress: true });
     synthControl.setTune(visualObj, false);
 }
+
 editor.onchange = update;
 update();
 /**
