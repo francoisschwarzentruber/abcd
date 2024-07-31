@@ -178,7 +178,7 @@ function isStaffLine(abcdLine) {
 
     if (instrumentToMIDITable[firstWord] != undefined) {
         if (!(content.startsWith("𝄞") || content.startsWith("𝄢")))
-            content = (instrumentToStandardKey[firstWord] ? instrumentToStandardKey[firstWord] : "𝄞") + " " + content;
+            content = (instrumentToStandardKey[firstWord] ? instrumentToStandardKey[firstWord] : "𝄞") + content;
         return { instrument: firstWord, content };
     }
     return false;
@@ -200,9 +200,27 @@ function isStaffInstrumentAndOpenCurlyBracket(abcdLine) {
     return false;
 }
 
+
+
+function isLyricsLine(abcdLine) {
+    if (line.startsWith("😀") || line.startsWith("💬"))
+        return abcdLine.substr(2);
+
+    //TODO: detect that the line does not contain music and therefore it is lyrics
+    return false;
+}
+
+
+
 async function abcd2abc(abcd) {
 
-    function getABCLinesPreambule(lines) {
+    /**
+     * 
+     * @param {*} abcdLines 
+     * @effect pop the corresponding lines in abcdLines
+     * @returns the abc code for the preambule
+     */
+    function getABCLinesPreambule(abcdLines) {
         const abc = [];
         abc.push("X:1");
         abc.push("L:1/4");
@@ -212,12 +230,16 @@ async function abcd2abc(abcd) {
 
         let i = 0;
 
-        while (lines.length > 0) {
-            let line = lines[0].trim();
+        function isNotATitleOrComposer(line) {
+            return line == "{" || isStaffLine(line);
+        }
+
+        while (abcdLines.length > 0) {
+            let line = abcdLines[0].trim();
             if (line != "") {
-                if (isStaffLine(line))
+                if (isNotATitleOrComposer(line))
                     return abc;
-                lines.shift();
+                abcdLines.shift();
                 if (i == 0) {
                     abc.push("T:" + line);//title
                     i++;
@@ -228,21 +250,22 @@ async function abcd2abc(abcd) {
                 }
             }
             else
-                lines.shift();
+                abcdLines.shift();
         }
         return abc;
     }
 
 
-    const lines = abcd.split("\n");
-    const abc = getABCLinesPreambule(lines);
+    const abcdLines = abcd.split("\n");
+    const abc = getABCLinesPreambule(abcdLines);
 
     let scoreStructure = new ScoreStructure();
     let scoreData = new ScoreData();
     let currentInstrument = undefined;
 
-    for (let i = 0; i < lines.length; i++) {
-        let line = lines[i].trim();
+    for (let i = 0; i < abcdLines.length; i++) {
+        let line = abcdLines[i].trim();
+        let lyrics = undefined;
 
         if (line.split("|").every((m) => m.trim() == "")) {
             scoreStructure.newStaff();
@@ -255,8 +278,8 @@ async function abcd2abc(abcd) {
         else if (["[", "]", "{", "}"].indexOf(line) >= 0) {
             scoreStructure.addStaffSymbol(line);
         }
-        else if (line.startsWith("💬") || line.startsWith("😀")) {
-            scoreData.addLyrics(line.substr(2));
+        else if (lyrics = isLyricsLine(line)) {
+            scoreData.addLyrics(lyrics);
         }
         else {
 
@@ -329,6 +352,9 @@ async function abcd2abc(abcd) {
                     switch (token) {
                         case "𝄢", "f:": return "[K:bass]";
                         case "𝄞", "g:": return "[K:treble]";
+                        case "𝄞8", "g:": return "[K:treble-8]";
+                        case "𝄞-8", "g:": return "[K:treble-8]";
+                        case "𝄞+8", "g:": return "[K:treble+8]";
                     }
 
                     if (token.startsWith("♩="))
@@ -396,6 +422,9 @@ async function abcd2abc(abcd) {
 
             let s = measures.join("|");
             s = s.replaceAll("𝄢", "[K:bass]");
+            s = s.replaceAll("𝄞8", "[K:treble-8]");
+            s = s.replaceAll("𝄞-8", "[K:treble-8]");
+            s = s.replaceAll("𝄞+8", "[K:treble+8]");
             s = s.replaceAll("𝄞", "[K:treble]");
             s = s.replaceAll("/ ", "/");
 
