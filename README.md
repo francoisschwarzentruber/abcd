@@ -1,9 +1,17 @@
 # ABCD - 🎵 The Markdown Notation for Music 🎵 
 
-A super simple textual language, called ABCD, to represent **music scores**. This repository also comes with an **music score editor** for that language. The aim is to be natural to use like **markdown** for writing documents. The positions of the musical elements in the text is close to their real positions in the score. It makes easy to add instruments, change keys, add voices, add lyrics. Its main feature is **rhythm inference**: you do not need to tediously specify the duration of each note; the system tries to guess the most natural rhythm from the specification.  The name ABCD is a hint to the abc notation. 
+A super simple textual language, called ABCD, to represent **music scores**. The aim is to be natural to use like **markdown** for writing documents. The positions of the musical elements in the text is close to their real positions in the score. It makes easy to add instruments, change keys, add voices, add lyrics. Its main feature is **rhythm inference**: you do not need to tediously specify the duration of each note; the system tries to guess the most natural rhythm from the specification.  The name ABCD is a hint to the abc notation. 
 
 
 
+
+# Overview
+
+This repository also comes with an **music score editor** for that language.
+
+![image](https://github.com/user-attachments/assets/16215691-cbf2-41f8-b299-81037da43a00)
+
+On the top of the screen, the user can write the score in code. The output is automatically updated at the bottom of the screen.
 Try it here: https://francoisschwarzentruber.github.io/abcd/
 
 
