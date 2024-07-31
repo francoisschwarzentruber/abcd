@@ -31,15 +31,20 @@
 
     <div id="toolbar">
         <span class="toolbarPart">
-            <button id="buttonDialogOpen">Load</button>
-            <button id="buttonSave">Save</button>
-            Export:
-            <button id="buttonExportMIDI">MIDI</button>
-            <button id="buttonExportABC">ABC</button>
-            <button id="buttonPrint" onclick="window.print()">Print</button>
+            <button id="buttonDialogOpen" title="open a score">📂</button>
+            <button id="buttonSave" title="save the score">💾</button>
+            <button id="buttonPrint" title="print the score" onclick="window.print()">⎙</button>
 
         </span>
+
+        <span class="toolbarPart">
+            <button id="buttonExportMIDI">MIDI</button>
+            <button id="buttonExportABC">ABC</button>
+        </span>
+
         <div class="toolbarPart" id="toolbarInsert"></div>
+
+   
 
         <span hidden="hidden" class="toolbarPart">
             <button title="shift one octave down" id="button8down">8↓</button>
