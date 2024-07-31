@@ -203,7 +203,7 @@ function isStaffInstrumentAndOpenCurlyBracket(abcdLine) {
 
 
 function isLyricsLine(abcdLine) {
-    if (line.startsWith("😀") || line.startsWith("💬"))
+    if (abcdLine.startsWith("😀") || abcdLine.startsWith("💬"))
         return abcdLine.substr(2);
 
     //TODO: detect that the line does not contain music and therefore it is lyrics
