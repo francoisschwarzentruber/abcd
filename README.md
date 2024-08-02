@@ -5,11 +5,24 @@ A super simple textual language, called ABCD, to represent **music scores**. The
 
 
 
-# Overview
+# Features
 
-This repository also comes with an **music score editor** for that language.
+The ABCD language enables to write scores with:
+- notes, rests, chords
+- multiple voice
+- multi-instruments
+- lyrics
+- guess the rhythm
+- ties, slurs, dynamics etc. (actually almost all the features from the language ABC)
 
-![image](https://github.com/user-attachments/assets/16215691-cbf2-41f8-b299-81037da43a00)
+This repository also comes with an **music score editor** with real-time update of the score while modifying the ABCD code (like HedgeDoc for editing markdown) and enables to:
+- listen to the audio (MIDI)
+- print
+- Load/save in the local storage of the browser
+- Input from a MIDI device (in Chrome only) 
+- Export in MIDI and ABC formats
+
+<img src="https://github.com/user-attachments/assets/16215691-cbf2-41f8-b299-81037da43a00" height="600px"/>
 
 On the top of the screen, the user can write the score in code. The output is automatically updated at the bottom of the screen.
 Try it here: https://francoisschwarzentruber.github.io/abcd/
@@ -48,15 +61,6 @@ The syntax is highly inspired from ABC and Lilypond.
 | Change tempo   | write `♩=120`   |
 
 
-# Features of the editor
-
-- real-time update of the score while modifying the code (like HedgeDoc for editing markdown)
-- Listening to the audio (MIDI)
-- Printing
-- Loading/saving in the local storage of the browser
-- Input from a MIDI device (in Chrome only) 
-- Export in MIDI and ABC
-
 
 # Basic example
 
@@ -71,23 +75,20 @@ produces the score
 
 
 
-
-
-
 # Motivation - Why?
 
 ## Why not graphical user interfaces?
-In wysiwyg software, like Musescore, Finale, etc. you never know where to click.
+In wysiwyg software, like Musescore, Finale, etc. you need to have a high knowledge about the graphical user interface. We found easier to only have to focus on having knowledge about a language. Also it does not mean that a simple graphical user interface exists for the most common features (adding a note, etc.).
 
 ## Why textual languages?
-The only thing to learn with a textual language is the language. Everyone knows how to use a text editor. Existing textual langages (like ABC and lilypond) are very expressive. 
+The only thing to learn with a textual language is the language itself. Everyone knows how to use a text editor. Existing textual langages (like ABC and lilypond) are very expressive. 
 
 ## Why a new textual language?
-Existing languages are difficult to learn. The project aims at providing an easier to use textual language. Here are the main points:
+Existing languages are somehow difficult to learn. The project aims at providing an easier to use textual language. Here are the main points:
 - Both languages (ABC, Lilypond) have cryptic notations like `[K:bass]` or `\voice...`. In particular, adding a voice, a staff or lyrics is a bit tricky in both languages, while it is obvious in ABCD.
 - Both in ABC and Lilypond, all the information concerning a single measure is spread out in the source.
-
+This project is to be compared with Markdown. Markdown is easier to learn than LaTEX or typst.
 
 # How does it work behind the scene?
-Technically, this repository provides a program, that preprocesses an input in ABCD to produce an ABC string, and then produces the output with the library abc.js. Meanwhile it calls a solver for solving rhythm inference.  
+Technically, this repository provides a program, that preprocesses an input in ABCD to produce an ABC string, and then produces the output with the library abc.js. Meanwhile it calls a linear programming solver for solving rhythm inference.  
 
