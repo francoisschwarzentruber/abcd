@@ -75,7 +75,7 @@ produces the score
 
 
 
-# Motivation - Why?
+# FAQ
 
 ## Why not graphical user interfaces?
 In wysiwyg software, like Musescore, Finale, etc. you need to have a high knowledge about the graphical user interface. We found easier to only have to focus on having knowledge about a language. Also it does not mean that a simple graphical user interface exists for the most common features (adding a note, etc.).
@@ -89,6 +89,9 @@ Existing languages are somehow difficult to learn. The project aims at providing
 - Both in ABC and Lilypond, all the information concerning a single measure is spread out in the source.
 This project is to be compared with Markdown. Markdown is easier to learn than LaTEX or typst.
 
-# How does it work behind the scene?
+## How does it work behind the scene?
 Technically, this repository provides a program, that preprocesses an input in ABCD to produce an ABC string, and then produces the output with the library abc.js. Meanwhile it calls a linear programming solver for solving rhythm inference.  
 
+# Reference
+
+François Schwarzentruber. **Rhythm Inference Helping Writing Music Scores.** IJCAI 2024 (demonstration track)
