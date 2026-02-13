@@ -7,7 +7,7 @@
  * isRest: true or false
  */
 class Element {
-    constructor(s) {
+    constructor(string) {
         function lyNoteLetterToiNote7(iNote) {
             switch (iNote) {
                 case "c": return 0;
@@ -21,87 +21,95 @@ class Element {
             throw "error";
         }
 
+        /**
+         * 
+         * @param {*} str 
+         * @returns [ the rest of the string, value of the accidental read] or [str, undefined]
+         */
+        function eatAccidental(str) {
+            if (str.startsWith("♮"))
+                return [str.substr(1), 0];
 
-        function eatAccidental(s) {
             let accidental = undefined;
-            if (s.startsWith("♯♯") || s.startsWith("##")) {
+            if (str.startsWith("♯♯") || str.startsWith("##")) {
                 accidental = 2;
             }
-            else if (s.startsWith("♯") || s.startsWith("#")) {
+            else if (str.startsWith("♯") || str.startsWith("#")) {
                 accidental = 1;
             }
-            else if (s.startsWith("♭♭")) {
+            else if (str.startsWith("♭♭")) {
                 accidental = -2;
             }
-            else if (s.startsWith("♭")) {
+            else if (str.startsWith("♭")) {
                 accidental = -1;
             }
-            s = s.substr(Math.abs(accidental));
-            return [s, accidental];
+
+            str = str.substr(Math.abs(accidental));
+            return [str, accidental];
         }
 
 
         /**
          * 
-         * @param {*} s 
-         * @returns [the rest to be parsed, the letter]
+         * @param {*} str 
+         * @returns [the rest to be parsed, the letter] or [str, undefined]
          */
-        function eatLetterNote(s) {
-            if (s.startsWith("do"))
-                return [s.substr(2), "c"];
-            if (s.startsWith("ré"))
-                return [s.substr(2), "d"];
-            if (s.startsWith("mi"))
-                return [s.substr(2), "e"];
-            if (s.startsWith("fa"))
-                return [s.substr(2), "f"];
-            if (s.startsWith("sol"))
-                return [s.substr(3), "g"];
-            if (s.startsWith("la"))
-                return [s.substr(2), "a"];
-            if (s.startsWith("si"))
-                return [s.substr(2), "b"];
-            if (s.startsWith("_"))
-                return [s.substr(1), "r"];
+        function eatLetterNote(str) {
+            if (str.startsWith("do"))
+                return [str.substr(2), "c"];
+            if (str.startsWith("ré"))
+                return [str.substr(2), "d"];
+            if (str.startsWith("mi"))
+                return [str.substr(2), "e"];
+            if (str.startsWith("fa"))
+                return [str.substr(2), "f"];
+            if (str.startsWith("sol"))
+                return [str.substr(3), "g"];
+            if (str.startsWith("la"))
+                return [str.substr(2), "a"];
+            if (str.startsWith("si"))
+                return [str.substr(2), "b"];
+            if (str.startsWith("_"))
+                return [str.substr(1), "r"];
 
-            const letterNote = s[0];
+            const letterNote = str[0];
             if (!(["a", "b", "c", "d", "e", "f", "g", "r", "x"].indexOf(letterNote.toLowerCase()) >= 0))
-                return [s, undefined];
-            return [s.substr(1), letterNote];
+                return [str, undefined];
+            return [str.substr(1), letterNote];
         }
 
-        function eatOctaves(s) {
+        function eatOctaves(str) {
             let octave = 0; // by default
             for (let i = 4; i >= 1; i--)
-                if (s.startsWith("'".repeat(i))) {
+                if (str.startsWith("'".repeat(i))) {
                     octave = i;
-                    s = s.substr(i);
+                    str = str.substr(i);
                     break;
                 }
 
             for (let i = 4; i >= 1; i--)
-                if (s.startsWith(",".repeat(i))) {
+                if (str.startsWith(",".repeat(i))) {
                     octave = -i;
-                    s = s.substr(i);
+                    str = str.substr(i);
                     break;
                 }
-            return [s, octave];
+            return [str, octave];
         }
 
 
-        if (s == "")
+        if (string == "")
             throw "empty string";
 
         let letter = undefined;
         let accidental = undefined;
 
-        [s, accidental] = eatAccidental(s);
-        [s, letter] = eatLetterNote(s);
+        [string, accidental] = eatAccidental(string);
+        [string, letter] = eatLetterNote(string);
         if (!(["a", "b", "c", "d", "e", "f", "g", "r", "x"].indexOf(letter.toLowerCase()) >= 0))
             throw "not a note or a rest";
 
         if (accidental == undefined)
-            [s, accidental] = eatAccidental(s);
+            [string, accidental] = eatAccidental(string);
 
         this.isRest = (letter == "r") || (letter == "x");
 
@@ -109,11 +117,11 @@ class Element {
         if (!this.isRest)
             value = lyNoteLetterToiNote7(letter.toLowerCase());
 
-        if (s == ":")
+        if (string == ":")
             throw "not a note";
 
         let octave;
-        [s, octave] = eatOctaves(s);
+        [string, octave] = eatOctaves(string);
 
         //if lowercase
         if (letter == letter.toUpperCase())
@@ -121,15 +129,36 @@ class Element {
 
         value += octave * 7;
         this.letter = letter;
-        this.pitch = new Pitch(value, accidental);
-        this.duration = new Duration(s);
+        this.value = value;
+        this.accidental = accidental;
+        console.log("accidental: ", this.accidental)
+        this.duration = new Duration(string);
     }
 
+    get pitch() {
+        return new Pitch(this.value, this.accidental)
+    }
     setDuration(d) { this.duration = new Duration(d); }
 
     toStringLy() { return (this.isRest ? this.letter : this.pitch.toStringLy()) + this.duration.toString(); }
-    toStringABC() { return (this.isRest ? (this.letter == "r" ? "z" : this.letter) : this.pitch.toStringABC()) + this.duration.toString(); }
-    toStringABCD() { return (this.isRest ? this.letter : this.pitch.toStringABCD()) + this.duration.toString(); }
+    toStringABC() {
+        if (this.isRest)
+            return (this.letter == "r" ? "z" : this.letter);
+        else {
+            const accidentalString = (this.accidental == 0) ? "=" : (this.accidental > 0 ? "^".repeat(this.accidental) : "_".repeat(-this.accidental));
+            const octaveString = (this.isRest) ? "" : octaveToString(this.pitch.octave-1);
+            return accidentalString + iNote7ToLy(this.pitch.value7) + octaveString + this.duration.toString();
+        }
+    }
+    toStringABCD() {
+        if (this.isRest)
+            return (this.letter == "r" ? "z" : this.letter);
+        else {
+            const accidentalString = (this.accidental == 0) ? "♮" : (this.accidental > 0 ? "♯".repeat(this.accidental) : "♭".repeat(-this.accidental));
+            const octaveString = (this.isRest) ? "" : octaveToString(this.pitch.octave);
+            return iNote7ToLy(this.pitch.value7) + accidentalString + octaveString + this.duration.toString();
+        }
+    }
 }
 
 

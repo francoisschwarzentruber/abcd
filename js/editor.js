@@ -27,6 +27,8 @@ class Editor {
 
         // Refocus the textarea so the user can keep typing immediately
         textarea.focus();
+
+        this.onchangecallback();
     }
 
 
@@ -37,8 +39,9 @@ class Editor {
 
 
     set onchange(callback) {
-         document.getElementById("editor").onchange = callback;
-         document.getElementById("editor").oninput = callback;
+        document.getElementById("editor").onchange = callback;
+        document.getElementById("editor").oninput = callback;
+        this.onchangecallback = callback;
     }
 }
 

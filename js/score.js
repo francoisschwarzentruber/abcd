@@ -92,6 +92,7 @@ class Score {
             this.staffs.push(new Staff());
     }
     appendVoice(cursor, data) {
+        console.log(cursor)
         this.ensureStaffExists(cursor.istaff);
         this.staffs[cursor.istaff].appendVoice(cursor, data);
         cursor.nextVoice();
@@ -210,15 +211,18 @@ class Voice extends StringToBeAppended {
 
 
 class ScorePreambule {
-    title;
-    composer;
+    constructor() {
+        this.title = "Write the title at the top of the code";
+        this.composer = "Composer follows the title";
+    }
 
     toStringABC() {
         const abcLines = [];
         abcLines.push("X:1");
         abcLines.push("L:1/4");
         abcLines.push("I:linebreak <none>"); //no linebreak explicitely specified in the code 
-        abcLines.push("%%propagate-accidentals not");
+        abcLines.push("%%propagate-accidentals pitch");
+        abcLines.push("%%writeout-accidentals none");
         abcLines.push("%%barnumbers 1");
         abcLines.push("T:" + this.title);//
         abcLines.push("C:" + this.composer);

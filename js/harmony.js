@@ -100,3 +100,15 @@ function getAccidentals(key) {
  * @example accidentalize(C, E) => C# because C has a # in E major
  */
 function accidentalize(pitch, key) { return new Pitch(pitch.value, getAccidentals(key)[pitch.value7]); }
+
+
+/**
+ * 
+ * @param {*} tonalityNumber 
+ * @returns a string that represents the tonic in the major tonality
+ * 
+ * @example tonalityNumberToTonicMajor(2) returns new Pitch('d')
+ */
+function tonalityNumberToTonicMajor(tonalityNumber) {
+    return lyToPitch(["c♭", "g♭", "d♭", "a♭", "e♭", "b♭", "f", "c", "g", "d", "a", "e", "b", "f#", "c#"][7 + tonalityNumber]);
+}

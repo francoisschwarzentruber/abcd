@@ -46,13 +46,16 @@ function isTimeSignature(str) {
  * '####' 4
  */
 function strToTonalityNumber(str) {
-    function accidentalsSurroundedBySpace(accident, n) { return accident.repeat(n); }
+    if (str == "♮")
+        return 0;
 
-    for (const sharp of ["#", "♯", "♭", "b"]) {
-        for (let i = 7; i > 0; i--) {
-            if (!(i == 1 && sharp == "b"))
-                if (str == accidentalsSurroundedBySpace(sharp, i))
-                    return i * (((sharp == "#") || sharp == "♯") ? 1 : -1);
+    function accidentals(accident, n) { return accident.repeat(n); }
+
+    for (const accident of ["#", "♯", "♭", "b"]) {
+        for (let n = 7; n > 0; n--) {
+            if (!(n == 1 && accident == "b")) // b once is not a tonality but a note "b"
+                if (str == accidentals(accident, n))
+                    return n * (((accident == "#") || accident == "♯") ? 1 : -1);
         }
     }
     return undefined;
@@ -222,10 +225,9 @@ async function abcd2Score(abcdLines) {
             score.appendLyrics(cursor, lyrics);
         }
         else {
-
-
             if (isStaffLine(line)) {
                 cursor.nextStaff();
+                console.log("MIAOU")
                 const infoStaff = isStaffLine(line);
                 line = infoStaff.content;
                 if (infoStaff.instrument)
@@ -235,9 +237,6 @@ async function abcd2Score(abcdLines) {
 
 
 
-            function tonalityNumberToTonicMajor(tonalityNumber) {
-                return lyToPitch(["c♭", "g♭", "d♭", "a♭", "e♭", "b♭", "f", "c", "g", "d", "a", "e", "b", "f#", "c#"][7 + tonalityNumber]);
-            }
 
             let measures = line.split("|");
             let currentTonalityTonicMaj = new Pitch(0, 0);
@@ -249,8 +248,8 @@ async function abcd2Score(abcdLines) {
 
                 let accidentals = {};
 
-                const getCurrentAccidental = (pitch) => {
-                    const ppure = new Pitch(pitch.value, 0);
+                const getCurrentAccidental = (pitchvalue) => {
+                    const ppure = new Pitch(pitchvalue, 0);
                     if (accidentals[ppure.toStringABC()]) {
                         console.log(accidentals)
                         return accidentals[ppure.toStringABC()];
@@ -289,31 +288,33 @@ async function abcd2Score(abcdLines) {
                         return "[Q:1/4=" + token.substr(2) + "]";
                     if (strToTonalityNumber(token)) {
                         currentTonalityTonicMaj = tonalityNumberToTonicMajor(strToTonalityNumber(token));
-                        console.log("TONALITY: " + currentTonalityTonicMaj)
                         return token;
                     }
                     else {
                         let note;
-                        try {
-                            note = new Element(token);
-                        }
-                        catch {
-                            //                            console.log("TOKEN LEAVED AS IT IS: " + token)
-                            return token;
-                        }
+                        try { note = new Element(token); }
+                        catch { return token; } //console.log("TOKEN LEAVED AS IT IS: " + token)
+
+                        //note is defined
+                        console.log(note.toStringABC());
 
                         alreadyOneNote = true;
-                        const currentA = getCurrentAccidental(note.pitch);
-                        const noteAccidental = note.pitch.accidental;
-                        note.pitch.accidental = 0;
-                        const ppure = new Pitch(note.pitch.value, 0);
-                        accidentals[ppure.toStringABC()] = noteAccidental;
-
-                        if (currentA == noteAccidental)
+                        const currentA = getCurrentAccidental(note.value);
+                        if (note.accidental == undefined) {
                             return note.toStringABC();
+                        }
                         else {
-                            note.pitch.accidental = noteAccidental;
-                            return ((noteAccidental == 0) ? "=" : "") + note.toStringABC();
+                            const noteAccidental = note.accidental;
+                            note.pitch.accidental = undefined;
+                            const ppure = new Pitch(note.pitch.value, 0);
+                            accidentals[ppure.toStringABC()] = noteAccidental;
+
+                            if (currentA == noteAccidental)
+                                return note.toStringABC();
+                            else {
+                                note.pitch.accidental = noteAccidental;
+                                return ((noteAccidental == 0) ? "=" : "") + note.toStringABC();
+                            }
                         }
 
                     }
@@ -358,6 +359,8 @@ async function abcd2Score(abcdLines) {
 
 
             function accidentalsSurroundedBySpace(accident, n) { return " " + accident.repeat(n) + " "; }
+
+            s = s.replaceAll(" ♮ ", " [K:Cmaj]");
 
             for (const sharp of ["#", "♯"]) {
                 s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 1), " [K:Gmaj]");
