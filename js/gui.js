@@ -235,7 +235,6 @@ function addButton(text, hint, event) {
 }
 
 function buttonInsert(s, hint) {
-    console.log("add button " + s)
     addButton(s, hint, (evt) => {
         evt.srcElement.blur();
         editor.write(s)
@@ -269,9 +268,9 @@ button8down.onclick = () => action8upOrDown(str8down);
 buttonInsert("𝄞 ", "add a treble key");
 buttonInsert("𝄢 ", "add a treble key");
 buttonInsert("♭", "add flat");
-//buttonInsert("♮", "add normal");
+buttonInsert("♮", "add normal");
 buttonInsert("♯", "add sharp");
-buttonInsert("😀 ", "add lyrics");
+buttonInsert("😀 ", "start a line of lyrics");
 buttonInsert("♩=120 ", "add tempo indication");
 
 

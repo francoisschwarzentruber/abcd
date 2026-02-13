@@ -66,6 +66,11 @@ function strToTonalityNumber(str) {
  * @returns false if the line is not a staff line, otherwise returns an object containing the information of the line
  * {content: content without the instrument name, instrument: (optional) instrument name}
  * @description a staffline is a line starting with a key or starting with an instrument name followed by a key
+ * 
+ * isStaffLine('flute 𝄞 a a a |') returns {key: "𝄞", content: "a a a |", instrument: "flute"}
+ * isStaffLine('𝄞 a a a |') returns {key: "𝄞", content: "a a a |"}
+ * isStaffLine('   a a |)' returns false
+ *
  */
 function isStaffLine(abcdLine) {
     if (abcdLine.startsWith("𝄞") || abcdLine.startsWith("𝄢"))
@@ -87,6 +92,9 @@ function isStaffLine(abcdLine) {
 /**
  * 
  * @returns true if line is of the form "flute {" or "piano   {   "
+ * 
+ * isStaffInstrumentAndOpenCurlyBracket('piano {') returns {instrument: "piano"}
+ * isStaffInstrumentAndOpenCurlyBracket('flute 𝄞 a a a |') returns false
  */
 function isStaffInstrumentAndOpenCurlyBracket(abcdLine) {
     const words = abcdLine.split(" ");
@@ -168,9 +176,7 @@ function extractScorePreambuleFromABCDLines(abcdLines) {
 async function abcd2abc(abcdString) {
     const abcdLines = abcdString.split("\n");
     const scorePreambule = extractScorePreambuleFromABCDLines(abcdLines);
-
-    const abcdSingleLines = abcdMultipleLines2abcdSingleLines(abcdLines);
-    const score = await abcdSingleLines2Score(abcdSingleLines);
+    const score = await abcd2Score(abcdLines);
     score.scorePreambule = scorePreambule;
 
     return score.toStringABC();
@@ -185,33 +191,41 @@ function abcdMultipleLines2abcdSingleLines(abcdLines) {
 
 
 
-async function abcdSingleLines2Score(abcdLines) {
-    let scoreStructure = new ScoreStructure();
-    let scoreData = new ScoreData();
+
+
+async function abcd2Score(abcdLines) {
+    const score = new Score();
+    const cursor = new Cursor();
     let currentInstrument = undefined;
 
     for (let i = 0; i < abcdLines.length; i++) {
-        let line = abcdLines[i].trim();
         let lyrics = undefined;
-
-        if (line.split("|").every((m) => m.trim() == "")) {
-            scoreStructure.newStaff();
+        let line = abcdLines[i].trim();
+        if (line == "") {
+            cursor.reset();
         }
+
+
+
+
+
         else if (isStaffInstrumentAndOpenCurlyBracket(line)) {
             const infoStaff = isStaffInstrumentAndOpenCurlyBracket(line);
             currentInstrument = infoStaff.instrument;
-            scoreStructure.addStaffSymbol("{");
+            score.setStaffSymbol(cursor, "{");
         }
+
         else if (["[", "]", "{", "}"].indexOf(line) >= 0) {
-            scoreStructure.addStaffSymbol(line);
+            score.setStaffSymbol(cursor, line);
         }
         else if (lyrics = isLyricsLine(line)) {
-            scoreData.addLyrics(lyrics);
+            score.appendLyrics(cursor, lyrics);
         }
         else {
 
+
             if (isStaffLine(line)) {
-                scoreStructure.newStaff();
+                cursor.nextStaff();
                 const infoStaff = isStaffLine(line);
                 line = infoStaff.content;
                 if (infoStaff.instrument)
@@ -364,15 +378,12 @@ async function abcdSingleLines2Score(abcdLines) {
                 s = s.replaceAll(accidentalsSurroundedBySpace(flat, 6), " [K:Gb] ");
                 s = s.replaceAll(accidentalsSurroundedBySpace(flat, 7), " [K:Cb] ");
             }
-            scoreStructure.addVoice(i);
-            scoreData.addVoice(i, s, currentInstrument);
+
+            score.appendVoice(cursor, s, currentInstrument);
 
         }
     } //endfor
 
-    const score = new Score();
-    score.scoreStructure = scoreStructure;
-    score.scoreData = scoreData;
     return score;
-    
+
 }

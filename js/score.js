@@ -1,4 +1,40 @@
 /**
+ * a cursor in the staffs and voices (i.e. a staff index & a voice index in that staff)
+ */
+class Cursor {
+    istaff;
+    ivoice;
+    ilyrics;
+
+    constructor() {
+        this.reset();
+    }
+
+    nextStaff() {
+        this.istaff++;
+        this.ivoice = 0;
+        this.ilyrics = 0;
+
+    }
+
+
+    nextVoice() {
+        this.ivoice++;
+    }
+
+    nextLyrics() {
+        this.ilyrics++;
+    }
+
+    reset() {
+        this.istaff = -1;
+        this.ivoice = 0;
+        this.ilyrics = 0;
+    }
+}
+
+
+/**
  * information about a staff, i.e. five lines to write music on it
  * 
  * --------
@@ -7,46 +43,65 @@
  * --------
  * --------
  * 
- * This class just stores the information about the structure of the contents (number of voices in that staff)
+ * This class stores information about the staff + its content
  */
-class StaffStructure {
+class Staff {
     constructor() {
-        this.isStartGroup = false;
-        this.isEndGroup = false;
+        this.symbolBeginning = "";
+        this.symbolEnding = "";
         this.voices = [];
+        this.lyrics = [];
     }
 
-    addVoice(i) { this.voices.push(i); }
+    appendVoice(cursor, data) {
+        if (cursor.ivoice >= this.voices.length)
+            this.voices.push(new Voice());
 
-    toStringABC() {
+        this.voices[cursor.ivoice].append(data);
+
+    }
+
+    appendLyrics(cursor, data) {
+        if (cursor.ilyrics >= this.lyrics.length)
+            this.lyrics.push(new Lyrics());
+
+        this.lyrics[cursor.ilyrics].append(data);
+
+    }
+
+    toStringABCStructure() {
         if (this.voices.length == 1)
-            return "V" + this.voices[0];
-        else return "(" + this.voices.map((i) => "V" + i).join(" ") + ")";
+            return "V" + this.voices[0].voiceNumber;
+        else return "(" + this.voices.map((voice) => "V" + voice.voiceNumber).join(" ") + ")";
     }
 }
 
 
 /**
- * information about the structure of the score, i.e. the number of staffs + the stru
+ * content of the score (structure + data)
  */
-class ScoreStructure {
+class Score {
+
+    scorePreambule;
+
     constructor() { this.staffs = []; }
 
-    addVoice(i) {
-        if (this.staffs.length == 0 || (!this.staffs[this.staffs.length - 1] instanceof StaffStructure))
-            newStaff();
 
-        this.staffs[this.staffs.length - 1].addVoice(i);
+    ensureStaffExists(istaff) {
+        if (istaff >= this.staffs.length)
+            this.staffs.push(new Staff());
+    }
+    appendVoice(cursor, data) {
+        this.ensureStaffExists(cursor.istaff);
+        this.staffs[cursor.istaff].appendVoice(cursor, data);
+        cursor.nextVoice();
     }
 
-    /**
-     * @description add a new staff if it does not finish with an empty staff
-     */
-    newStaff() {
-        if (this.staffs.length == 0 ||
-            !(this.staffs[this.staffs.length - 1] instanceof StaffStructure)
-            || this.staffs[this.staffs.length - 1].voices.length > 0)
-            this.staffs.push(new StaffStructure());
+    appendLyrics(cursor, data) {
+        this.ensureStaffExists(cursor.istaff);
+        this.staffs[cursor.istaff].appendLyrics(cursor, data);
+        cursor.nextLyrics();
+
     }
 
     /**
@@ -54,29 +109,46 @@ class ScoreStructure {
      * @param symbol 
      * @effect add a "symbol", e.g.'{' = beginning of a group, '}' = end of a group
      */
-    addStaffSymbol(symbol) {
-        if (this.staffs.length == 0)
-            this.staffs.push(symbol);
-        else if (!(this.staffs[this.staffs.length - 1] instanceof StaffStructure))
-            this.staffs.push(symbol);
-
-        else if (this.staffs[this.staffs.length - 1].voices.length == 0)
-            this.staffs[this.staffs.length - 1] = symbol; //cancel the empty staff
+    setStaffSymbol(cursor, symbol) {
+        if (symbol == '{' || symbol == '[') {
+            this.ensureStaffExists(cursor.istaff + 1);
+            this.staffs[cursor.istaff + 1].symbolBeginning = symbol;
+        }
         else
-            this.staffs.push(symbol);
+            this.staffs[cursor.istaff].symbolEnding = symbol;
     }
 
-    toStringABC() {
+    getStringABCStructure() {
         let scoreExpression = "%%score ";
 
-        for (const staff of this.staffs) {
-            if (staff instanceof StaffStructure)
-                scoreExpression += staff.toStringABC() + " ";
-            else
-                scoreExpression += staff; //symbol like '{' or '}'
-        }
+        for (const staff of this.staffs)
+            scoreExpression += staff.symbolBeginning + " " + staff.toStringABCStructure() + " " + staff.symbolEnding;
+
         return scoreExpression;
     }
+
+
+
+    getStringABCData() {
+        const lines = [];
+
+        for (const staff of this.staffs) {
+            for (const voice of staff.voices)
+                lines.push(voice.toStringABC());
+            for (const lyrics of staff.lyrics)
+                lines.push(lyrics.toStringABC());
+        }
+
+        return lines.join('\n');
+    }
+
+
+    toStringABC() {
+        console.log(this)
+        return this.scorePreambule.toStringABC() + '\n' + this.getStringABCStructure() + '\n' + this.getStringABCData();
+    }
+
+
 }
 
 function strToArrayOfLines(str) {
@@ -93,29 +165,37 @@ function strToArrayOfLines(str) {
     return A;
 }
 
-class VoiceData {
 
-    constructor(i, data, instrument) {
-        this.i = i;
-        this.data = data;
-        this.instrument = instrument;
-        this.lyrics = [];
+
+class StringToBeAppended {
+    constructor() {
+        this.data = "";
     }
 
+    append(newData) { this.data += newData; }
+}
 
-    addLyrics(lyric) { this.lyrics.push(lyric); }
+
+
+class Lyrics extends StringToBeAppended {
+    toStringABC() { return "w: " + this.data; }
+}
+
+
+class Voice extends StringToBeAppended {
+    constructor() {
+        super();
+        if (Voice.NEXTNUMBER == undefined)
+            Voice.NEXTNUMBER = 0;
+
+        this.voiceNumber = Voice.NEXTNUMBER;
+        Voice.NEXTNUMBER++;
+    }
 
     toStringABC() {
         const data = strToArrayOfLines(this.data);
-        const lyrics = this.lyrics.map(strToArrayOfLines);
 
-        let A = [];
-        while (!(data.length == 0 && lyrics.every((l) => l.length == 0))) {
-            if (data.length > 0) A.push(data.shift());
-            for (const l of lyrics) if (l.length > 0) A.push("w:" + l.shift());
-        }
-
-        return `V:V${this.i}\n` + this.instrumentToABC() + `[V:V${this.i}]` + A.join("\n");
+        return `V:V${this.voiceNumber}\n` + this.instrumentToABC() + `[V:V${this.voiceNumber}]` + data;
     }
 
 
@@ -126,22 +206,6 @@ class VoiceData {
             return "";
     }
 }
-
-
-class ScoreData {
-    constructor() {
-        this.voices = [];
-        this.currentVoice = undefined;
-    }
-    addVoice(i, data, instrument) { this.currentVoice = new VoiceData(i, data, instrument); this.voices.push(this.currentVoice); }
-    addLyrics(lyrics) { this.currentVoice.addLyrics(lyrics); }
-
-    toStringABC() { return this.voices.map((v) => v.toStringABC()).join("\n"); }
-}
-
-
-
-
 
 
 
@@ -158,17 +222,7 @@ class ScorePreambule {
         abcLines.push("%%barnumbers 1");
         abcLines.push("T:" + this.title);//
         abcLines.push("C:" + this.composer);
-        return abcLines.join("/n");
+        return abcLines.join("\n");
     }
 }
 
-class Score {
-    scoreData;
-    scoreStructure;
-    scorePreambule;
-
-
-    toStringABC() {
-        return this.scorePreambule.toStringABC() + '\n' + this.scoreStructure.toStringABC() + '\n' + this.scoreData.toStringABC();
-    }
-}
