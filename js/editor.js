@@ -2,11 +2,11 @@
 
 class Editor {
     get text() {
-        return document.getElementById("editor").value;
+        return this.DOMelement.value;
     }
 
     set text(txt) {
-        document.getElementById("editor").value = txt;
+        this.DOMelement.value = txt;
     }
 
 
@@ -34,14 +34,30 @@ class Editor {
 
 
     focus() {
-        document.getElementById("editor").focus();
+        this.DOMelement.focus();
     }
 
 
     set onchange(callback) {
-        document.getElementById("editor").onchange = callback;
-        document.getElementById("editor").oninput = callback;
+        this.DOMelement.onchange = callback;
+        this.DOMelement.oninput = callback;
         this.onchangecallback = callback;
+    }
+
+
+
+
+    getSelectedText() {
+        return window.getSelection().toString();
+    }
+
+    get DOMelement() {
+        return  document.getElementById("editor");
+    }
+    setSelectedText(txt) {
+        this.write(txt);
+        const pos = this.DOMelement.selectionStart;
+        this.DOMelement.setSelectionRange(pos - txt.length, pos);
     }
 }
 

@@ -11,7 +11,7 @@ function str8up(str) {
         if (s == "") return s;
         try {
             const note = new Element(s);
-            note.pitch.value += 7;
+            note.value += 7;
             return note.toStringLy();
         }
         catch (e) {
@@ -28,7 +28,7 @@ function str8down(str) {
         if (s == "") return s;
         try {
             const note = new Element(s);
-            note.pitch.value -= 7;
+            note.value -= 7;
             return note.toStringLy();
         }
         catch {

@@ -254,12 +254,14 @@ function editorInsert(str) {
 function action8upOrDown(f) {
 
     editor.focus();
-    /* if (editor.getSelectedText() == "") {
+
+     if (editor.getSelectedText() == "") {
          inputOctave.value = f("a" + inputOctave.value).substr(1);
      }
-     else
-         editorReplaceSelection(f);
- */
+     else {
+        editor.setSelectedText(f(editor.getSelectedText()));
+     }
+ 
 }
 
 button8up.onclick = () => action8upOrDown(str8up);
