@@ -36,129 +36,28 @@ function isTimeSignature(str) {
     return ["1/2", "1/4", "2/2", "2/4", "3/4", "5/4", "7/4", "3/8", "4/4", "6/4", "6/8", "12/8"].indexOf(str) >= 0;
 }
 
-class Staff {
-    constructor() {
-        this.isStartGroup = false;
-        this.isEndGroup = false;
-        this.voices = [];
-    }
+/**
+ * 
+ * @param {*} str 
+ * @returns the corresponding tonality number, e.g.:
+ * 
+ * '###' 3
+ * 'bb' -2
+ * '####' 4
+ */
+function strToTonalityNumber(str) {
+    function accidentalsSurroundedBySpace(accident, n) { return accident.repeat(n); }
 
-    addVoice(i) { this.voices.push(i); }
-
-    toStringABC() {
-        if (this.voices.length == 1)
-            return "V" + this.voices[0];
-        else return "(" + this.voices.map((i) => "V" + i).join(" ") + ")";
-    }
-}
-
-class ScoreStructure {
-    constructor() {
-        this.staffs = [];
-    }
-
-    addVoice(i) {
-        if (this.staffs.length == 0 || (!this.staffs[this.staffs.length - 1] instanceof Staff))
-            newStaff();
-
-        this.staffs[this.staffs.length - 1].addVoice(i);
-    }
-
-    /**
-     * @description add a new staff if it does not finish with an empty staff
-     */
-    newStaff() {
-        if (this.staffs.length == 0 ||
-            !(this.staffs[this.staffs.length - 1] instanceof Staff)
-            || this.staffs[this.staffs.length - 1].voices.length > 0)
-            this.staffs.push(new Staff());
-    }
-
-
-    addStaffSymbol(symbol) {
-        if (this.staffs.length == 0)
-            this.staffs.push(symbol);
-        else if (!(this.staffs[this.staffs.length - 1] instanceof Staff))
-            this.staffs.push(symbol);
-
-        else if (this.staffs[this.staffs.length - 1].voices.length == 0)
-            this.staffs[this.staffs.length - 1] = symbol; //cancel the empty staff
-        else
-            this.staffs.push(symbol);
-    }
-
-    toStringABC() {
-        let scoreExpression = "%%score ";
-
-        for (const staff of this.staffs) {
-            if (staff instanceof Staff)
-                scoreExpression += staff.toStringABC() + " ";
-            else
-                scoreExpression += staff; //symbol
+    for (const sharp of ["#", "♯", "♭", "b"]) {
+        for (let i = 7; i > 0; i--) {
+            if (!(i == 1 && sharp == "b"))
+                if (str == accidentalsSurroundedBySpace(sharp, i))
+                    return i * (((sharp == "#") || sharp == "♯") ? 1 : -1);
         }
-        return scoreExpression;
     }
+    return undefined;
 }
 
-function strToArrayOfLines(str) {
-    const measures = str.split("|");
-    const A = [];
-    while (measures.length > 0) {
-        let B = [];
-        for (let i = 0; i < 4; i++) {
-            if (measures.length > 0)
-                B.push(measures.shift());
-        }
-        A.push(B.join("|") + (measures.length > 0 ? "|" : ""))
-    }
-    return A;
-}
-
-class Voice {
-
-    constructor(i, data, instrument) {
-        this.i = i;
-        this.data = data;
-        this.instrument = instrument;
-        this.lyrics = [];
-    }
-
-
-    addLyrics(lyric) { this.lyrics.push(lyric); }
-
-    toStringABC() {
-        const data = strToArrayOfLines(this.data);
-        const lyrics = this.lyrics.map(strToArrayOfLines);
-
-        let A = [];
-        while (!(data.length == 0 && lyrics.every((l) => l.length == 0))) {
-            if (data.length > 0) A.push(data.shift());
-            for (const l of lyrics) if (l.length > 0) A.push("w:" + l.shift());
-        }
-
-        return `V:V${this.i}\n` + this.instrumentToABC() + `[V:V${this.i}]` + A.join("\n");
-    }
-
-
-    instrumentToABC() {
-        if (this.instrument)
-            return "%%MIDI program " + instrumentToMIDITable[this.instrument] + "\n";
-        else
-            return "";
-    }
-}
-
-
-class ScoreData {
-    constructor() {
-        this.voices = [];
-        this.currentVoice = undefined;
-    }
-    addVoice(i, data, instrument) { this.currentVoice = new Voice(i, data, instrument); this.voices.push(this.currentVoice); }
-    addLyrics(lyrics) { this.currentVoice.addLyrics(lyrics); }
-
-    toStringABC() { return this.voices.map((v) => v.toStringABC()).join("\n"); }
-}
 
 
 /**
@@ -212,53 +111,81 @@ function isLyricsLine(abcdLine) {
 
 
 
-async function abcd2abc(abcd) {
 
-    /**
+
+
+/**
      * 
      * @param {*} abcdLines 
      * @effect pop the corresponding lines in abcdLines
-     * @returns the abc code for the preambule
+     * @returns the score preambule (title of the score + name of the composer)
      */
-    function getABCLinesPreambule(abcdLines) {
-        const abc = [];
-        abc.push("X:1");
-        abc.push("L:1/4");
-        abc.push("I:linebreak <none>"); //no linebreak explicitely specified in the code 
-        abc.push("%%propagate-accidentals not");
-        abc.push("%%barnumbers 1");
+function extractScorePreambuleFromABCDLines(abcdLines) {
+    const scorePreambule = new ScorePreambule();
+    let i = 0;
 
-        let i = 0;
-
-        function isNotATitleOrComposer(line) {
-            return line == "{" || isStaffLine(line);
-        }
-
-        while (abcdLines.length > 0) {
-            let line = abcdLines[0].trim();
-            if (line != "") {
-                if (isNotATitleOrComposer(line))
-                    return abc;
-                abcdLines.shift();
-                if (i == 0) {
-                    abc.push("T:" + line);//title
-                    i++;
-                }
-                else {
-                    abc.push("C:" + line);//composer
-                    return abc;
-                }
-            }
-            else
-                abcdLines.shift();
-        }
-        return abc;
+    function isNotATitleOrComposer(line) {
+        return line == "{" || isStaffLine(line);
     }
 
+    while (abcdLines.length > 0) {
+        let line = abcdLines[0].trim();
+        if (line != "") {
+            if (isNotATitleOrComposer(line))
+                return scorePreambule;
+            abcdLines.shift();
+            if (i == 0) {
+                scorePreambule.title = line;
+                i++;
+            }
+            else {
+                scorePreambule.composer = line;
+                return scorePreambule;
+            }
+        }
+        else
+            abcdLines.shift();
+    }
+    return scorePreambule;
+}
 
-    const abcdLines = abcd.split("\n");
-    const abc = getABCLinesPreambule(abcdLines);
+/**
+ * 
+ * @param {*} abcdString that represents a score. For instance
+ *          Bloup
+ *                    Mozart
+ * 
+ * {
+ * 𝄞 4/4 a |
+ * 𝄢   a   |
+ * }
+ * 
+ * 𝄞 4/4 a |
+ * 𝄢   a   |
+ * 
+ * @returns the corresponding abc code
+ */
+async function abcd2abc(abcdString) {
+    const abcdLines = abcdString.split("\n");
+    const scorePreambule = extractScorePreambuleFromABCDLines(abcdLines);
 
+    const abcdSingleLines = abcdMultipleLines2abcdSingleLines(abcdLines);
+    const score = await abcdSingleLines2Score(abcdSingleLines);
+    score.scorePreambule = scorePreambule;
+
+    return score.toStringABC();
+}
+
+
+
+
+function abcdMultipleLines2abcdSingleLines(abcdLines) {
+    return abcdLines;
+}
+
+
+
+async function abcdSingleLines2Score(abcdLines) {
     let scoreStructure = new ScoreStructure();
     let scoreData = new ScoreData();
     let currentInstrument = undefined;
@@ -293,19 +220,6 @@ async function abcd2abc(abcd) {
 
 
 
-
-            function strToTonalityNumber(str) {
-                function accidentalsSurroundedBySpace(accident, n) { return accident.repeat(n); }
-
-                for (const sharp of ["#", "♯", "♭", "b"]) {
-                    for (let i = 7; i > 0; i--) {
-                        if (!(i == 1 && sharp == "b"))
-                            if (str == accidentalsSurroundedBySpace(sharp, i))
-                                return i * (((sharp == "#") || sharp == "♯") ? 1 : -1);
-                    }
-                }
-                return undefined;
-            }
 
             function tonalityNumberToTonicMajor(tonalityNumber) {
                 return lyToPitch(["c♭", "g♭", "d♭", "a♭", "e♭", "b♭", "f", "c", "g", "d", "a", "e", "b", "f#", "c#"][7 + tonalityNumber]);
@@ -455,6 +369,10 @@ async function abcd2abc(abcd) {
 
         }
     } //endfor
-    abc.push(scoreStructure.toStringABC());
-    return abc.join("\n") + "\n" + scoreData.toStringABC();
+
+    const score = new Score();
+    score.scoreStructure = scoreStructure;
+    score.scoreData = scoreData;
+    return score;
+    
 }

@@ -1,10 +1,11 @@
         #editor {
             position: absolute;
             top: 76px;
-            right: 0px;
-            bottom: 60%;
+            right: 50%;
+            bottom: 0;
             left: 0;
             border: 1px solid black;
+            resize: none;
         }
 
         #midi {
@@ -18,9 +19,9 @@
         #outputWrapper {
             overflow: auto;
             position: absolute;
-            top: 40%;
-            left: 0px;
-            right: 0px;
+            top: 76px;
+            left: 50%;
+            right: 0;
             bottom: 0px;
             padding-top: 16px;
         }
@@ -122,11 +123,9 @@
 
 
         #audio {
-            position: absolute;
             left: 0px;
             right: 0px;
             filter: invert(1) brightness(1.2);
-            border-top: 4px solid gray;
         }
 
 

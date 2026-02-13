@@ -387,7 +387,11 @@ function getPossibleDurations(element, ratio, signature) {
 function isEq(a, b) { return Math.abs(a - b) < 0.00001; }
 
 
-const solve =  window.location.href.indexOf("github") >= 0 ? solveQuickAndDirty : solveWithLP//solveQuickAndDirty;
+const solve =  
+//window.location.href.indexOf("github") >= 0 ? solveQuickAndDirty : solveWithLP//
+solveQuickAndDirty;
+
+
 /**
  * 
  * @param {*} dhats 

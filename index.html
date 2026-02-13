@@ -8,8 +8,6 @@
         src="https://cdn.jsdelivr.net/combine/npm/tone@14.7.58,npm/@magenta/music@1.23.1/es6/core.js,npm/focus-visible@5,npm/html-midi-player@1.5.0"></script>
     <script src="https://unpkg.com/tone"></script>
     <script src="https://unpkg.com/tone"></script>
-    <script src="https://francoisschwarzentruber.github.io/textmapeditor/textmapeditor.js"></script>
-    <script src="https://unpkg.com/javascript-lp-solver/prod/solver.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="lib/abcjs-audio.css" media="all" type="text/css" />
 
@@ -56,17 +54,19 @@
         <button id="buttonClean" title="indent the code (still in developpement)">🧹</button>
         <input checked type="checkbox" id="recordMidi">
         <label for="recordMidi" title="works on Chrome only">record Midi</label>
-
+<div id="audio"></div>
         <a id="help" href="https://github.com/francoisschwarzentruber/abcd" target="_blank">?</a>
 
         <div id="midi">
 
         </div>
+        
     </div>
-    <div>
-        <div id="audio"></div>
-        <text-map-editor id="editor" tabindex="1"></text-map-editor>
+    <div id="editoroutput">
+        <textarea id="editor">
+        </textarea>
         <div id="outputWrapper">
+            
             <div id="output"></div>
         </div>
 
@@ -77,6 +77,7 @@
     <script src="lib/abcjs-basic-min.js"></script>
 
     <script src="js/rhythmguess.js"></script>
+    <script src="js/score.js"></script>
 
     <script src="js/save.js"></script>
     <script src="js/editor.js"></script>
