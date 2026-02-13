@@ -33,7 +33,7 @@ const instrumentToStandardKey = {
 
 
 function isTimeSignature(str) {
-    return ["1/2", "1/4", "2/2", "2/4", "3/4", "5/4", "7/4", "3/8", "4/4", "6/4", "6/8", "12/8"].indexOf(str) >= 0;
+    return ["1/2", "1/4", "2/2", "2/4", "3/4", "5/4", "7/4", "3/8", "4/4", "6/4", "6/8", "12/8", "15/8"].indexOf(str) >= 0;
 }
 
 /**
@@ -296,7 +296,6 @@ async function abcd2Score(abcdLines) {
                         catch { return token; } //console.log("TOKEN LEAVED AS IT IS: " + token)
 
                         //note is defined
-                        console.log(note.toStringABC());
 
                         alreadyOneNote = true;
                         const currentA = getCurrentAccidental(note.value);

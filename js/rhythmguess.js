@@ -25,8 +25,8 @@ class RhythmGuess {
     /**
      * 
      * @param {*} abcdStr, a string representing the content of a voice of a measure
-     * @param {*} signature, the duration of the measure. 1 = a whole note
-     * @returns a string where each elemnt (note or rest) has a duration
+     * @param {*} signature, a string representing the duration of the measure, e.g. 4/4 = a whole note
+     * @returns a string where each element (note or rest) has a duration
      * @description if the string does not contain any note/rest/chord, then it adds a "x" with its duration at the end
      */
     static async inferRhythm(abcdStr, signature) {
@@ -74,7 +74,7 @@ class RhythmGuess {
                         try { element = new Element(token); } catch (e) { isElement = false; };
                     elements.push(element);
                     if (isElement) nbSpaces++;
-                    nbSpacesArray.push(isElement ? (1 + ((token.indexOf(".") >= 0) ? 0.5 : 0)) : 0);
+                    nbSpacesArray.push(isElement ? (1 + ((token.indexOf(".") >= 0) ? 0.5 : 0)) : 0); // : 0 when it is not an element
                 }
             });
 
@@ -138,8 +138,9 @@ class RhythmGuess {
                             nupletCount--;
                         }
                         const proportion = e.dhat / factor;
-                        console.log("PROPORTION: " + proportion)
-                        return getPossibleDurations(e, proportion, signature).map((x) => x * factor);
+                        console.log("PROPORTION: " + (proportion* signatureValue))
+
+                        return getPossibleDurations(e, proportion * signatureValue, signature).map((x) => x * factor);
                     }
                 });
         }
@@ -190,7 +191,7 @@ class RhythmGuess {
 
                 let splittingDuration = 0.25; //
 
-                if (["6/8", "9/8", "3/8", "12/8"].indexOf(signature) >= 0)
+                if (["6/8", "9/8", "3/8", "12/8", "15/8"].indexOf(signature) >= 0)
                     splittingDuration = 1.5 / 4;
                 return e.toStringABCD() + (isEq(Math.floor(t / splittingDuration), t / splittingDuration) ? " " : "");
             }).join(" ");
@@ -206,7 +207,7 @@ class RhythmGuess {
 
             if (possibleDurations.map((durs) => Math.max(...durs)).reduce((a, b) => a + b, 0) < signatureValue)
                 isDurationMeasureSmallerThanSignatureForSure = true;
-            
+
             let durationsSolution;
             if (possibleDurations.every((durs) => durs.length == 1))
                 durationsSolution = possibleDurations.map((durs) => durs[0]);
@@ -325,7 +326,7 @@ class NupletSymbolElement {
  * @param {*} signature the signature (e.g. "3/4") of a full measure
  * @returns an array of possible durations
  */
-function getPossibleDurations(element, ratio, signature) {
+function getPossibleDurations(element, ratio, signatureValue) {
     let A = [];
     let num = 1;
     let istart = 0;
@@ -374,12 +375,13 @@ function getPossibleDurations(element, ratio, signature) {
 
     // the signature itself should always be a possibility (e.g. one single note)
     if (durationStr == "") {
-        const signatureEval = eval(signature);
-        if (A.indexOf(signatureEval) == -1)
-            A.push(signatureEval);
+        if (A.indexOf(signatureValue) == -1)
+            A.push(signatureValue);
     }
 
-    return A.sort((a, b) => Math.abs(a - ratio) - Math.abs(b - ratio));
+    const possibleValues = A.sort((a, b) => Math.abs(a - ratio) - Math.abs(b - ratio)).slice(0, 2);
+    console.log(possibleValues)
+    return possibleValues;
 }
 
 
@@ -387,9 +389,9 @@ function getPossibleDurations(element, ratio, signature) {
 function isEq(a, b) { return Math.abs(a - b) < 0.00001; }
 
 
-const solve =  
-//window.location.href.indexOf("github") >= 0 ? solveQuickAndDirty : solveWithLP//
-solveQuickAndDirty;
+const solve =
+    //window.location.href.indexOf("github") >= 0 ? solveQuickAndDirty : solveWithLP//
+    solveQuickAndDirty;
 
 
 /**
