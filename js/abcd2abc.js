@@ -1,68 +1,3 @@
-const instrumentToMIDITable = {
-    "piano": 1,
-    "harpsichord": 7,
-    "clavinet": 8,
-    "celesta": 9,
-    "glockenspiel": 10,
-    "vibraphone": 12,
-    "marimba": 13,
-    "xylophone": 14,
-    "guitar": 25,
-    "violin": 41,
-    "viola": 42,
-    "cello": 43,
-    "contrabass": 44,
-    "trumpet": 57,
-    "trombone": 58,
-    "tuba": 59,
-    "oboe": 69,
-    "bassoon": 71,
-    "clarinet": 72,
-    "piccolo": 73,
-    "flute": 74,
-    "recorder": 75,
-    "whistle": 79,
-    "ocarina": 80
-}
-
-//if not present, by default it is 𝄞
-const instrumentToStandardKey = {
-    "cello": "𝄢"
-}
-
-
-
-function isTimeSignature(str) {
-    return ["1/2", "1/4", "2/2", "2/4", "3/4", "5/4", "7/4", "3/8", "4/4", "6/4", "6/8", "12/8", "15/8"].indexOf(str) >= 0;
-}
-
-/**
- * 
- * @param {*} str 
- * @returns the corresponding tonality number, e.g.:
- * 
- * '###' 3
- * 'bb' -2
- * '####' 4
- */
-function strToTonalityNumber(str) {
-    if (str == "♮")
-        return 0;
-
-    function accidentals(accident, n) { return accident.repeat(n); }
-
-    for (const accident of ["#", "♯", "♭", "b"]) {
-        for (let n = 7; n > 0; n--) {
-            if (!(n == 1 && accident == "b")) // b once is not a tonality but a note "b"
-                if (str == accidentals(accident, n))
-                    return n * (((accident == "#") || accident == "♯") ? 1 : -1);
-        }
-    }
-    return undefined;
-}
-
-
-
 /**
  * 
  * @param {*} abcdLine 
@@ -70,12 +5,15 @@ function strToTonalityNumber(str) {
  * {content: content without the instrument name, instrument: (optional) instrument name}
  * @description a staffline is a line starting with a key or starting with an instrument name followed by a key
  * 
- * isStaffLine('flute 𝄞 a a a |') returns {key: "𝄞", content: "a a a |", instrument: "flute"}
- * isStaffLine('𝄞 a a a |') returns {key: "𝄞", content: "a a a |"}
+ * isStaffLine('flute 𝄞 a a a |') returns {content: "a a a |", instrument: "flute"}
+ * isStaffLine('𝄞 a a a |') returns {content: "𝄞 a a a |"}
  * isStaffLine('   a a |)' returns false
  *
  */
 function isStaffLine(abcdLine) {
+    if (abcdLine == "")
+        return false;
+
     if (abcdLine.startsWith("𝄞") || abcdLine.startsWith("𝄢"))
         return { content: abcdLine };
 
@@ -239,7 +177,9 @@ async function abcd2Score(abcdLines) {
 
             let measures = line.split("|");
             let currentTonalityTonicMaj = new Pitch(0, 0);
-            let currentTimeSignature = 1; // bydefaut
+            let currentTimeSignature = score.getLastTimeSignature(cursor);
+            if (currentTimeSignature == undefined)
+                currentTimeSignature = "4/4";
 
             measures = await Promise.all(measures.map(async (measureStr) => {
                 if (measureStr == "") // DO NOT REMOVE. It enables to handle "||"
@@ -250,7 +190,6 @@ async function abcd2Score(abcdLines) {
                 const getCurrentAccidental = (pitchvalue) => {
                     const ppure = new Pitch(pitchvalue, 0);
                     if (accidentals[ppure.toStringABC()]) {
-                        console.log(accidentals)
                         return accidentals[ppure.toStringABC()];
                     }
                     else {
@@ -348,38 +287,6 @@ async function abcd2Score(abcdLines) {
 
 
             let s = measures.join("|");
-            s = s.replaceAll("𝄢", "[K:bass]");
-            s = s.replaceAll("𝄞8", "[K:treble-8]");
-            s = s.replaceAll("𝄞-8", "[K:treble-8]");
-            s = s.replaceAll("𝄞+8", "[K:treble+8]");
-            s = s.replaceAll("𝄞", "[K:treble]");
-            s = s.replaceAll("/ ", "/");
-
-
-            function accidentalsSurroundedBySpace(accident, n) { return " " + accident.repeat(n) + " "; }
-
-            s = s.replaceAll(" ♮ ", " [K:Cmaj]");
-
-            for (const sharp of ["#", "♯"]) {
-                s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 1), " [K:Gmaj]");
-                s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 2), " [K:D]");
-                s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 3), " [K:A]");
-                s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 4), " [K:E]");
-                s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 5), " [K:B]");
-                s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 6), " [K:F#maj]");
-                s = s.replaceAll(accidentalsSurroundedBySpace(sharp, 7), " [K:C#maj]");
-            }
-            for (const flat of ["♭", "b"]) {
-                if (flat == "♭")
-                    s = s.replaceAll(accidentalsSurroundedBySpace(flat, 1), " [K:F] ");
-                s = s.replaceAll(accidentalsSurroundedBySpace(flat, 2), "[K:Bb]");
-                s = s.replaceAll(accidentalsSurroundedBySpace(flat, 3), " [K:Eb] ");
-                s = s.replaceAll(accidentalsSurroundedBySpace(flat, 4), " [K:Ab] ");
-                s = s.replaceAll(accidentalsSurroundedBySpace(flat, 5), " [K:Db] ");
-                s = s.replaceAll(accidentalsSurroundedBySpace(flat, 6), " [K:Gb] ");
-                s = s.replaceAll(accidentalsSurroundedBySpace(flat, 7), " [K:Cb] ");
-            }
-
             score.appendVoice(cursor, s, currentInstrument);
 
         }

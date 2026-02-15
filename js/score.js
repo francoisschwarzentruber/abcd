@@ -50,6 +50,7 @@ class Staff {
         this.symbolBeginning = "";
         this.symbolEnding = "";
         this.voices = [];
+        this.voices.push(new Voice());
         this.lyrics = [];
     }
 
@@ -104,6 +105,12 @@ class Score {
 
     }
 
+
+    getLastTimeSignature(cursor) {
+        this.ensureStaffExists(cursor.istaff);
+        return this.staffs[cursor.istaff].voices[0].getLastTimeSignature();
+    }
+
     /**
      * 
      * @param symbol 
@@ -150,19 +157,7 @@ class Score {
 
 }
 
-function strToArrayOfLines(str) {
-    const measures = str.split("|");
-    const A = [];
-    while (measures.length > 0) {
-        let B = [];
-        for (let i = 0; i < 4; i++) {
-            if (measures.length > 0)
-                B.push(measures.shift());
-        }
-        A.push(B.join("|") + (measures.length > 0 ? "|" : ""))
-    }
-    return A;
-}
+
 
 
 
@@ -171,7 +166,7 @@ class StringToBeAppended {
         this.data = "";
     }
 
-    append(newData) { this.data += newData; }
+    append(newData) { this.data += "\n" + newData; }
 }
 
 
@@ -179,6 +174,34 @@ class StringToBeAppended {
 class Lyrics extends StringToBeAppended {
     toStringABC() { return "w: " + this.data; }
 }
+
+
+/**
+ * @param {*} abcdString
+ * @returns the last thing from array appearing in the abcdString 
+ * @example getLastClef("𝄞 a a 𝄢 a", ["𝄞", "𝄢"]) == "𝄢"
+ * @example getLastClef("𝄞 a a a", ["𝄞", "𝄢"]) == "𝄞"
+ */
+function getLastThing(abcdString, array) {
+    const positions = array.map((clef) => abcdString.lastIndexOf(clef));
+    const pos = Math.max(...positions);
+    if (pos == -1)
+        return undefined;
+
+    const i = positions.indexOf(pos);
+    return array[i];
+}
+
+
+
+/**
+ * @param {*} abcdString
+ * @returns the last clef appearing in the voice 
+ * @example getLastClef("𝄞 a a 𝄢 a") == "𝄢"
+ * @example getLastClef("𝄞 a a a") == "𝄞"
+ */
+function getLastClef(abcdString) { return getLastThing(abcdString, abcdStringClefs); }
+function getLastTimeSignature(abcdString) { return getLastThing(abcdString, abcdStringTimeSignature.map(sign => " " + sign)); }
 
 
 class Voice extends StringToBeAppended {
@@ -191,10 +214,63 @@ class Voice extends StringToBeAppended {
         Voice.NEXTNUMBER++;
     }
 
-    toStringABC() {
-        const data = strToArrayOfLines(this.data);
 
-        return `V:V${this.voiceNumber}\n` + this.instrumentToABC() + `[V:V${this.voiceNumber}]` + data;
+    append(newData) {
+        if (isStartsWithClefs(newData)) {
+            const lastClef = getLastClef(this.data);
+            const clef = isStartsWithClefs(newData);
+            if (lastClef == clef)
+                newData = newData.substr(clef.length);
+
+        }
+        this.data += "\n" + newData;
+    }
+
+    getLastTimeSignature() {
+        const sign = getLastTimeSignature(this.data);
+        if (sign == undefined)
+            return undefined;
+        return sign.trim();
+    }
+
+    toStringABC() {
+
+        function replaceABCDtokensByABCtokens(string) {
+            string = string.replaceAll("𝄢", "[K:bass]");
+            string = string.replaceAll("𝄞8", "[K:treble-8]");
+            string = string.replaceAll("𝄞-8", "[K:treble-8]");
+            string = string.replaceAll("𝄞+8", "[K:treble+8]");
+            string = string.replaceAll("𝄞", "[K:treble]");
+            string = string.replaceAll("/ ", "/");
+
+
+            function accidentalsSurroundedBySpace(accident, n) { return " " + accident.repeat(n) + " "; }
+
+            string = string.replaceAll(" ♮ ", " [K:Cmaj]");
+
+            for (const sharp of ["#", "♯"]) {
+                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 1), " [K:Gmaj]");
+                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 2), " [K:D]");
+                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 3), " [K:A]");
+                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 4), " [K:E]");
+                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 5), " [K:B]");
+                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 6), " [K:F#maj]");
+                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 7), " [K:C#maj]");
+            }
+            for (const flat of ["♭", "b"]) {
+                if (flat == "♭")
+                    string = string.replaceAll(accidentalsSurroundedBySpace(flat, 1), " [K:F] ");
+                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 2), "[K:Bb]");
+                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 3), " [K:Eb] ");
+                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 4), " [K:Ab] ");
+                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 5), " [K:Db] ");
+                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 6), " [K:Gb] ");
+                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 7), " [K:Cb] ");
+            }
+
+            return string
+        }
+        return `V:V${this.voiceNumber}\n` + this.instrumentToABC() + `[V:V${this.voiceNumber}]` + replaceABCDtokensByABCtokens(this.data);
     }
 
 

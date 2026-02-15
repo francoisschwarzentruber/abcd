@@ -17,7 +17,14 @@ function storeMemo(abcdStr, signature, result) {
 
 
 class RhythmGuess {
+    /**
+     * 
+     * @param {*} abcdStr 
+     * @param {*} signature 
+     * @returns the abcd string where the durations of the notes have been infered
+     */
     static async getRhythm(abcdStr, signature = "4/4") {
+        abcdStr = abcdStr.trimLeft();
         if (memo[signature + abcdStr])
             return memo[signature + abcdStr];
 
@@ -35,7 +42,7 @@ class RhythmGuess {
     static async inferRhythm(abcdStr, signature) {
         const signatureValue = eval(signature);
         console.log(`inferRhythm(${abcdStr}, ${signature})`)
-        abcdStr = abcdStr.trimLeft();
+        
 
 
         /**
