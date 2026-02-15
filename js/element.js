@@ -131,7 +131,6 @@ class Element {
         this.letter = letter;
         this.value = value;
         this.accidental = accidental;
-        console.log("accidental: ", this.accidental)
         this.duration = new Duration(string);
     }
 
@@ -143,16 +142,16 @@ class Element {
     toStringLy() { return (this.isRest ? this.letter : this.pitch.toStringLy()) + this.duration.toString(); }
     toStringABC() {
         if (this.isRest)
-            return (this.letter == "r" ? "z" : this.letter);
+            return (this.letter == "r" ? "z" : this.letter) + this.duration.toString();
         else {
             const accidentalString = (this.accidental == 0) ? "=" : (this.accidental > 0 ? "^".repeat(this.accidental) : "_".repeat(-this.accidental));
-            const octaveString = (this.isRest) ? "" : octaveToString(this.pitch.octave-1);
+            const octaveString = (this.isRest) ? "" : octaveToString(this.pitch.octave - 1);
             return accidentalString + iNote7ToLy(this.pitch.value7) + octaveString + this.duration.toString();
         }
     }
     toStringABCD() {
         if (this.isRest)
-            return (this.letter == "r" ? "z" : this.letter);
+            return (this.letter == "r" ? "z" : this.letter) + this.duration.toString();
         else {
             const accidentalString = (this.accidental == 0) ? "♮" : (this.accidental > 0 ? "♯".repeat(this.accidental) : "♭".repeat(-this.accidental));
             const octaveString = (this.isRest) ? "" : octaveToString(this.pitch.octave);

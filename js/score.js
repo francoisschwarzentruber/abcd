@@ -92,7 +92,6 @@ class Score {
             this.staffs.push(new Staff());
     }
     appendVoice(cursor, data) {
-        console.log(cursor)
         this.ensureStaffExists(cursor.istaff);
         this.staffs[cursor.istaff].appendVoice(cursor, data);
         cursor.nextVoice();
@@ -145,7 +144,6 @@ class Score {
 
 
     toStringABC() {
-        console.log(this)
         return this.scorePreambule.toStringABC() + '\n' + this.getStringABCStructure() + '\n' + this.getStringABCData();
     }
 

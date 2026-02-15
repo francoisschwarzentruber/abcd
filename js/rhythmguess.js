@@ -1,3 +1,6 @@
+/**
+ * Memoïzation of the guessed rhythm for small portion of abcd strings
+ */
 const memo = {};
 
 /**
@@ -34,7 +37,14 @@ class RhythmGuess {
         console.log(`inferRhythm(${abcdStr}, ${signature})`)
         abcdStr = abcdStr.trimLeft();
 
-        function tokenToElements(tokens) {
+
+        /**
+         * 
+         * @param {*} tokens 
+         * @returns a list containing either Element (notes, rest), Chord (group of notes), NupletSymbolElement, or a generic StringElement that is ignored for the rhythm inference.
+         * The elements with a duration are decorated with .dhat which represents the "expected" (with the number of spaces) ratio (to 1 = full measure)of its duration
+         */
+        function tokensToElements(tokens) {
 
             /**
              * 
@@ -89,9 +99,6 @@ class RhythmGuess {
             for (let i = 0; i < elements.length; i++)
                 elements[i].dhat = nbSpacesArray[i] / nbSpaces;
 
-            console.log("spaces: ", nbSpacesArray);
-            console.log("nb total spaces: ", nbSpaces)
-
             return elements;
 
         }
@@ -138,9 +145,9 @@ class RhythmGuess {
                             nupletCount--;
                         }
                         const proportion = e.dhat / factor;
-                        console.log("PROPORTION: " + (proportion* signatureValue))
+                        console.log("PROPORTION: " + (proportion * signatureValue))
 
-                        return getPossibleDurations(e, proportion * signatureValue, signature).map((x) => x * factor);
+                        return getPossibleDurations(e, proportion * signatureValue, signatureValue).map((x) => x * factor);
                     }
                 });
         }
@@ -193,7 +200,9 @@ class RhythmGuess {
 
                 if (["6/8", "9/8", "3/8", "12/8", "15/8"].indexOf(signature) >= 0)
                     splittingDuration = 1.5 / 4;
-                return e.toStringABCD() + (isEq(Math.floor(t / splittingDuration), t / splittingDuration) ? " " : "");
+
+                const maybeExtraSpaceForSplitting = isEq(Math.floor(t / splittingDuration), t / splittingDuration) ? " " : "";
+                return e.toStringABCD() + maybeExtraSpaceForSplitting;
             }).join(" ");
 
         }
@@ -202,7 +211,7 @@ class RhythmGuess {
         //main
         try {
             const tokens = tokenize(abcdStr);
-            const elements = addFakeRestIfMeasureIsEmpty(tokenToElements(tokens));
+            const elements = addFakeRestIfMeasureIsEmpty(tokensToElements(tokens));
             const possibleDurations = computePossibleDurations(elements);
 
             if (possibleDurations.map((durs) => Math.max(...durs)).reduce((a, b) => a + b, 0) < signatureValue)
@@ -212,7 +221,7 @@ class RhythmGuess {
             if (possibleDurations.every((durs) => durs.length == 1))
                 durationsSolution = possibleDurations.map((durs) => durs[0]);
             else
-                durationsSolution = await solve(elements.map((e) => e.dhat), possibleDurations, signatureValue);
+                durationsSolution = await solve(possibleDurations, signatureValue, elements.map((e) => e.dhat));
             setDurations(elements, durationsSolution);
             const abcdResult = elementsToABCD(elements, durationsSolution);
             console.log("result of the inference: ", durationsSolution, abcdResult)
@@ -281,14 +290,17 @@ function tokenize(abcdStr) {
  * class to represent a chord
  */
 class Chord {
-    constructor(str) {
-        this.notesStr = str.substr(0, str.indexOf("]") + 1);
-        this.duration = new Duration(str.substr(str.indexOf("]") + 1));
+    /**
+     * 
+     * @param {*} abcdString 
+     * @example new Chord("[c e g]2.")
+     */
+    constructor(abcdString) {
+        this.notesStr = abcdString.substr(0, abcdString.indexOf("]") + 1); // e.g. "[c e g]"
+        this.duration = new Duration(abcdString.substr(abcdString.indexOf("]") + 1)); //e.g. "2."
     }
 
-    toStringABCD() {
-        return this.notesStr + this.duration.toString();
-    }
+    toStringABCD() { return this.notesStr + this.duration.toString(); }
 }
 
 
@@ -296,13 +308,8 @@ class Chord {
  * class for any element (which is not a note or a rest)
  */
 class StringElement {
-    constructor(string) {
-        this.string = string;
-    }
-
-    toStringABCD() {
-        return this.string;
-    }
+    constructor(string) { this.string = string; }
+    toStringABCD() { return this.string; }
 }
 
 
@@ -310,21 +317,21 @@ class StringElement {
  * class for a symbol e.g. "(3", "(5"
  */
 class NupletSymbolElement {
-    constructor(value) {
-        this.value = value;
-    }
-
-    toStringABCD() {
-        return "(" + this.value;
-    }
+    /**
+     * 
+     * @param {*} value
+     * @example new NupletSymbolElement(3)
+     */
+    constructor(value) { this.value = value; }
+    toStringABCD() { return "(" + this.value; }
 }
 
 /**
  * 
  * @param {*} element a musical element (class Element) 
  * @param {*} ratio an estimation of the duration of the element
- * @param {*} signature the signature (e.g. "3/4") of a full measure
- * @returns an array of possible durations
+ * @param {*} signatureValue the signature (e.g. 0.75 for a "3/4" measure) of a full measure
+ * @returns an array of possible durations for the element
  */
 function getPossibleDurations(element, ratio, signatureValue) {
     let A = [];
@@ -379,13 +386,18 @@ function getPossibleDurations(element, ratio, signatureValue) {
             A.push(signatureValue);
     }
 
-    const possibleValues = A.sort((a, b) => Math.abs(a - ratio) - Math.abs(b - ratio)).slice(0, 2);
-    console.log(possibleValues)
-    return possibleValues;
+    A.sort((a, b) => Math.abs(a - ratio) - Math.abs(b - ratio)).slice(0, 2);
+
+    return A;
 }
 
 
-
+/**
+ * 
+ * @param {*} a 
+ * @param {*} b 
+ * @returns true iff a and b are equal (close to equal)
+ */
 function isEq(a, b) { return Math.abs(a - b) < 0.00001; }
 
 
@@ -396,22 +408,21 @@ const solve =
 
 /**
  * 
- * @param {*} dhats 
  * @param {*} possibleDurations 
- * @param {*} signatureValue 
+ * @param {*} totalDuration 
+ * @param {*} dhats 
  * @returns array of durations, or 0 if no solution
  * @description it calls the LP solver in Python (server side)
  */
-async function solveWithLP(dhats, possibleDurations, signatureValue) {
+async function solveWithLP(possibleDurations, totalDuration, dhats) {
     var url = '/your/url';
     var formData = new FormData();
-    const strJSON = JSON.stringify({ dhats, possibleDurations, signature: signatureValue });
-    formData.append('input', JSON.stringify({ dhats, possibleDurations, signature: signatureValue }));
+    const strJSON = JSON.stringify({ dhats, possibleDurations, signature: totalDuration });
+    formData.append('input', JSON.stringify({ dhats, possibleDurations, signature: totalDuration }));
 
     const f = await fetch("./guessRhythm/guessRhythm.php", { method: 'POST', body: formData });
     const txt = await f.text();
     const lines = txt.split("\n");
-    console.log(txt)
     const array = JSON.parse(lines[lines.length - 2]);
 
     if (array == "0")
@@ -419,62 +430,80 @@ async function solveWithLP(dhats, possibleDurations, signatureValue) {
     return array;
 }
 
+
+
 /**
- * up([1, 2, 4, 5,3], [3, 4])
- * */
-function up(durations, bests) {
-    return durations.sort((a, b) => {
-        if ((bests.indexOf(a) >= 0) && (bests.indexOf(b) >= 0))
-            return bests.indexOf(a) >= bests.indexOf(b);
-        else if (bests.indexOf(a) >= 0)
-            return -1;
-        else if (bests.indexOf(b) >= 0)
-            return 1;
-        else
-            return 0;
-    })
-}
+ * 
+ * @param {*} possibleDurations: a list of list of possibleDurations. possibleDurations[i] is the list of possible durations of element n° i 
+ * @param {*} totalDuration 
+ * @param {*} dhats: a list of duration ratios (the sum of these numbers equals 1), these numbers are just used to prune the search tree
+
+ * @returns returns an array "solutions" of durations such that:
+ *  - the solutions[i] is in possibleDurations[i]
+ *  - solutions[0] + solutions[1] + ... sums to totalDuration
+ *  - solutions comply with dhats (same ratios => same duration etc.)
+ */
+async function solveQuickAndDirty(possibleDurations, totalDuration, dhats) {
+
+    /**
+     * up([1, 2, 4, 5,3], [3, 4])
+     * */
+    function up(durations, bests) {
+        return durations.sort((a, b) => {
+            if ((bests.indexOf(a) >= 0) && (bests.indexOf(b) >= 0))
+                return bests.indexOf(a) >= bests.indexOf(b);
+            else if (bests.indexOf(a) >= 0)
+                return -1;
+            else if (bests.indexOf(b) >= 0)
+                return 1;
+            else
+                return 0;
+        })
+    }
 
 
-async function solveQuickAndDirty(dhats, D, signature) {
-    console.log("dhats", dhats)
     const solution = [];
-    function solveRec(D, i, subTotal) {
-        if (i >= D.length && Math.abs(subTotal) < 0.000001) {
+
+    /**
+     * 
+     * @param {*} possibleDurations 
+     * @param {*} i 
+     * @param {*} subTotal 
+     * @returns 
+     */
+    function solveRec(possibleDurations, i, subTotal) {
+        if (i >= possibleDurations.length && Math.abs(subTotal) < 0.000001) {
             console.log("we win!")
-            console.log(D)
+            console.log(possibleDurations)
             return true; // we win!
         }
 
-        if (i >= D.length)
+        if (i >= possibleDurations.length)
             return false;
 
-        const newD = D;
-        newD[i] = [...newD[i]];
+        const newPossibleDurations = possibleDurations;
+        newPossibleDurations[i] = [...newPossibleDurations[i]];
 
-
-
-
+        // prune the search for consistency of durations
         for (j = 0; j < i; j++)
-            if (dhats[j] == dhats[i]) {
-                newD[i] = up(newD[i], [solution[j]]);
+            if (dhats[j] == dhats[i]) { // same number of spaces => same duration
+                newPossibleDurations[i] = up(newPossibleDurations[i], [solution[j]]);
             }
             else if (dhats[i] > dhats[j])
-                newD[i] = up(newD[i], D[i].filter((d) => d >= solution[j]));
+                newPossibleDurations[i] = up(newPossibleDurations[i], possibleDurations[i].filter((d) => d >= solution[j]));
             else if (dhats[i] < dhats[j])
-                newD[i] = up(newD[i], D[i].filter((d) => d <= solution[j]));
+                newPossibleDurations[i] = up(newPossibleDurations[i], possibleDurations[i].filter((d) => d <= solution[j]));
 
 
-        for (const v of newD[i]) {
+        for (const v of newPossibleDurations[i]) {
             solution[i] = v;
-            const a = solveRec(newD, i + 1, subTotal - v);
-            if (a)
-                return true;
+            const a = solveRec(newPossibleDurations, i + 1, subTotal - v);
+            if (a) return true;
         }
         return false;
     }
 
-    const a = solveRec(D, 0, signature);
+    const a = solveRec(possibleDurations, 0, totalDuration);
     if (a)
         return solution;
     else

@@ -227,7 +227,6 @@ async function abcd2Score(abcdLines) {
         else {
             if (isStaffLine(line)) {
                 cursor.nextStaff();
-                console.log("MIAOU")
                 const infoStaff = isStaffLine(line);
                 line = infoStaff.content;
                 if (infoStaff.instrument)
