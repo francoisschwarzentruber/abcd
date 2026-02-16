@@ -4,7 +4,6 @@
 class Cursor {
     istaff;
     ivoice;
-    ilyrics;
 
     constructor() {
         this.reset();
@@ -13,7 +12,6 @@ class Cursor {
     nextStaff() {
         this.istaff++;
         this.ivoice = 0;
-        this.ilyrics = 0;
 
     }
 
@@ -22,14 +20,11 @@ class Cursor {
         this.ivoice++;
     }
 
-    nextLyrics() {
-        this.ilyrics++;
-    }
+    nextLyrics() {    }
 
     reset() {
         this.istaff = -1;
         this.ivoice = 0;
-        this.ilyrics = 0;
     }
 }
 
@@ -51,7 +46,6 @@ class Staff {
         this.symbolEnding = "";
         this.voices = [];
         this.voices.push(new Voice());
-        this.lyrics = [];
     }
 
     appendVoice(cursor, data) {
@@ -63,10 +57,7 @@ class Staff {
     }
 
     appendLyrics(cursor, data) {
-        if (cursor.ilyrics >= this.lyrics.length)
-            this.lyrics.push(new Lyrics());
-
-        this.lyrics[cursor.ilyrics].append(data);
+        this.voices[0].append("w:" + data);
 
     }
 
@@ -142,8 +133,6 @@ class Score {
         for (const staff of this.staffs) {
             for (const voice of staff.voices)
                 lines.push(voice.toStringABC());
-            for (const lyrics of staff.lyrics)
-                lines.push(lyrics.toStringABC());
         }
 
         return lines.join('\n');
@@ -166,14 +155,14 @@ class StringToBeAppended {
         this.data = "";
     }
 
-    append(newData) { this.data += "\n" + newData; }
+    append(newData) {
+        if (this.data == "")
+            this.data = newData;
+        else this.data += "\n" + newData;
+    }
 }
 
 
-
-class Lyrics extends StringToBeAppended {
-    toStringABC() { return "w: " + this.data; }
-}
 
 
 /**
