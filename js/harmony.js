@@ -1,42 +1,59 @@
-
-function mapToAllToken(str, f) {
-    return str.replaceAll("<", " < ")
-        .replaceAll(">", " > ")
-        .split(' ').map(f).join(' ').replaceAll(" < ", "<").replaceAll(" > ", ">");
+/**
+ * 
+ * @param {*} abcdString 
+ * @param {*} f 
+ * @returns apply function f to all tokens in abcdString and returns the obtained string
+ */
+function mapToAllToken(abcdString, f) {
+    return abcdString.replaceAll("[", " [ ")
+        .replaceAll("]", " ] ")
+        .split(' ').map(f).join(' ').replaceAll(" [ ", "[").replaceAll(" ] ", "]");
 }
 
-
-function str8up(str) {
-    function move8up(s) {
-        if (s == "") return s;
+/**
+ * 
+ * @param {*} abcdString 
+ * @returns the string where each note is one octave higher
+ * 
+ * @example str8up("a'' c,") == "a''' c"
+ */
+function str8up(abcdString) {
+    function move8up(abcdTokenString) {
+        if (abcdTokenString == "") return abcdTokenString;
         try {
-            const note = new Element(s);
+            const note = new Element(abcdTokenString);
             note.value += 7;
             return note.toStringLy();
         }
         catch (e) {
-            return s;
+            return abcdTokenString;
         }
 
     }
-    return mapToAllToken(str, move8up);
+    return mapToAllToken(abcdString, move8up);
 }
 
-
-function str8down(str) {
-    function move8up(s) {
-        if (s == "") return s;
+/**
+ * 
+ * @param {*} abcdString 
+ * @returns the string where each note is one octave lower
+ * 
+ * @example str8up("a'' c,") == "a' c,,"
+ */
+function str8down(abcdString) {
+    function move8up(abcdTokenString) {
+        if (abcdTokenString == "") return abcdTokenString;
         try {
-            const note = new Element(s);
+            const note = new Element(abcdTokenString);
             note.value -= 7;
             return note.toStringLy();
         }
         catch {
-            return s;
+            return abcdTokenString;
         }
 
     }
-    return mapToAllToken(str, move8up);
+    return mapToAllToken(abcdString, move8up);
 }
 
 

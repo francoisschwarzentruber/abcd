@@ -196,14 +196,17 @@ function getLastTimeSignature(abcdString) { return getLastThing(abcdString, abcd
 class Voice extends StringToBeAppended {
     constructor() {
         super();
-        if (Voice.NEXTNUMBER == undefined)
+        if (Voice.NEXTNUMBER == undefined) // internal numbering used in ABC
             Voice.NEXTNUMBER = 0;
 
         this.voiceNumber = Voice.NEXTNUMBER;
         Voice.NEXTNUMBER++;
     }
 
-
+    /**
+     * 
+     * @param {*} newData 
+     */
     append(newData) {
         if (isStartsWithClefs(newData)) {
             const lastClef = getLastClef(this.data);
@@ -215,6 +218,12 @@ class Voice extends StringToBeAppended {
         this.data += "\n" + newData;
     }
 
+
+    /**
+     * 
+     * @returns the last signature in the voice
+     * @example returns "4/4"
+     */
     getLastTimeSignature() {
         const sign = getLastTimeSignature(this.data);
         if (sign == undefined)

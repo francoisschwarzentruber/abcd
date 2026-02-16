@@ -106,15 +106,15 @@ window.onclick = (event) => {
 }
 
 
-let previousABCD = "";
+let previousABCDString = "";
 async function update() {
 
-    const abcd = editor.text;
-    if (abcd == previousABCD)
+    const abcdString = editor.text;
+    if (abcdString == previousABCDString)
         return;
 
-    previousABCD = abcd;
-    const abc = await abcd2abc(abcd);
+    previousABCDString = abcdString;
+    const abc = await abcd2abc(abcdString);
 
     function clickListener(abcelem, tuneNumber, classes, analysis, drag, mouseEvent) {
         console.log(abcelem);
@@ -131,92 +131,7 @@ async function update() {
 
 editor.onchange = update;
 update();
-/**
- * @description executed after the user types sth
- */
 
-/*editor.commands.on('afterExec', eventData => {
-    if (eventData.command.name === 'insertstring') {
-        if (isSelection)
-            return;
-        const currline = editor.getSelectionRange().start.row;
-        const wholelinetxt = editor.session.getLine(currline);
-        if (!wholelinetxt.startsWith("😀"))
-            if (['a', 'b', 'c', 'd', 'e', 'f', 'g'].indexOf(eventData.args) >= 0) {
-                let h = 0;
-                if (inputOctave.value.length > 0)
-                    h += inputOctave.value.length * (inputOctave.value[0] == "'" ? 1 : -1);
-                const pitch = lyToPitch(eventData.args);
-                pitch.value += 7 * h;
-                const realPitch = accidentalize(pitch, currentKey());
-
-                const noteName = realPitch.toStringTone();
-
-                console.log(noteName)
-                synth.triggerAttackRelease(noteName, "32n");
-                editor.session.insert(editor.getCursorPosition(), inputOctave.value + " ");
-            }
-    }
-});*/
-
-
-/**
- * clean the code, align the symbols |
- */
-function clean() {
-    const code = editor.text;
-
-    function alignLines(lines, lbegin, lend) {
-        const splits = [];
-        const measureLength = [];
-
-        for (let l = lbegin; l <= lend; l++) {
-            splits[l] = lines[l].split("|"); //.map((s, i) => (i == 0) ? s.trimRight() : s.trim());
-            console.log(splits)
-            for (let m = 0; m < splits[l].length; m++) {
-                if (m > measureLength.length - 1)
-                    measureLength.push(1);
-                measureLength[m] = Math.max(measureLength[m], [...splits[l][m]].length);
-            }
-        }
-
-        for (let l = lbegin; l <= lend; l++) {
-            for (let m = 0; m < splits[l].length; m++) {
-                const nbSpacesToAdd = measureLength[m] - [...splits[l][m]].length - 1;
-                splits[l][m] = splits[l][m] + " ".repeat(nbSpacesToAdd);
-            }
-            lines[l] = splits[l].join(" | ").replaceAll(" |   | ", " || ").replaceAll(" | ]", " |]")
-                .replaceAll(": || :", ":||:").replaceAll(": |", ":|").replaceAll("| :", "|:")
-        }
-    }
-
-    function reorganiseLines(lines) {
-        let ibegin = 0;
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
-            if (line == "|" || line == "||") {
-                iend = i - 1;
-                alignLines(lines, ibegin, iend);
-                ibegin = i + 1;
-            }
-        }
-        alignLines(lines, ibegin, lines.length - 1);
-        return lines;
-    }
-    const lines = code.split("\n");
-
-    editor.text = [...reorganiseLines(lines)].join("\n");
-
-    /*
-    if (isStaffLine(lines[0]))
-        editor.text = [...reorganiseLines(lines.slice(2))].join("\n");
-    else if (isStaffLine(lines[1]))
-        editor.text = [lines[0], ...reorganiseLines(lines.slice(2))].join("\n");
-    else
-        editor.text = [lines[0], lines[1], ...reorganiseLines(lines.slice(2))].join("\n");*/
-}
-
-buttonClean.onclick = clean;
 
 
 
@@ -251,21 +166,14 @@ function editorInsert(str) {
     editor.write(str);
 }
 
-function action8upOrDown(f) {
-
+function performActionOnSelection(f) {
     editor.focus();
-
-     if (editor.getSelectedText() == "") {
-         inputOctave.value = f("a" + inputOctave.value).substr(1);
-     }
-     else {
-        editor.setSelectedText(f(editor.getSelectedText()));
-     }
- 
+    editor.setSelectedText(f(editor.getSelectedText()));
 }
 
-button8up.onclick = () => action8upOrDown(str8up);
-button8down.onclick = () => action8upOrDown(str8down);
+
+button8up.onclick = () => performActionOnSelection(str8up);
+button8down.onclick = () => performActionOnSelection(str8down);
 
 buttonInsert("𝄞 ", "add a treble key");
 buttonInsert("𝄢 ", "add a treble key");
@@ -277,7 +185,11 @@ buttonInsert("♩=120 ", "add tempo indication");
 
 
 addButton("chord", "write/transform into chord", () => {
-    editor.write("[]");
+    if (editor.getSelectedText() == "")
+        editor.write("[c e g]");
+    else {
+        editor.setSelectedText("[" + editor.getSelectedText() + "]");
+    }
     editor.focus();
 })
 
