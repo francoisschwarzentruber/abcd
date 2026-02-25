@@ -13,6 +13,7 @@ dialogOpenButtonOpen.onclick = () => {
         if (Save.exists(newid)) {
             Save.setId(newid);
             editor.text = Save.load();//editor.setValue(Save.load(), -1);
+            update();
         }
         else {
             alert("No document with id name '" + newid + "' found!")

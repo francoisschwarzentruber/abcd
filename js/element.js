@@ -4,6 +4,8 @@
  * 
  * Fields:
  * value: octave * 7 + note (between 0 and 6) (c, d, e, f, g, a, b)
+ * accidental: undefined (if unspecified) or a number 0 (normal), 1 (sharp), -1 (flat), 2 (double-sharp), -2 (double-flat)
+ * duration: a Duration object
  * isRest: true or false
  */
 class Element {
@@ -134,9 +136,7 @@ class Element {
         this.duration = new Duration(string);
     }
 
-    get pitch() {
-        return new Pitch(this.value, this.accidental)
-    }
+    get pitch() { return new Pitch(this.value, this.accidental) }
     setDuration(d) { this.duration = new Duration(d); }
 
     toStringLy() { return (this.isRest ? this.letter : this.pitch.toStringLy()) + this.duration.toString(); }

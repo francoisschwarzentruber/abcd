@@ -20,7 +20,7 @@ class Cursor {
         this.ivoice++;
     }
 
-    nextLyrics() {    }
+    nextLyrics() { }
 
     reset() {
         this.istaff = -1;
@@ -51,7 +51,6 @@ class Staff {
     appendVoice(cursor, data) {
         if (cursor.ivoice >= this.voices.length)
             this.voices.push(new Voice());
-
         this.voices[cursor.ivoice].append(data);
 
     }
