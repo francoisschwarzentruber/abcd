@@ -241,8 +241,6 @@ class Voice extends StringToBeAppended {
             string = string.replaceAll("𝄞", "[K:treble]");
             string = string.replaceAll(/(?<=\S) /g, ""); //remove a space after a letter different from a space
 
-            console.log(inputString)
-            console.log(string)
             return string
 
         }
