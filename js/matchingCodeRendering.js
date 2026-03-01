@@ -10,12 +10,15 @@ class MatchingCodeRendering {
             }
     }
 
-
-
 }
 
 
-
+/**
+ * 
+ * @param {*} abcdStr 
+ * @param {*} staffNumber 
+ * @returns the first line number that corresponds to the staff staffNumber
+ */
 function staffNumberToLineNumber(abcdStr, staffNumber) {
     const lines = abcdStr.split("\n");
 
