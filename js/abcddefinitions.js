@@ -44,6 +44,8 @@ function isTimeSignature(str) { return abcdStringTimeSignature.indexOf(str) >= 0
  * '###' 3
  * 'bb' -2
  * '####' 4
+ * 
+ * undefined if not a tonality
  */
 function strToTonalityNumber(str) {
     if (str == "♮")

@@ -160,6 +160,8 @@ async function abcd2Score(abcdLines) {
             score.appendLyrics(cursor, lyrics);
         }
         else {
+
+
             if (isStaffLine(line)) {
                 cursor.nextStaff();
                 const infoStaff = isStaffLine(line);
@@ -169,7 +171,6 @@ async function abcd2Score(abcdLines) {
             }
 
             let measuresABCDStr = line.split("|");
-            let currentTonalityTonicMaj = new Pitch(0, 0);
             let currentTimeSignature = score.getLastTimeSignature(cursor);
             if (currentTimeSignature == undefined)
                 currentTimeSignature = "4/4";
@@ -178,77 +179,9 @@ async function abcd2Score(abcdLines) {
                 if (measureStr == "") // DO NOT REMOVE. It enables to handle "||"
                     return "";
 
-                let accidentals = {};
-
-                const getCurrentAccidental = (pitchvalue) => {
-                    const ppure = new Pitch(pitchvalue, 0);
-                    if (accidentals[ppure.toStringABC()]) {
-                        return accidentals[ppure.toStringABC()];
-                    }
-                    else {
-                        const p = accidentalize(ppure, currentTonalityTonicMaj);
-                        // console.log("looking for the tonality")
-                        return p.accidental;
-                    }
-                }
-
                 let timeSignatureRead = undefined;
-                let alreadyOneNote = false;
 
-                const abcdToken2abcToken = (token) => {
-                    if (token == "") return token;
-
-                    if (isTimeSignature(token)) {
-                        timeSignatureRead = token;
-                        if (!alreadyOneNote) {
-                            currentTimeSignature = timeSignatureRead;
-                        }
-                        return "[M: " + token + "]";
-
-                    }
-
-                    switch (token) {
-                        case "𝄢", "f:": return "[K:bass]";
-                        case "𝄞", "g:": return "[K:treble]";
-                        case "𝄞8", "g:": return "[K:treble-8]";
-                        case "𝄞-8", "g:": return "[K:treble-8]";
-                        case "𝄞+8", "g:": return "[K:treble+8]";
-                    }
-
-                    if (token.startsWith("♩="))
-                        return "[Q:1/4=" + token.substr(2) + "]";
-                    if (strToTonalityNumber(token)) {
-                        currentTonalityTonicMaj = tonalityNumberToTonicMajor(strToTonalityNumber(token));
-                        return token;
-                    }
-                    else {
-                        let note;
-                        try { note = new Element(token); }
-                        catch { return token; } //console.log("TOKEN LEAVED AS IT IS: " + token)
-
-                        //note is defined
-
-                        alreadyOneNote = true;
-                        const currentA = getCurrentAccidental(note.value);
-                        if (note.accidental == undefined) {
-                            return note.toStringABC();
-                        }
-                        else {
-                            const noteAccidental = note.accidental;
-                            note.pitch.accidental = undefined;
-                            const ppure = new Pitch(note.pitch.value, 0);
-                            accidentals[ppure.toStringABC()] = noteAccidental;
-
-                            if (currentA == noteAccidental)
-                                return note.toStringABC();
-                            else {
-                                note.pitch.accidental = noteAccidental;
-                                return ((noteAccidental == 0) ? "=" : "") + note.toStringABC();
-                            }
-                        }
-
-                    }
-                };
+                const abcdToken2abcToken = (token) => tokenToElement(token).toStringABC();
 
 
                 /**
@@ -257,19 +190,15 @@ async function abcd2Score(abcdLines) {
                  * @description read in advance the signature for eventually update currentTimeSignature before the full 
                  */
                 function readSignature(measureStr) {
-                    measureStr.split(" ").map(abcdToken2abcToken);
+                    for (const element of measureStr.split(" ").map(tokenToElement))
+                        if (element instanceof ElementSignature)
+                            currentTimeSignature = element.tokenStr;
                 }
+                console.log(measureStr)
 
                 readSignature(measureStr);
-                accidentals = {}; //reintialize accidentals because of side effect of readSignature
 
-                const measureOutputStr = (await RhythmGuess.getRhythm(measureStr, currentTimeSignature)).split(" ")
-                    .map((A) => A.split("[")
-                        .map((B) => B.split("]")
-                            .map((C) => C.split("{")
-                                .map((D) => D.split("}")
-                                    .map(abcdToken2abcToken)
-                                    .join("}")).join("{")).join("]")).join("[")).join(" ")
+                const measureOutputStr = (await RhythmGuess.getRhythm(measureStr, currentTimeSignature));
 
                 if (timeSignatureRead != undefined)
                     currentTimeSignature = timeSignatureRead;

@@ -1,3 +1,6 @@
+/**
+ * duration of a rest / chord
+ */
 class Duration {
     constructor(value) {
         if (typeof (value) == "string")

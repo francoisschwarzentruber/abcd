@@ -188,15 +188,6 @@ buttonInsert("💬 ", "start a line of lyrics");
 buttonInsert("♩=120 ", "add tempo indication");
 
 
-addButton("chord", "write/transform into chord", () => {
-    if (editor.getSelectedText() == "")
-        editor.write("[c e g]");
-    else {
-        editor.setSelectedText("[" + editor.getSelectedText() + "]");
-    }
-    editor.focus();
-})
-
 
 
 

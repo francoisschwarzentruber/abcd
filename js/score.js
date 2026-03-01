@@ -241,28 +241,6 @@ class Voice extends StringToBeAppended {
             string = string.replaceAll("𝄞", "[K:treble]");
             string = string.replaceAll(/(?<=\S) /g, ""); //remove a space after a letter different from a space
 
-            string = string.replaceAll(" ♮ ", " [K:Cmaj]");
-            function accidentalsSurroundedBySpace(accident, n) { return " " + accident.repeat(n) + " "; }
-            for (const sharp of ["#", "♯"]) {
-                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 1), " [K:Gmaj]");
-                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 2), " [K:D]");
-                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 3), " [K:A]");
-                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 4), " [K:E]");
-                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 5), " [K:B]");
-                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 6), " [K:F#maj]");
-                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 7), " [K:C#maj]");
-            }
-            for (const flat of ["♭", "b"]) {
-                if (flat == "♭")
-                    string = string.replaceAll(accidentalsSurroundedBySpace(flat, 1), " [K:F] ");
-                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 2), "[K:Bb]");
-                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 3), " [K:Eb] ");
-                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 4), " [K:Ab] ");
-                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 5), " [K:Db] ");
-                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 6), " [K:Gb] ");
-                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 7), " [K:Cb] ");
-            }
-
             console.log(inputString)
             console.log(string)
             return string
