@@ -42,7 +42,7 @@ class RhythmGuess {
     static async inferRhythm(abcdStr, signature) {
         const signatureValue = eval(signature);
         console.log(`inferRhythm(${abcdStr}, ${signature})`)
-        
+
 
 
         /**
@@ -199,15 +199,14 @@ class RhythmGuess {
          * @returns the ABCD string with the durations
          */
         function elementsToABCD(elements, durationsSolution) {
+
+            let splittingDuration = 0.25; //
+            if (["6/8", "9/8", "3/8", "12/8", "15/8"].indexOf(signature) >= 0)
+                splittingDuration = 1.5 / 4;
+
             let t = 0;
             return elements.map((e, i) => {
                 t += durationsSolution[i];
-
-                let splittingDuration = 0.25; //
-
-                if (["6/8", "9/8", "3/8", "12/8", "15/8"].indexOf(signature) >= 0)
-                    splittingDuration = 1.5 / 4;
-
                 const maybeExtraSpaceForSplitting = isEq(Math.floor(t / splittingDuration), t / splittingDuration) ? " " : "";
                 return e.toStringABCD() + maybeExtraSpaceForSplitting;
             }).join(" ");

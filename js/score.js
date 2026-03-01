@@ -232,19 +232,17 @@ class Voice extends StringToBeAppended {
 
     toStringABC() {
 
-        function replaceABCDtokensByABCtokens(string) {
+        function replaceABCDtokensByABCtokens(inputString) {
+            let string = inputString;
             string = string.replaceAll("𝄢", "[K:bass]");
             string = string.replaceAll("𝄞8", "[K:treble-8]");
             string = string.replaceAll("𝄞-8", "[K:treble-8]");
             string = string.replaceAll("𝄞+8", "[K:treble+8]");
             string = string.replaceAll("𝄞", "[K:treble]");
-            string = string.replaceAll("/ ", "/");
-
-
-            function accidentalsSurroundedBySpace(accident, n) { return " " + accident.repeat(n) + " "; }
+            string = string.replaceAll(/(?<=\S) /g, ""); //remove a space after a letter different from a space
 
             string = string.replaceAll(" ♮ ", " [K:Cmaj]");
-
+            function accidentalsSurroundedBySpace(accident, n) { return " " + accident.repeat(n) + " "; }
             for (const sharp of ["#", "♯"]) {
                 string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 1), " [K:Gmaj]");
                 string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 2), " [K:D]");
@@ -265,7 +263,10 @@ class Voice extends StringToBeAppended {
                 string = string.replaceAll(accidentalsSurroundedBySpace(flat, 7), " [K:Cb] ");
             }
 
+            console.log(inputString)
+            console.log(string)
             return string
+
         }
         return `V:V${this.voiceNumber}\n` + this.instrumentToABC() + `[V:V${this.voiceNumber}]` + replaceABCDtokensByABCtokens(this.data);
     }

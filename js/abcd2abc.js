@@ -69,7 +69,7 @@ function isLyricsLine(abcdLine) {
      */
 function extractScorePreambuleFromABCDLines(abcdLines) {
     const scorePreambule = new ScorePreambule();
-    let i = 0;
+    let iLine = 0;
 
     function isNotATitleOrComposer(line) {
         return line == "{" || isStaffLine(line);
@@ -81,14 +81,13 @@ function extractScorePreambuleFromABCDLines(abcdLines) {
             if (isNotATitleOrComposer(line))
                 return scorePreambule;
             abcdLines.shift();
-            if (i == 0) {
+            if (iLine == 0)
                 scorePreambule.title = line;
-                i++;
-            }
             else {
                 scorePreambule.composer = line;
                 return scorePreambule;
             }
+            iLine++;
         }
         else
             abcdLines.shift();
@@ -169,17 +168,13 @@ async function abcd2Score(abcdLines) {
                     currentInstrument = infoStaff.instrument;
             }
 
-
-
-
-
-            let measures = line.split("|");
+            let measuresABCDStr = line.split("|");
             let currentTonalityTonicMaj = new Pitch(0, 0);
             let currentTimeSignature = score.getLastTimeSignature(cursor);
             if (currentTimeSignature == undefined)
                 currentTimeSignature = "4/4";
 
-            measures = await Promise.all(measures.map(async (measureStr) => {
+            measuresABCDStr = await Promise.all(measuresABCDStr.map(async (measureStr) => {
                 if (measureStr == "") // DO NOT REMOVE. It enables to handle "||"
                     return "";
 
@@ -268,7 +263,7 @@ async function abcd2Score(abcdLines) {
                 readSignature(measureStr);
                 accidentals = {}; //reintialize accidentals because of side effect of readSignature
 
-                const result = (await RhythmGuess.getRhythm(measureStr, currentTimeSignature)).split(" ")
+                const measureOutputStr = (await RhythmGuess.getRhythm(measureStr, currentTimeSignature)).split(" ")
                     .map((A) => A.split("[")
                         .map((B) => B.split("]")
                             .map((C) => C.split("{")
@@ -279,12 +274,11 @@ async function abcd2Score(abcdLines) {
                 if (timeSignatureRead != undefined)
                     currentTimeSignature = timeSignatureRead;
 
-                return result;
+                console.log(measureOutputStr)
+                return measureOutputStr;
             }));
 
-
-
-            let s = measures.join("|");
+            let s = measuresABCDStr.join("|");
             score.appendVoice(cursor, s, currentInstrument);
 
         }
