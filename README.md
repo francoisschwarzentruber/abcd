@@ -56,7 +56,7 @@ The syntax is highly inspired from ABC and Lilypond.
 | Appoggiatura      | put notes between { and }  |  
 |  add a new voice  |    just write in a new line |
 |  add a new staff  |  add an empty line or a line starting with 𝄞 or 𝄢          |
-| Lyrics       |  start a line with 💬 or 😀  | 
+| Lyrics       |  start a line with 💬 | 
 | specify an instrument | start the line with the name of an instrument (e.g. `piano`, `flute`, `violin`, `cello`) |
 | Change tempo   | write `♩=120`   |
 

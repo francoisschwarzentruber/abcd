@@ -181,7 +181,7 @@ buttonInsert("𝄢 ", "add a treble key");
 buttonInsert("♭", "add flat");
 buttonInsert("♮", "add normal");
 buttonInsert("♯", "add sharp");
-buttonInsert("😀 ", "start a line of lyrics");
+buttonInsert("💬 ", "start a line of lyrics");
 buttonInsert("♩=120 ", "add tempo indication");
 
 
