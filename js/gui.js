@@ -108,6 +108,7 @@ window.onclick = (event) => {
 
 
 let previousABCDString = "";
+
 async function update() {
 
     const abcdString = editor.text;
@@ -128,6 +129,8 @@ async function update() {
     const synthControl = new abcjs.synth.SynthController();
     synthControl.load("#audio", null, { displayRestart: true, displayPlay: true, displayProgress: true });
     synthControl.setTune(visualObj, false);
+
+    MatchingCodeRendering.install();
 }
 
 editor.onchange = update;

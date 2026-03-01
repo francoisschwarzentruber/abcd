@@ -52,12 +52,46 @@ class Editor {
     }
 
     get DOMelement() {
-        return  document.getElementById("editor");
+        return document.getElementById("editor");
     }
     setSelectedText(txt) {
         this.write(txt);
         const pos = this.DOMelement.selectionStart;
         this.DOMelement.setSelectionRange(pos - txt.length, pos);
+    }
+
+
+
+
+
+
+
+    gotoLine(lineNumber) {
+        const textarea = document.getElementById("editor");
+
+        const text = textarea.value;
+        // Split by lines to find the character index of the target line
+        const lines = text.split("\n");
+
+        // Ensure the line number is within bounds (1-based indexing)
+        const targetLine = Math.max(1, Math.min(lineNumber, lines.length));
+
+        // Calculate the index by joining previous lines and adding their length
+        const charIndex = lines.slice(0, targetLine - 1).join("\n").length + (targetLine > 1 ? 1 : 0);
+
+        // Set the cursor position
+        textarea.focus();
+        textarea.setSelectionRange(charIndex, charIndex);
+
+        // Scroll the textarea so the line is visible
+        let lineHeight = parseFloat(style.lineHeight);
+
+        if (isNaN(lineHeight)) {
+            // Fallback: Use 1.2 * fontSize if lineHeight is "normal"
+            const fontSize = parseFloat(style.fontSize);
+            lineHeight = fontSize * 1.2;
+        }
+        textarea.scrollTop = (targetLine - 1) * lineHeight;
     }
 }
 
