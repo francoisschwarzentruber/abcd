@@ -22,7 +22,10 @@ const instrumentToMIDITable = {
     "flute": 74,
     "recorder": 75,
     "whistle": 79,
-    "ocarina": 80
+    "ocarina": 80,
+    "bass": 54,
+    "soprano": 53,
+    "tenor": 53
 }
 
 //if not present, by default it is 𝄞
