@@ -118,13 +118,13 @@ function extractScorePreambuleFromABCDLines(abcdLines) {
  * 
  * @returns the corresponding abc code
  */
-async function abcd2abc(abcdString, params) {
+async function abcd2abc(abcdString) {
     const abcdLines = abcdString.split("\n");
     const scorePreambule = extractScorePreambuleFromABCDLines(abcdLines);
     const score = await abcd2Score(abcdLines);
     score.scorePreambule = scorePreambule;
 
-    return score.toStringABC(params);
+    return score.toStringABC();
 }
 
 
