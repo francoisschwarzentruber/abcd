@@ -10,6 +10,23 @@ function mapToAllToken(abcdString, f) {
         .split(' ').map(f).join(' ').replaceAll(" [ ", "[").replaceAll(" ] ", "]");
 }
 
+
+
+
+
+function movePitch(abcdTokenString, diff) {
+    const element = tokenToElement(abcdTokenString);
+
+    if (!(element instanceof Chord))
+        return abcdTokenString;
+
+    for (const pitch of element.pitchs)
+        pitch.value += diff;
+
+    return element.toStringABCD();
+}
+
+
 /**
  * 
  * @param {*} abcdString 
@@ -18,19 +35,7 @@ function mapToAllToken(abcdString, f) {
  * @example str8up("a'' c,") == "a''' c"
  */
 function str8up(abcdString) {
-    function move8up(abcdTokenString) {
-        if (abcdTokenString == "") return abcdTokenString;
-        try {
-            const note = new Element(abcdTokenString);
-            note.value += 7;
-            return note.toStringLy();
-        }
-        catch (e) {
-            return abcdTokenString;
-        }
-
-    }
-    return mapToAllToken(abcdString, move8up);
+    return mapToAllToken(abcdString, (str) => movePitch(str, 7));
 }
 
 /**
@@ -41,19 +46,7 @@ function str8up(abcdString) {
  * @example str8up("a'' c,") == "a' c,,"
  */
 function str8down(abcdString) {
-    function move8up(abcdTokenString) {
-        if (abcdTokenString == "") return abcdTokenString;
-        try {
-            const note = new Element(abcdTokenString);
-            note.value -= 7;
-            return note.toStringLy();
-        }
-        catch {
-            return abcdTokenString;
-        }
-
-    }
-    return mapToAllToken(abcdString, move8up);
+    return mapToAllToken(abcdString, (str) => movePitch(str, -7));
 }
 
 

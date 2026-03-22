@@ -22,7 +22,10 @@ const instrumentToMIDITable = {
     "flute": 74,
     "recorder": 75,
     "whistle": 79,
-    "ocarina": 80
+    "ocarina": 80,
+    "bass": 54,
+    "soprano": 53,
+    "tenor": 53
 }
 
 //if not present, by default it is 𝄞
@@ -44,6 +47,8 @@ function isTimeSignature(str) { return abcdStringTimeSignature.indexOf(str) >= 0
  * '###' 3
  * 'bb' -2
  * '####' 4
+ * 
+ * undefined if not a tonality
  */
 function strToTonalityNumber(str) {
     if (str == "♮")

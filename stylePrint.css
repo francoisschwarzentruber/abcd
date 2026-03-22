@@ -1,5 +1,14 @@
 @media print {
 
+    body,
+    html,
+    #outputWrapper {
+        overflow: visible !important;
+        height: auto !important;
+        position: static !important;
+    }
+
+
     #toolbar,
     #audio,
     #editor,
@@ -10,11 +19,19 @@
     #outputWrapper {
         display: block;
         overflow: visible;
-        position: relative;
         left: 0px;
         top: 0px;
         width: auto;
         height: auto;
+    }
+
+    #output {
+        overflow: visible;
+    }
+
+
+    #output div {
+        overflow: visible;
     }
 
     [fill="#ff0000"] {

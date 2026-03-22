@@ -12,21 +12,8 @@ class Editor {
 
     write(textToInsert) {
         const textarea = document.getElementById("editor");
-        // Get the current cursor position
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-
-        // Split the current value and sandwich the new text in the middle
-        const oldValue = textarea.value;
-        textarea.value = oldValue.substring(0, start) +
-            textToInsert +
-            oldValue.substring(end);
-
-        // Put the cursor back in a logical place (right after the new text)
-        textarea.selectionStart = textarea.selectionEnd = start + textToInsert.length;
-
-        // Refocus the textarea so the user can keep typing immediately
         textarea.focus();
+        const success = document.execCommand('insertText', false, textToInsert);
 
         this.onchangecallback();
     }
@@ -61,11 +48,6 @@ class Editor {
     }
 
 
-
-
-
-
-
     gotoLine(lineNumber) {
         const textarea = document.getElementById("editor");
 
@@ -84,11 +66,11 @@ class Editor {
         textarea.setSelectionRange(charIndex, charIndex);
 
         // Scroll the textarea so the line is visible
-        let lineHeight = parseFloat(style.lineHeight);
+        let lineHeight = parseFloat(getComputedStyle(textarea).lineHeight);
 
         if (isNaN(lineHeight)) {
             // Fallback: Use 1.2 * fontSize if lineHeight is "normal"
-            const fontSize = parseFloat(style.fontSize);
+            const fontSize = parseFloat(getComputedStyle(textarea).fontSize);
             lineHeight = fontSize * 1.2;
         }
         textarea.scrollTop = (targetLine - 1) * lineHeight;

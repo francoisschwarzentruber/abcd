@@ -48,10 +48,15 @@ class Staff {
         this.voices.push(new Voice());
     }
 
-    appendVoice(cursor, data) {
+    appendVoice(cursor, data, info) {
         if (cursor.ivoice >= this.voices.length)
             this.voices.push(new Voice());
         this.voices[cursor.ivoice].append(data);
+
+        if (info.instrument)
+            this.voices[cursor.ivoice].instrument = info.instrument;
+        if (info.muted)
+            this.voices[cursor.ivoice].muted = info.muted;
 
     }
 
@@ -82,9 +87,9 @@ class Score {
         if (istaff >= this.staffs.length)
             this.staffs.push(new Staff());
     }
-    appendVoice(cursor, data) {
+    appendVoice(cursor, data, info) {
         this.ensureStaffExists(cursor.istaff);
-        this.staffs[cursor.istaff].appendVoice(cursor, data);
+        this.staffs[cursor.istaff].appendVoice(cursor, data, info);
         cursor.nextVoice();
     }
 
@@ -131,7 +136,8 @@ class Score {
 
         for (const staff of this.staffs) {
             for (const voice of staff.voices)
-                lines.push(voice.toStringABC());
+                if (!voice.muted)
+                    lines.push(voice.toStringABC());
         }
 
         return lines.join('\n');
@@ -199,6 +205,9 @@ class Voice extends StringToBeAppended {
             Voice.NEXTNUMBER = 0;
 
         this.voiceNumber = Voice.NEXTNUMBER;
+        this.instrument = 0;
+        this.muted = false;
+
         Voice.NEXTNUMBER++;
     }
 
@@ -216,7 +225,6 @@ class Voice extends StringToBeAppended {
         }
         this.data += "\n" + newData;
     }
-
 
     /**
      * 
@@ -241,30 +249,6 @@ class Voice extends StringToBeAppended {
             string = string.replaceAll("𝄞", "[K:treble]");
             string = string.replaceAll(/(?<=\S) /g, ""); //remove a space after a letter different from a space
 
-            string = string.replaceAll(" ♮ ", " [K:Cmaj]");
-            function accidentalsSurroundedBySpace(accident, n) { return " " + accident.repeat(n) + " "; }
-            for (const sharp of ["#", "♯"]) {
-                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 1), " [K:Gmaj]");
-                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 2), " [K:D]");
-                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 3), " [K:A]");
-                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 4), " [K:E]");
-                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 5), " [K:B]");
-                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 6), " [K:F#maj]");
-                string = string.replaceAll(accidentalsSurroundedBySpace(sharp, 7), " [K:C#maj]");
-            }
-            for (const flat of ["♭", "b"]) {
-                if (flat == "♭")
-                    string = string.replaceAll(accidentalsSurroundedBySpace(flat, 1), " [K:F] ");
-                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 2), "[K:Bb]");
-                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 3), " [K:Eb] ");
-                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 4), " [K:Ab] ");
-                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 5), " [K:Db] ");
-                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 6), " [K:Gb] ");
-                string = string.replaceAll(accidentalsSurroundedBySpace(flat, 7), " [K:Cb] ");
-            }
-
-            console.log(inputString)
-            console.log(string)
             return string
 
         }

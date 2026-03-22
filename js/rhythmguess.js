@@ -34,14 +34,14 @@ class RhythmGuess {
 
     /**
      * 
-     * @param {*} abcdStr, a string representing the content of a voice of a measure
+     * @param {*} abcStr, a string representing the content of a voice of a measure
      * @param {*} signature, a string representing the duration of the measure, e.g. 4/4 = a whole note
      * @returns a string where each element (note or rest) has a duration
      * @description if the string does not contain any note/rest/chord, then it adds a "x" with its duration at the end
      */
-    static async inferRhythm(abcdStr, signature) {
+    static async inferRhythm(abcStr, signature) {
         const signatureValue = eval(signature);
-        console.log(`inferRhythm(${abcdStr}, ${signature})`)
+        console.log(`inferRhythm(${abcStr}, ${signature})`)
 
 
 
@@ -52,55 +52,37 @@ class RhythmGuess {
          * The elements with a duration are decorated with .dhat which represents the "expected" (with the number of spaces) ratio (to 1 = full measure)of its duration
          */
         function tokensToElements(tokens) {
-
-            /**
-             * 
-             * @param {*} string
-             * @returns the value of the nuplet symbol if it is one, otherwise it returns undefined
-             * @example on "(3" returns 3
-             */
-            function isStringNupletSymbol(string) {
-                return string.startsWith("(") ? parseInt(string.substr(1)) : undefined;
-            }
-
-
-
             let nbSpaces = 0;
             const nbSpacesArray = [];
             let isElement = false;
-            const elements = []; //array of Element, Chord or string :)
+            const elements = []; //array of Element (Chord, NupletSymbolElement, Rest, StringElement) :)
 
-            tokens.map((token) => {
+            for (const token of tokens) {
                 if (token == "") {
                     if (isElement)
                         nbSpacesArray[elements.length - 1]++;
                     nbSpaces++;
                 }
-                else if (isStringNupletSymbol(token)) {
-                    const value = isStringNupletSymbol(token);
-                    const element = new NupletSymbolElement(value);
-                    elements.push(element);
-                    nbSpacesArray.push(0);
-                }
                 else {
-                    let element = new StringElement(token);
-                    isElement = true;
-                    if (token.startsWith("["))
-                        try { element = new Chord(token); } catch (e) { isElement = false; }
-                    else
-                        try { element = new Element(token); } catch (e) { isElement = false; };
+                    const element = tokenToElement(token);
+                    if (element instanceof ElementWithDuration) {
+                        nbSpaces++;
+                        isElement = true;
+
+                        nbSpacesArray.push(1 + ((token.indexOf(".") >= 0) ? 0.5 : 0));
+                    }
+                    else {
+                        isElement = false;
+                        nbSpacesArray.push(0);
+                    }
                     elements.push(element);
-                    if (isElement) nbSpaces++;
-                    nbSpacesArray.push(isElement ? (1 + ((token.indexOf(".") >= 0) ? 0.5 : 0)) : 0); // : 0 when it is not an element
                 }
-            });
+            }
 
             nbSpacesArray[elements.length - 1]--;
+
             nbSpaces = 0;
-
-            for (const x of nbSpacesArray)
-                nbSpaces += x;
-
+            for (const x of nbSpacesArray) nbSpaces += x;
             if (nbSpaces == 0) nbSpaces = 1;
 
             for (let i = 0; i < elements.length; i++)
@@ -111,10 +93,6 @@ class RhythmGuess {
         }
 
 
-
-
-
-
         /**
          * 
          * @param {*} elements
@@ -122,10 +100,10 @@ class RhythmGuess {
          * elements + a rest 
          */
         function addFakeRestIfMeasureIsEmpty(elements) {
-            if (elements.some((el) => el instanceof Element || el instanceof Chord))
+            if (elements.some((el) => el instanceof ElementWithDuration))
                 return elements;
             else {
-                const extraRest = new Element("x")
+                const extraRest = new Rest("x", new Duration(""))
                 elements.push(extraRest);
                 extraRest.dhat = 1;
                 return elements;
@@ -138,14 +116,8 @@ class RhythmGuess {
 
             return elements.map(
                 (e) => {
-                    if (e instanceof NupletSymbolElement) {
-                        nupletValue = e.value;
-                        nupletCount = nupletValue;
-                        return [0];
-                    }
-                    else if (e instanceof StringElement)
-                        return [0];
-                    else {
+
+                    if (e instanceof ElementWithDuration) {
                         let factor = 1;
                         if (nupletCount) {
                             factor = 1 / nupletValue;
@@ -156,6 +128,13 @@ class RhythmGuess {
 
                         return getPossibleDurations(e, proportion * signatureValue, signatureValue).map((x) => x * factor);
                     }
+                    else if (e instanceof NupletSymbolElement) {
+                        nupletValue = e.value;
+                        nupletCount = nupletValue;
+                        return [0];
+                    }
+                    else
+                        return [0];
                 });
         }
 
@@ -171,10 +150,7 @@ class RhythmGuess {
                     nupletValue = e.value;
                     nupletCount = nupletValue;
                 }
-                else if (e instanceof StringElement) {
-
-                }
-                else {
+                else if (e instanceof ElementWithDuration) {
                     const d = durationsSolution[i]; //real duration
                     let factor = 1;
 
@@ -196,9 +172,9 @@ class RhythmGuess {
          * 
          * @param {*} elements with already the correct durations 
          * @param {*} durationsSolution 
-         * @returns the ABCD string with the durations
+         * @returns the ABC string with the durations
          */
-        function elementsToABCD(elements, durationsSolution) {
+        function elementsToABC(elements, durationsSolution) {
 
             let splittingDuration = 0.25; //
             if (["6/8", "9/8", "3/8", "12/8", "15/8"].indexOf(signature) >= 0)
@@ -208,16 +184,18 @@ class RhythmGuess {
             return elements.map((e, i) => {
                 t += durationsSolution[i];
                 const maybeExtraSpaceForSplitting = isEq(Math.floor(t / splittingDuration), t / splittingDuration) ? " " : "";
-                return e.toStringABCD() + maybeExtraSpaceForSplitting;
+                return e.toStringABC() + maybeExtraSpaceForSplitting;
             }).join(" ");
 
         }
 
         let isDurationMeasureSmallerThanSignatureForSure = false;
+        const tokens = abcStr.split(" ");
+        const elements = addFakeRestIfMeasureIsEmpty(tokensToElements(tokens));
+
         //main
         try {
-            const tokens = tokenize(abcdStr);
-            const elements = addFakeRestIfMeasureIsEmpty(tokensToElements(tokens));
+
             const possibleDurations = computePossibleDurations(elements);
 
             if (possibleDurations.map((durs) => Math.max(...durs)).reduce((a, b) => a + b, 0) < signatureValue)
@@ -229,112 +207,29 @@ class RhythmGuess {
             else
                 durationsSolution = await solve(possibleDurations, signatureValue, elements.map((e) => e.dhat));
             setDurations(elements, durationsSolution);
-            const abcdResult = elementsToABCD(elements, durationsSolution);
-            console.log("result of the inference: ", durationsSolution, abcdResult)
-            storeMemo(abcdStr, signature, abcdResult);
-            return abcdResult;
+            const abcResult = elementsToABC(elements, durationsSolution);
+            console.log("result of the inference: ", durationsSolution, abcResult)
+            storeMemo(abcStr, signature, abcResult);
+            return abcResult;
 
         } catch (e) {
             console.error(e);
 
             if (isDurationMeasureSmallerThanSignatureForSure) // in case of of anacrusis, we do not show an error
-                return abcdStr;
+                return abcStr;
             else
-                return abcdStr + ' [Q:"error: inconsistent_rhythm"] ';
+                return abcStr + ' [Q:"error: inconsistent_rhythm"] ';
         }
     }
 
 }
+
+
+
 
 /**
  * 
- * @param {*} abcdStr 
- * @returns a list of tokens
- * @example on "b c [d a]", it returns the list ["b", "c", "[d a]"]
- */
-function tokenize(abcdStr) {
-    const tokens = [];
-    let isBracket = false;
-    let bracketType = "[";
-    let bracketToken = "";
-
-    abcdStr = abcdStr.replaceAll(/\([^0-9]/g, (s) => " ( " + s.substr(1));
-    abcdStr = abcdStr.replaceAll(")", " ) ");
-    abcdStr = abcdStr.replaceAll("-", " - ");
-
-    const L = abcdStr.split(" ");
-
-    for (const chunk of L) {
-        if (!isBracket) {
-            if (chunk.startsWith("[") && chunk.endsWith("]"))
-                tokens.push(chunk);
-            else if (chunk.startsWith("{") && chunk.endsWith("}"))
-                tokens.push(chunk);
-            else if (chunk.startsWith("[") || chunk.startsWith("{")) {
-                bracketType = chunk[0];
-                bracketToken = chunk + " ";
-                isBracket = true;
-            }
-            else
-                tokens.push(chunk);
-        }
-        else {
-            const getClosedBracket = (openBracket) => (openBracket == "[") ? "]" : "}";
-            if (chunk.indexOf(getClosedBracket(bracketType)) >= 0) {
-                bracketToken += chunk;
-                tokens.push(bracketToken);
-                isBracket = false;
-            }
-            else
-                bracketToken += chunk + " ";
-        }
-    }
-    return tokens;
-}
-
-/**
- * class to represent a chord
- */
-class Chord {
-    /**
-     * 
-     * @param {*} abcdString 
-     * @example new Chord("[c e g]2.")
-     */
-    constructor(abcdString) {
-        this.notesStr = abcdString.substr(0, abcdString.indexOf("]") + 1); // e.g. "[c e g]"
-        this.duration = new Duration(abcdString.substr(abcdString.indexOf("]") + 1)); //e.g. "2."
-    }
-
-    toStringABCD() { return this.notesStr + this.duration.toString(); }
-}
-
-
-/**
- * class for any element (which is not a note or a rest)
- */
-class StringElement {
-    constructor(string) { this.string = string; }
-    toStringABCD() { return this.string; }
-}
-
-
-/**
- * class for a symbol e.g. "(3", "(5"
- */
-class NupletSymbolElement {
-    /**
-     * 
-     * @param {*} value
-     * @example new NupletSymbolElement(3)
-     */
-    constructor(value) { this.value = value; }
-    toStringABCD() { return "(" + this.value; }
-}
-
-/**
- * 
- * @param {*} element a musical element (class Element) 
+ * @param {*} element a musical element (class ElementWithDuration) 
  * @param {*} ratio an estimation of the duration of the element
  * @param {*} signatureValue the signature (e.g. 0.75 for a "3/4" measure) of a full measure
  * @returns an array of possible durations for the element

@@ -2,7 +2,6 @@ class MatchingCodeRendering {
 
     static install() {
         const renderedStaffs = document.getElementById("output").children;
-        console.log(renderedStaffs)
         for (let staffNumber = 0; staffNumber < renderedStaffs.length; staffNumber++)
             renderedStaffs[staffNumber].onclick = () => {
                 const lineNumber = staffNumberToLineNumber(editor.text, staffNumber);
