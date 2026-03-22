@@ -11,20 +11,27 @@
  *
  */
 function isStaffLine(abcdLine) {
+    let muted = false;
+
     if (abcdLine == "")
         return false;
 
+    if (abcdLine.startsWith("🤫")) {
+        abcdLine = abcdLine.substr(2);
+        abcdLine = abcdLine.trim();
+        muted = true;
+    }
+
     if (abcdLine.startsWith("𝄞") || abcdLine.startsWith("𝄢"))
-        return { content: abcdLine };
+        return { content: abcdLine, muted };
 
     const words = abcdLine.split(" ");
     const firstWord = words[0].toLowerCase();
     let content = words.splice(1).join(" ").trim();
-
     if (instrumentToMIDITable[firstWord] != undefined) {
         if (!(content.startsWith("𝄞") || content.startsWith("𝄢")))
             content = (instrumentToStandardKey[firstWord] ? instrumentToStandardKey[firstWord] : "𝄞") + content;
-        return { instrument: firstWord, content };
+        return { instrument: firstWord, content, muted };
     }
     return false;
 }
@@ -111,13 +118,13 @@ function extractScorePreambuleFromABCDLines(abcdLines) {
  * 
  * @returns the corresponding abc code
  */
-async function abcd2abc(abcdString) {
+async function abcd2abc(abcdString, params) {
     const abcdLines = abcdString.split("\n");
     const scorePreambule = extractScorePreambuleFromABCDLines(abcdLines);
     const score = await abcd2Score(abcdLines);
     score.scorePreambule = scorePreambule;
 
-    return score.toStringABC();
+    return score.toStringABC(params);
 }
 
 
@@ -135,17 +142,12 @@ async function abcd2Score(abcdLines) {
     const score = new Score();
     const cursor = new Cursor();
     let currentInstrument = undefined;
-
     for (let i = 0; i < abcdLines.length; i++) {
         let lyrics = undefined;
         let line = abcdLines[i].trim();
         if (line == "") {
             cursor.reset();
         }
-
-
-
-
 
         else if (isStaffInstrumentAndOpenCurlyBracket(line)) {
             const infoStaff = isStaffInstrumentAndOpenCurlyBracket(line);
@@ -160,14 +162,14 @@ async function abcd2Score(abcdLines) {
             score.appendLyrics(cursor, lyrics);
         }
         else {
-
+            let infoVoice = {};
 
             if (isStaffLine(line)) {
                 cursor.nextStaff();
-                const infoStaff = isStaffLine(line);
-                line = infoStaff.content;
-                if (infoStaff.instrument)
-                    currentInstrument = infoStaff.instrument;
+                infoVoice = isStaffLine(line);
+                line = infoVoice.content;
+                if (infoVoice.instrument)
+                    currentInstrument = infoVoice.instrument;
             }
 
             let measuresABCDStr = line.split("|");
@@ -208,7 +210,7 @@ async function abcd2Score(abcdLines) {
             }));
 
             let s = measuresABCDStr.join("|");
-            score.appendVoice(cursor, s, currentInstrument);
+            score.appendVoice(cursor, s, infoVoice);
 
         }
     } //endfor

@@ -186,6 +186,7 @@ buttonInsert("♮", "add normal");
 buttonInsert("♯", "add sharp");
 buttonInsert("💬 ", "start a line of lyrics");
 buttonInsert("♩=120 ", "add tempo indication");
+buttonInsert("🤫", "mute voice");
 
 
 
