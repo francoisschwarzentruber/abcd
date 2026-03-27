@@ -28,7 +28,10 @@ class Chord extends ElementWithDuration {
             return accidentalString + iNote7ToLy(pitch.value7) + octaveString;
         });
 
-        return "[" + pitchsStr.join("") + "]" + this.duration.toString();
+        if (pitchsStr.length == 1)
+            return pitchsStr[0] + this.duration.toString();
+        else
+            return "[" + pitchsStr.join("") + "]" + this.duration.toString();
     }
 
     toStringABCD() {

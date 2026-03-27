@@ -46,9 +46,14 @@ class Staff {
         this.symbolEnding = "";
         this.voices = [];
         this.voices.push(new Voice());
+        this.voices.push(new Voice());
+        this.voices.push(new Voice());
+        this.voices.push(new Voice());
+        this.nbMeasureAddedLastTime = 0;
     }
 
     appendVoice(cursor, data, info) {
+        this.nbMeasureAddedLastTime = abcToNbMeasures(data);
         if (cursor.ivoice >= this.voices.length)
             this.voices.push(new Voice());
         this.voices[cursor.ivoice].append(data);
@@ -60,19 +65,45 @@ class Staff {
 
     }
 
+
+    validate(cursor) {
+        for (let i = cursor.ivoice; i < this.voices.length; i++)
+            this.voices[i].appendWeak(emptyABCFromNbMeasures(this.nbMeasureAddedLastTime));
+    }
+
     appendLyrics(cursor, data) {
         this.voices[0].append("w:" + data);
-
     }
 
     toStringABCStructure() {
         if (this.voices.length == 1)
             return "V" + this.voices[0].voiceNumber;
-        else return "(" + this.voices.map((voice) => "V" + voice.voiceNumber).join(" ") + ")";
+        else
+            return "(" + this.voices.filter((voice) => !voice.isEmpty).map((voice) => "V" + voice.voiceNumber).join(" ") + ")";
     }
 }
 
+/**
+ * 
+ * @param {*} nbMeasures 
+ * @returns a abcd string with empty measures
+ * @example emptyABCFromNbMeasures(2) == "   |   |   "
+ */
+function emptyABCFromNbMeasures(nbMeasures) {
+    return "   |  ".repeat(nbMeasures);
+}
 
+
+/**
+ * 
+ * @param {*} abcdString 
+ * @returns the number of measures in abcdString
+ * @example abcToNbMeasures("    |    |") == 2
+ */
+function abcToNbMeasures(abcdString) {
+    const abcdString2 = abcdString.replaceAll("||", "|");
+    return abcdString2.split("|").length;
+}
 /**
  * content of the score (structure + data)
  */
@@ -100,6 +131,11 @@ class Score {
 
     }
 
+
+    validateStaff(cursor) {
+        if (cursor.istaff >= 0)
+            this.staffs[cursor.istaff].validate(cursor);
+    }
 
     getLastTimeSignature(cursor) {
         this.ensureStaffExists(cursor.istaff);
@@ -136,8 +172,9 @@ class Score {
 
         for (const staff of this.staffs) {
             for (const voice of staff.voices)
-                if (!voice.muted)
-                    lines.push(voice.toStringABC());
+                if (!voice.isEmpty)
+                    if (!voice.muted)
+                        lines.push(voice.toStringABC());
         }
 
         return lines.join('\n');
@@ -207,6 +244,7 @@ class Voice extends StringToBeAppended {
         this.voiceNumber = Voice.NEXTNUMBER;
         this.instrument = 0;
         this.muted = false;
+        this.isEmpty = true;
 
         Voice.NEXTNUMBER++;
     }
@@ -214,8 +252,20 @@ class Voice extends StringToBeAppended {
     /**
      * 
      * @param {*} newData 
+     * @description append the data to the voice (the voice is then non-empty)
      */
     append(newData) {
+        this.appendWeak(newData);
+        this.isEmpty = false;
+    }
+
+
+    /**
+     * 
+     * @param {*} newData 
+     * @description append the data to the voice (the voice is then non-empty)
+     */
+    appendWeak(newData) {
         if (isStartsWithClefs(newData)) {
             const lastClef = getLastClef(this.data);
             const clef = isStartsWithClefs(newData);

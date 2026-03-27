@@ -146,6 +146,7 @@ async function abcd2Score(abcdLines) {
         let lyrics = undefined;
         let line = abcdLines[i].trim();
         if (line == "") {
+            score.validateStaff(cursor);
             cursor.reset();
         }
 
@@ -165,6 +166,7 @@ async function abcd2Score(abcdLines) {
             let infoVoice = {};
 
             if (isStaffLine(line)) {
+                score.validateStaff(cursor);
                 cursor.nextStaff();
                 infoVoice = isStaffLine(line);
                 line = infoVoice.content;
@@ -214,7 +216,6 @@ async function abcd2Score(abcdLines) {
 
         }
     } //endfor
-
     return score;
 
 }
