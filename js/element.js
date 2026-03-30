@@ -1,9 +1,15 @@
+/**
+ * An element with duration can be a Chord or a rest
+ */
 class ElementWithDuration {
     duration;
     constructor(duration) { this.duration = duration; }
     setDuration(d) { this.duration = new Duration(d); }
 }
 
+/**
+ * A rest (silence)
+ */
 class Rest extends ElementWithDuration {
     constructor(letter, duration) {
         super(duration);
@@ -15,6 +21,9 @@ class Rest extends ElementWithDuration {
 }
 
 
+/**
+ * a note or a chord
+ */
 class Chord extends ElementWithDuration {
     constructor(pitchs, duration) {
         super(duration);
@@ -46,7 +55,9 @@ class Chord extends ElementWithDuration {
     }
 }
 
-
+/**
+ * a signature, e.g. "4/4"
+ */
 class ElementSignature {
     constructor(tokenStr) { this.tokenStr = tokenStr; }
     toStringABC() { return "[M: " + this.tokenStr + "]"; }
@@ -96,7 +107,10 @@ class ElementTempo {
 
 
 
-
+/**
+ * a tonality changes
+ * @example new ElementTonality("##")
+ */
 class ElementTonality {
     constructor(tokenStr) {
         this.tonalityNumber = ElementTonality.isTonalityStr(tokenStr);
@@ -123,7 +137,7 @@ class ElementTonality {
 class NupletSymbolElement {
     /**
      * 
-     * @param {*} value
+     * @param {number} value
      * @example new NupletSymbolElement(3)
      */
     constructor(value) { this.value = value; }
