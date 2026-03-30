@@ -104,12 +104,21 @@ function editorGoTo(musicalInformation) {
 }
 
 
-
+/**
+ * 
+ * @param {string} line 
+ * @param {number} imeasure 
+ * @returns the position just after the "|" of the measure number imeasure in the line
+ * 
+ * @example getColumnBeginningMeasure("a c | d e | f", 0) == 0
+ * @example getColumnBeginningMeasure("a c | d e | f", 1) == 5
+ * @example getColumnBeginningMeasure("a c | d e | f", 2) == 11
+ */
 function getColumnBeginningMeasure(line, imeasure) {
     const cleanedLine = line.replace(/g||/, "| ");
     console.log(cleanedLine)
     let pos = 0;
     for (let i = 0; i < imeasure; i++)
         pos = cleanedLine.indexOf("|", pos + 1);
-    return pos + 1;
+    return pos <= 0 ? 0 : pos + 1;
 }
