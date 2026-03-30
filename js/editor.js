@@ -48,7 +48,7 @@ class Editor {
     }
 
 
-    gotoLine(lineNumber) {
+    gotoLine(lineNumber, columnNumber = 0) {
         const textarea = document.getElementById("editor");
 
         const text = textarea.value;
@@ -59,7 +59,7 @@ class Editor {
         const targetLine = Math.max(1, Math.min(lineNumber, lines.length));
 
         // Calculate the index by joining previous lines and adding their length
-        const charIndex = lines.slice(0, targetLine - 1).join("\n").length + (targetLine > 1 ? 1 : 0);
+        const charIndex = lines.slice(0, targetLine - 1).join("\n").length + (targetLine > 1 ? 1 : 0) + columnNumber;
 
         // Set the cursor position
         textarea.focus();
