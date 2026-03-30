@@ -2,7 +2,7 @@
             position: absolute;
             top: 76px;
             right: 50%;
-            bottom: 0;
+            bottom: 64px;
             left: 0;
             border: 1px solid black;
             resize: none;
@@ -22,7 +22,7 @@
             top: 76px;
             left: 50%;
             right: 0;
-            bottom: 0px;
+            bottom: 64px;
             padding-top: 16px;
         }
 
@@ -141,4 +141,13 @@
             margin: 0px;
             user-select: none;
             /* Standard syntax */
+        }
+
+
+        piano-keyboard {
+            height: 64px;
+            bottom: 0;
+            position:absolute;
+            left: 0;
+            right: 0;
         }

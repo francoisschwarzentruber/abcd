@@ -93,13 +93,11 @@ function systemNumberToLineNumber(fullABCDCodeLines, isystem) {
  * musicalInformation.ibar = the number of the measure
  */
 function editorGoTo(musicalInformation) {
-    console.log(musicalInformation)
     const lines = editor.text.split("\n");
     const ilineBeginningSystem = systemNumberToLineNumber(lines, musicalInformation.isystem);
     const iline = ilineBeginningSystem + musicalInformation.istaff;
     const line = lines[iline - 1];
     const icolumn = getColumnBeginningMeasure(line, musicalInformation.imeasure);
-    console.log(icolumn)
     editor.gotoLine(iline, icolumn);
 }
 
@@ -116,7 +114,6 @@ function editorGoTo(musicalInformation) {
  */
 function getColumnBeginningMeasure(line, imeasure) {
     const cleanedLine = line.replace(/g||/, "| ");
-    console.log(cleanedLine)
     let pos = 0;
     for (let i = 0; i < imeasure; i++)
         pos = cleanedLine.indexOf("|", pos + 1);

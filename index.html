@@ -50,7 +50,13 @@
         </span>
         <input checked type="checkbox" id="recordMidi">
         <label for="recordMidi" title="works on Chrome only">record Midi</label>
+
+
         <div id="audio"></div>
+
+
+
+
         <a id="help" href="https://github.com/francoisschwarzentruber/abcd" target="_blank">?</a>
 
         <div id="midi">
@@ -68,6 +74,8 @@
 
 
     </div>
+
+
 
     <script src="lib/abcjs-basic-min.js"></script>
     <script src="lib/abcjs-basic-min.js"></script>
@@ -90,6 +98,29 @@
 
     <script src="js/gui.js"></script>
     <script src="js/midiinputgui.js"></script>
+
+
+
+
+
+
+    <script src="js/pianokeyboard.js"></script>
+    <span class="toolbarPart"> <piano-keyboard octaves="7" id="myPiano"></piano-keyboard></span>
+
+
+    <script>
+        const piano = document.getElementById('myPiano');
+
+        // Connect your listener here
+        piano.addEventListener('noteplay', (e) => {
+            console.log(`Playing note: ${e.detail.note}`);
+            // This is where you'd trigger your AudioContext or Synth
+        });
+    </script>
+
+
+
+
 </body>
 
 </html>
