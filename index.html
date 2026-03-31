@@ -113,7 +113,8 @@
 
         // Connect your listener here
         piano.addEventListener('noteplay', (e) => {
-            console.log(`Playing note: ${e.detail.note}`);
+            editor.write(Pitch.fromNameAccidentalOctave(e.detail.name, e.detail.accidental, e.detail.octave-3).toStringABCD() + " ");
+            editor.focus();
             // This is where you'd trigger your AudioContext or Synth
         });
     </script>

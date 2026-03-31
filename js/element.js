@@ -190,20 +190,6 @@ function tokenToElement(tokenStr) {
         return new NupletSymbolElement(value);
     }
 
-
-    function lyNoteLetterToiNote7(iNote) {
-        switch (iNote) {
-            case "c": return 0;
-            case "d": return 1;
-            case "e": return 2;
-            case "f": return 3;
-            case "g": return 4;
-            case "a": return 5;
-            case "b": return 6;
-        }
-        throw "error";
-    }
-
     /**
      * 
      * @param {*} str 
@@ -335,7 +321,18 @@ function tokenToElement(tokenStr) {
 
 
 
-
+function lyNoteLetterToiNote7(iNote) {
+        switch (iNote) {
+            case "c": return 0;
+            case "d": return 1;
+            case "e": return 2;
+            case "f": return 3;
+            case "g": return 4;
+            case "a": return 5;
+            case "b": return 6;
+        }
+        throw "error";
+    }
 
 function lyToPitch(str) {
     const el = new Chord(str);

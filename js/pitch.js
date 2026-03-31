@@ -60,7 +60,7 @@ class Pitch {
     toStringABCD() {
         const accidentalString = (this.accidental > 0 ? "♯".repeat(this.accidental) : "♭".repeat(-this.accidental));
         const octaveString = (this.isRest) ? "" : octaveToString(this.octave);
-        return iNote7ToLy(this.value7) + accidentalString + octaveString;
+        return accidentalString + iNote7ToLy(this.value7) + octaveString;
     }
 
     toStringABC() {
@@ -74,6 +74,12 @@ class Pitch {
             "#".repeat(this.accidental) : "b".repeat(-this.accidental));
         const octaveString = this.octave + 4;
         return iNote7ToLy(this.value7).toUpperCase() + accidentalString + octaveString;
+    }
+
+
+
+    static fromNameAccidentalOctave(name, accidental, octave) {
+        return new Pitch(lyNoteLetterToiNote7(name) + 7*octave, accidental);
     }
 
 }

@@ -3,12 +3,12 @@ class PianoKeyboard extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.octaveNotes = [
-      { n: 'C', t: 'white' }, { n: 'C#', t: 'black' },
-      { n: 'D', t: 'white' }, { n: 'D#', t: 'black' },
-      { n: 'E', t: 'white' }, { n: 'F', t: 'white' },
-      { n: 'F#', t: 'black' }, { n: 'G', t: 'white' },
-      { n: 'G#', t: 'black' }, { n: 'A', t: 'white' },
-      { n: 'A#', t: 'black' }, { n: 'B', t: 'white' }
+      { name: 'c', accidental: 0, type: 'white' }, { name: 'c', accidental: 1, type: 'black' },
+      { name: 'd', accidental: 0, type: 'white' }, { name: 'd', accidental: 1, type: 'black' },
+      { name: 'e', accidental: 0, type: 'white' }, { name: 'f', accidental: 0, type: 'white' },
+      { name: 'f', accidental: 1, type: 'black' }, { name: 'g', accidental: 0, type: 'white' },
+      { name: 'g', accidental: 1, type: 'black' }, { name: 'a', accidental: 0, type: 'white' },
+      { name: 'a', accidental: 1, type: 'black' }, { name: 'b', accidental: 0, type: 'white' }
     ];
   }
 
@@ -31,8 +31,7 @@ class PianoKeyboard extends HTMLElement {
 
     for (let i = 0; i < octaves; i++) {
       this.octaveNotes.forEach(note => {
-        const noteName = `${note.n}${i}`;
-        keysHtml += `<div class="key ${note.t}" data-note="${noteName}"></div>`;
+        keysHtml += `<div class="key ${note.type}" data-name= "${note.name}" data-accidental= ${note.accidental} data-octave=${i} }}></div>`;
       });
     }
 
@@ -52,7 +51,7 @@ class PianoKeyboard extends HTMLElement {
           width: 100%;
           height: 100%;
           background: #111;
-          position: relative;
+          position:relative;
           overflow: hidden;
           box-sizing: border-box;
           user-select: none;
@@ -69,7 +68,7 @@ class PianoKeyboard extends HTMLElement {
           border: 1px solid #333;
           z-index: 1;
           border-radius: 0 0 5px 5px;
-          transition: background 0.1s;
+          transitioname:background 0.1s;
         }
 
         .white:active {
@@ -88,7 +87,7 @@ class PianoKeyboard extends HTMLElement {
           z-index: 2;
           border-radius: 0 0 3px 3px;
           border: 1px solid #000;
-          transition: background 0.1s;
+          transitioname:background 0.1s;
         }
 
         .black:active {
@@ -105,7 +104,7 @@ class PianoKeyboard extends HTMLElement {
       key.addEventListener('mousedown', (e) => {
         e.stopPropagation();
         this.dispatchEvent(new CustomEvent('noteplay', {
-          detail: { note: key.dataset.note },
+          detail: { name: key.dataset.name, accidental: key.dataset.accidental, octave: key.dataset.octave },
           bubbles: true,
           composed: true
         }));
