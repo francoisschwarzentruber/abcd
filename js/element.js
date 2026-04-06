@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * An element with duration can be a Chord or a rest
  */
@@ -112,6 +114,13 @@ class ElementTempo {
  * @example new ElementTonality("##")
  */
 class ElementTonality {
+
+    tonalityNumber = 0;
+
+    /**
+     * 
+     * @param {string} tokenStr 
+     */
     constructor(tokenStr) {
         this.tonalityNumber = ElementTonality.isTonalityStr(tokenStr);
     }
@@ -120,14 +129,34 @@ class ElementTonality {
         return strToTonalityNumber(token);
     }
 
-    toStringABC() {
+    /**
+     * @returns {Pitch}
+     */
+    get tonic() {
+        return ElementTonality.tonalityNumberToTonicMajor(this.tonalityNumber);
+    }
 
+
+    /**
+     * 
+     * @param {*} tonalityNumber 
+     * @returns a string that represents the tonic in the major tonality
+     * 
+     * @example tonalityNumberToTonicMajor(2) returns new Pitch('d')
+     */
+    static tonalityNumberToTonicMajor(tonalityNumber) {
+        const tonic = lyToPitch(["♭c", "♭g", "♭d", "♭a", "♭e", "♭b", "f", "c", "g", "d", "a", "e", "b", "#f", "#c"][7 + tonalityNumber]);
+        if (tonic.accidental == undefined)
+            tonic.accidental = 0;
+        return tonic;
+    }
+
+
+    toStringABC() {
         if (this.tonalityNumber >= 0)
             return ["[K:Cmaj]", " [K:Gmaj]", " [K:D]", " [K:A]", " [K:E]", " [K:B]", " [K:F#maj]", " [K:C#maj]"][this.tonalityNumber];
-
         if (this.tonalityNumber < 0)
             return ["[K:Cmaj", " [K:F] ", "[K:Bb]", " [K:Eb] ", " [K:Ab] ", " [K:Db] ", " [K:Gb] ", " [K:Cb] "][-this.tonalityNumber];
-
     }
 }
 
@@ -155,8 +184,8 @@ class StringElement {
 
 /**
  * 
- * @param {*} tokenStr 
- * @returns element corresponding to tokenStr
+ * @param {string} tokenStr 
+ * @returns {Element} element corresponding to tokenStr
  */
 function tokenToElement(tokenStr) {
     console.log(tokenStr)
@@ -193,7 +222,7 @@ function tokenToElement(tokenStr) {
     /**
      * 
      * @param {*} str 
-     * @returns [ the rest of the string, value of the accidental read] or [str, undefined]
+     * @returns {[string, number|undefined]}[the rest of the string, value of the accidental read] or [str, undefined]
      */
     function eatAccidental(str) {
         if (str.startsWith("♮"))
@@ -213,12 +242,17 @@ function tokenToElement(tokenStr) {
             accidental = -1;
         }
 
-        str = str.substr(Math.abs(accidental));
+        if (accidental != undefined)
+            str = str.substr(Math.abs(accidental));
         return [str, accidental];
     }
 
 
-
+    /**
+     * 
+     * @param {string} str 
+     * @returns {[string, string|undefined]}
+     */
     function eatRestLetter(str) {
         if (str.startsWith("_")) return [str.substr(1), "r"];
         if (str.startsWith("r")) return [str.substr(1), "r"];
@@ -322,19 +356,25 @@ function tokenToElement(tokenStr) {
 
 
 function lyNoteLetterToiNote7(iNote) {
-        switch (iNote) {
-            case "c": return 0;
-            case "d": return 1;
-            case "e": return 2;
-            case "f": return 3;
-            case "g": return 4;
-            case "a": return 5;
-            case "b": return 6;
-        }
-        throw "error";
+    switch (iNote) {
+        case "c": return 0;
+        case "d": return 1;
+        case "e": return 2;
+        case "f": return 3;
+        case "g": return 4;
+        case "a": return 5;
+        case "b": return 6;
     }
+    throw "error";
+}
 
+
+/**
+ * 
+ * @param {string} str 
+ * @returns {Pitch}
+ */
 function lyToPitch(str) {
-    const el = new Chord(str);
+    const el = tokenToElement(str);
     return el.pitchs[0];
 }

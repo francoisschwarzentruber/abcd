@@ -105,21 +105,15 @@
 
 
     <script src="js/pianokeyboard.js"></script>
+
+
+
     <span class="toolbarPart"> <piano-keyboard octaves="7" id="myPiano"></piano-keyboard></span>
 
 
-    <script>
-        const piano = document.getElementById('myPiano');
 
-        // Connect your listener here
-        piano.addEventListener('noteplay', (e) => {
-            editor.write(Pitch.fromNameAccidentalOctave(e.detail.name, e.detail.accidental, e.detail.octave-3).toStringABCD() + " ");
-            editor.focus();
-            // This is where you'd trigger your AudioContext or Synth
-        });
-    </script>
-
-
+    <script src="js/pianokeyboardgui.js"></script>
+    <script src="js/editorcontext.js"></script>
 
 
 </body>

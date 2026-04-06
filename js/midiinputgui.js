@@ -1,13 +1,16 @@
+// @ts-check
+/// <reference path="editorcontext.js" />
+
 
 let beginningTimeForAChord;
 
 
 /**
  * 
- * @param {*} midiNote 
- * @returns the lilypond string for the midi note midiNote
+ * @param {number} midiNote 
+ * @returns {Pitch} the lilypond string for the midi note midiNote
  */
-function imidiNote2Pitch(midiNote) {
+function imidiNote2RawPitch(midiNote) {
     const iC = 0;
     const midiNotefromC = midiNote - iC;
     let octave = Math.floor(midiNotefromC / 12);
@@ -19,8 +22,8 @@ function imidiNote2Pitch(midiNote) {
 
 
     /**
-     * @param midiPitchM(between 0 and 11)
-        * @returns the value of the pitch between 0 and 6(0 = C, 1 = D, etc.)
+     * @param {number} midiPitchM(between 0 and 11)
+     * @returns {number} the value of the pitch between 0 and 6 (0 = C, 1 = D, etc.)
      */
     function midi12ToPitch7(midiPitchM) {
         switch (midiPitchM) {
@@ -31,37 +34,53 @@ function imidiNote2Pitch(midiNote) {
             case 7: case 8: return 4;
             case 9: case 10: return 5;
             case 11: return 6;
-            default: throw "midi12ToPitch7: argument not between 0 and 11"
+            default: throw "midi12ToPitch7: argument not between 0 and 11";
         }
     }
 
     /**
      * 
-     * @param midi12 (between 0 and 11)
-     * @returns 0 or 1 (0 means that the note is natural, 1 = sharp)
+     * @param {number} midi12 (between 0 and 11)
+     * @returns {number} 0 or 1 (0 means that the note is natural, 1 = sharp)
      * 
      */
     function midi12ToAccidental(midi12) { return [1, 3, 6, 8, 10].indexOf(midi12) >= 0 ? 1 : 0; }
     console.log(midi12ToPitch7(midi12) + octave * 7)
+
     return new Pitch(midi12ToPitch7(midi12) + octave * 7,
         midi12ToAccidental(midi12));
 }
 
 
-
-function imidiNote2Ly(midiNoteRelative) {
-    const pitch = imidiNote2Pitch(midiNoteRelative);
-    const key = currentKey();
-    console.log(pitch.toStringLy())
-
-    console.log(key.toStringLy())
-    const pitchCorrected = enharmonic(pitch, key);
-    console.log(pitchCorrected.toStringLy())
-    return pitchCorrected.toStringLy();
+/**
+ * 
+ * @param {number} midiNoteRelative 
+ * @returns {Pitch} 
+ */
+function imidiNote2Pitch(midiNoteRelative) {
+    const rawPitch = imidiNote2RawPitch(midiNoteRelative);
+    return rawPitch2Pitch(rawPitch);
 }
 
+/**
+ * 
+ * @param {Pitch} rawPitch 
+ * @returns {Pitch} the pitch that is same as rawPitch but possibly enharmonic because of the current tonality
+ */
+function rawPitch2Pitch(rawPitch) {
+    const currentTonality = editorContext.getCurrentTonality();
+    const key = currentTonality.tonic;
+    console.log(rawPitch.toStringLy())
+    const pitchCorrected = enharmonic(rawPitch, key);
+    console.log(pitchCorrected.toStringLy())
+    return pitchCorrected;
+}
 
-
+/**
+ * 
+ * @param {number} dt 
+ * @returns 
+ */
 function dtToNbSpaces(dt) {
     console.log(dt)
     if (dt > 1000)
@@ -103,6 +122,6 @@ MidiInput.setEventListenerNoteOn((inote) => {
     if (nbnotes == 0) {
         beginningTimeForAChord = Date.now();
     }
-    console.log(inote); notes.push(imidiNote2Ly(inote - 60)); nbnotes++;
+    console.log(inote); notes.push(imidiNote2Pitch(inote - 60).toStringLy()); nbnotes++;
 });
 MidiInput.start();

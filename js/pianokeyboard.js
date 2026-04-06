@@ -1,3 +1,6 @@
+// @ts-check
+
+
 class PianoKeyboard extends HTMLElement {
   constructor() {
     super();

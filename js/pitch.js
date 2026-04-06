@@ -1,4 +1,12 @@
+// @ts-check
+
 class Pitch {
+
+    /**
+     * 
+     * @param {number} value 
+     * @param {number|undefined} accidental 
+     */
     constructor(value, accidental) { this.value = value; this.accidental = accidental; }
 
     get value7() {
@@ -19,6 +27,7 @@ class Pitch {
                 case 4: return 7;
                 case 5: return 9;
                 case 6: return 11;
+                default: return 0;
             }
         }
         return 12 * this.octave + f() + this.accidental;
@@ -53,19 +62,19 @@ class Pitch {
 
     toStringLy() {
         const accidentalString = (this.accidental > 0 ? "♯".repeat(this.accidental) : "♭".repeat(-this.accidental));
-        const octaveString = (this.isRest) ? "" : octaveToString(this.octave);
+        const octaveString = octaveToString(this.octave);
         return iNote7ToLy(this.value7) + accidentalString + octaveString;
     }
 
     toStringABCD() {
-        const accidentalString = (this.accidental > 0 ? "♯".repeat(this.accidental) : "♭".repeat(-this.accidental));
-        const octaveString = (this.isRest) ? "" : octaveToString(this.octave);
+        const accidentalString = (this.accidental == 0) ? "♮" : (this.accidental > 0 ? "♯".repeat(this.accidental) : "♭".repeat(-this.accidental));
+        const octaveString = octaveToString(this.octave);
         return accidentalString + iNote7ToLy(this.value7) + octaveString;
     }
 
     toStringABC() {
         const accidentalString = (this.accidental == 0) ? "=" : (this.accidental > 0 ? "^".repeat(this.accidental) : "_".repeat(-this.accidental));
-        const octaveString = (this.isRest) ? "" : octaveToString(this.octave - 1);
+        const octaveString = octaveToString(this.octave - 1);
         return accidentalString + iNote7ToLy(this.value7) + octaveString;
     }
 
@@ -77,16 +86,33 @@ class Pitch {
     }
 
 
-
+    /**
+     * 
+     * @param {string} name 
+     * @param {number} accidental 
+     * @param {number} octave 
+     * @returns 
+     */
     static fromNameAccidentalOctave(name, accidental, octave) {
         return new Pitch(lyNoteLetterToiNote7(name) + 7*octave, accidental);
     }
 
 }
 
-
+/**
+ * 
+ * @param {number} octave 
+ * @returns 
+ */
 function octaveToString(octave) { return (octave > 0 ? "'".repeat(octave) : ",".repeat(-octave)); }
 
+
+
+/**
+ * 
+ * @param {number} iNote 
+ * @returns {string}
+ */
 function iNote7ToLy(iNote) {
     switch (iNote) {
         case 0: return "c";

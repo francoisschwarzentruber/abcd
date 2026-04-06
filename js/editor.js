@@ -1,15 +1,16 @@
-//const editor = ace.edit("editor");
+// @ts-check
 
 class Editor {
-    get text() {
-        return this.DOMelement.value;
-    }
+    /**
+     * return {string}
+     */
+    get text() { return this.DOMelement.value; }
+    set text(txt) { this.DOMelement.value = txt; }
 
-    set text(txt) {
-        this.DOMelement.value = txt;
-    }
-
-
+    /**
+     * 
+     * @param {string} textToInsert 
+     */
     write(textToInsert) {
         const textarea = document.getElementById("editor");
         textarea.focus();
@@ -74,6 +75,24 @@ class Editor {
             lineHeight = fontSize * 1.2;
         }
         textarea.scrollTop = (targetLine - 1) * lineHeight;
+    }
+
+
+    /**
+     * 
+     * @returns {{iline: number, icolumn: number, ipos: number}}
+     */
+    getCursor() {
+        const textarea = this.DOMelement;
+        const code = this.text;
+        const lines = code.split("\n");
+        const ipos = textarea.selectionStart;
+        function getLineNumber() {
+            return textarea.value.substr(0, textarea.selectionStart).split("\n").length;
+        }
+        const iline = getLineNumber();
+        const icolumn = code.lastIndexOf("\n", ipos);
+        return { iline, icolumn, ipos };
     }
 }
 

@@ -42,13 +42,13 @@ function isTimeSignature(str) { return abcdStringTimeSignature.indexOf(str) >= 0
 /**
  * 
  * @param {*} str 
- * @returns the corresponding tonality number, e.g.:
+ * @returns the corresponding tonality number, and undefined if not a tonality
  * 
- * '###' 3
- * 'bb' -2
- * '####' 4
+ * @example strToTonalityNumber('###') == 3
+ * @example strToTonalityNumber('bb') == -2
+ * @example strToTonalityNumber('####') == 4
+ * @example strToTonalityNumber('bonjour') == undefined
  * 
- * undefined if not a tonality
  */
 function strToTonalityNumber(str) {
     if (str == "♮")
@@ -65,6 +65,10 @@ function strToTonalityNumber(str) {
     }
     return undefined;
 }
+
+
+
+
 
 
 

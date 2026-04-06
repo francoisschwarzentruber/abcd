@@ -1,10 +1,12 @@
+// @ts-check
+/// <reference path="pitch.js" />
 /**
  * 
- * @param {*} abcdString 
+ * @param {string} abcdString 
  * @param {*} f 
  * @returns apply function f to all tokens in abcdString and returns the obtained string
  */
-function mapToAllToken(abcdString, f) {
+function mapToAllTokens(abcdString, f) {
     return abcdString.replaceAll("[", " [ ")
         .replaceAll("]", " ] ")
         .split(' ').map(f).join(' ').replaceAll(" [ ", "[").replaceAll(" ] ", "]");
@@ -13,7 +15,12 @@ function mapToAllToken(abcdString, f) {
 
 
 
-
+/**
+ * 
+ * @param {string} abcdTokenString 
+ * @param {number} diff 
+ * @returns the string
+ */
 function movePitch(abcdTokenString, diff) {
     const element = tokenToElement(abcdTokenString);
 
@@ -29,13 +36,13 @@ function movePitch(abcdTokenString, diff) {
 
 /**
  * 
- * @param {*} abcdString 
+ * @param {string} abcdString 
  * @returns the string where each note is one octave higher
  * 
  * @example str8up("a'' c,") == "a''' c"
  */
 function str8up(abcdString) {
-    return mapToAllToken(abcdString, (str) => movePitch(str, 7));
+    return mapToAllTokens(abcdString, (str) => movePitch(str, 7));
 }
 
 /**
@@ -46,7 +53,7 @@ function str8up(abcdString) {
  * @example str8up("a'' c,") == "a' c,,"
  */
 function str8down(abcdString) {
-    return mapToAllToken(abcdString, (str) => movePitch(str, -7));
+    return mapToAllTokens(abcdString, (str) => movePitch(str, -7));
 }
 
 
@@ -54,8 +61,8 @@ function str8down(abcdString) {
 
 /**
  * 
- * @param pitch1 
- * @param pitch2 
+ * @param {Pitch} pitch1 
+ * @param {Pitch} pitch2 
  * @return the sum of the two pitch.
  * @example add(D, E) = F# because D = one tone, D = two tones => the result is three tones, so F#
  */
@@ -68,7 +75,7 @@ function add(pitch1, pitch2) {
 
 /**
 * 
-* @param pitch 
+* @param {Pitch} pitch 
 * @returns the same pitch but in the normal octave
 */
 function modulo(pitch) {
@@ -79,18 +86,19 @@ function modulo(pitch) {
 
 /**
 * 
-* @param pitch 
-* @param key 
+* @param {Pitch} pitch
+* @param {Pitch} key 
+* @example enharmonic(new Pitch(1, 1), new Pitch(3, -1)) is Object { value: 2, accidental: -1 }
 * @returns the same pitch but in the key (e.g. G# in Eb is Ab)
 */
 function enharmonic(pitch, key) {
-    const pitch0e = imidiNote2Pitch(pitch.nbHalfTones - key.nbHalfTones);
+    const pitch0e = imidiNote2RawPitch(pitch.nbHalfTones - key.nbHalfTones);
     return add(pitch0e, key);
 }
 
 /**
 * 
-* @param key : Pitch
+* @param {Pitch} key
 * @returns the array of accidentals in the key
 */
 function getAccidentals(key) {
@@ -104,21 +112,10 @@ function getAccidentals(key) {
 
 
 /**
- * @param pitch 
- * @param key 
+ * @param {Pitch} pitch 
+ * @param {Pitch} key 
  * @return the pitch with the accidental that is natural in the key
  * @example accidentalize(C, E) => C# because C has a # in E major
  */
 function accidentalize(pitch, key) { return new Pitch(pitch.value, getAccidentals(key)[pitch.value7]); }
 
-
-/**
- * 
- * @param {*} tonalityNumber 
- * @returns a string that represents the tonic in the major tonality
- * 
- * @example tonalityNumberToTonicMajor(2) returns new Pitch('d')
- */
-function tonalityNumberToTonicMajor(tonalityNumber) {
-    return lyToPitch(["c♭", "g♭", "d♭", "a♭", "e♭", "b♭", "f", "c", "g", "d", "a", "e", "b", "f#", "c#"][7 + tonalityNumber]);
-}
