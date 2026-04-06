@@ -7,7 +7,7 @@
     <script
         src="https://cdn.jsdelivr.net/combine/npm/tone@14.7.58,npm/@magenta/music@1.23.1/es6/core.js,npm/focus-visible@5,npm/html-midi-player@1.5.0"></script>
     <script src="https://unpkg.com/tone"></script>
-    <script src="https://unpkg.com/tone"></script>
+    <script type="module" src="https://unpkg.com/ninja-keys?module"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="lib/abcjs-audio.css" media="all" type="text/css" />
 
@@ -62,6 +62,7 @@
         <div id="midi">
 
         </div>
+        <ninja-keys placeholder="Search actions..."></ninja-keys>
 
     </div>
     <div id="editoroutput">
@@ -108,12 +109,16 @@
 
 
 
+
     <span class="toolbarPart"> <piano-keyboard octaves="7" id="myPiano"></piano-keyboard></span>
 
 
 
     <script src="js/pianokeyboardgui.js"></script>
     <script src="js/editorcontext.js"></script>
+
+    <script src="js/actions.js"></script>
+    <script src="js/actionsgui.js"></script>
 
 
 </body>
