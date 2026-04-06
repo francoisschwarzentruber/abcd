@@ -103,12 +103,7 @@ MidiInput.setEventListenerNoteOff((inote) => {
         const dt = Date.now() - beginningTimeForAChord;
         const nbSpaces = dtToNbSpaces(dt);
         const spaces = " ".repeat(nbSpaces);
-        if (notes.length == 1) {
-            editorInsert(" " + notes[0] + spaces);
-        }
-        else {
-            editorInsert(" [" + notes.join(" ") + "]" + spaces);
-        }
+        editor.write(notes.join("") + spaces);
 
         PlayNote.play(notes);
 

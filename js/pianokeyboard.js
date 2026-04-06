@@ -1,6 +1,8 @@
 // @ts-check
 
-
+/**
+ * HTMLElement for a piano keyboard
+ */
 class PianoKeyboard extends HTMLElement {
   constructor() {
     super();
@@ -15,9 +17,6 @@ class PianoKeyboard extends HTMLElement {
     ];
   }
 
-  static get observedAttributes() {
-    return ['octaves'];
-  }
 
   attributeChangedCallback() {
     this.render();

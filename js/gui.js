@@ -4,9 +4,7 @@ const abcjs = window.ABCJS;
 /**
  * reload the content from local storage
  */
-
 dialogOpenButtonOpen.onclick = () => {
-    console.log("azeaze")
     dialogOpen.close();
     newid = selectFilename.value;
     if (newid != null) {
@@ -37,10 +35,7 @@ buttonDialogOpen.onclick = () => {
         option.text = filename;
         selectFilename.add(option);
     }
-
-
     dialogOpen.showModal();
-
 }
 
 
@@ -98,8 +93,6 @@ setInterval(() => Save.save(editor.text), 5000);
  * @param {*} event 
  * @description close the insert menu
  */
-
-
 window.onclick = (event) => {
     if (!event.target.matches('#buttonInsert')) {
         toolbarInsert.classList.remove("show");
@@ -109,8 +102,9 @@ window.onclick = (event) => {
 
 let previousABCDString = "";
 
-async function update() {
 
+
+async function update() {
     const abcdString = editor.text;
     if (abcdString == previousABCDString)
         return;
@@ -164,12 +158,6 @@ function buttonInsert(s, hint) {
 
 
 
-
-
-function editorInsert(str) {
-    editor.write(str);
-}
-
 function performActionOnSelection(f) {
     editor.focus();
     editor.setSelectedText(f(editor.getSelectedText()));
@@ -178,6 +166,10 @@ function performActionOnSelection(f) {
 
 button8up.onclick = () => performActionOnSelection(str8up);
 button8down.onclick = () => performActionOnSelection(str8down);
+
+
+
+
 
 buttonInsert("𝄞 ", "add a treble key");
 buttonInsert("𝄢 ", "add a treble key");
@@ -188,29 +180,6 @@ buttonInsert("💬 ", "start a line of lyrics");
 buttonInsert("♩=120 ", "add tempo indication");
 buttonInsert("🤫", "mute voice");
 
-
-
-
-
-function currentKey() {
-    function findKey() {
-        const code = editor.text;
-
-        function accidentalsSurroundedBySpace(accident, n) { return " " + accident.repeat(n) + " "; }
-
-        for (const sharp of ["#", "♯", "♭", "b"]) {
-            for (let i = 7; i > 0; i--) {
-                if (code.indexOf(accidentalsSurroundedBySpace(sharp, i)) >= 0)
-                    return i * (((sharp == "#") || sharp == "♯") ? 1 : -1);
-            }
-        }
-        return 0;
-    }
-
-    const accidentals = findKey();
-
-    return lyToPitch(["c♭", "g♭", "d♭", "a♭", "e♭", "b♭", "f", "c", "g", "d", "a", "e", "b", "f#", "c#"][7 + accidentals]);
-}
 
 
 

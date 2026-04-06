@@ -1,3 +1,6 @@
+/**
+ * A class with helpers for the link between the rendering and the code
+ */
 class MatchingCodeRendering {
 
     static install() {

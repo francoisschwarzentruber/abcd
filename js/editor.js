@@ -1,8 +1,12 @@
 // @ts-check
 
+
+/**
+ * A wrapper class for the text editor where the code is written 
+ */
 class Editor {
     /**
-     * return {string}
+     * return {string} the full code
      */
     get text() { return this.DOMelement.value; }
     set text(txt) { this.DOMelement.value = txt; }
@@ -21,9 +25,7 @@ class Editor {
 
 
 
-    focus() {
-        this.DOMelement.focus();
-    }
+    focus() { this.DOMelement.focus(); }
 
 
     set onchange(callback) {

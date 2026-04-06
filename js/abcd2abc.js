@@ -1,3 +1,5 @@
+
+
 /**
  * 
  * @param {*} abcdLine 
@@ -56,7 +58,11 @@ function isStaffInstrumentAndOpenCurlyBracket(abcdLine) {
 }
 
 
-
+/**
+ * 
+ * @param {string} abcdLine 
+ * @returns {string|false}
+ */
 function isLyricsLine(abcdLine) {
     if (abcdLine.startsWith("💬"))
         return abcdLine.substr(2);
@@ -137,7 +143,11 @@ function abcdMultipleLines2abcdSingleLines(abcdLines) {
 
 
 
-
+/**
+ * 
+ * @param {string[]} abcdLines 
+ * @returns {Score}
+ */
 async function abcd2Score(abcdLines) {
     const score = new Score();
     const cursor = new Cursor();

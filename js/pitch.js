@@ -9,12 +9,18 @@ class Pitch {
      */
     constructor(value, accidental) { this.value = value; this.accidental = accidental; }
 
+    /**
+     * @returns the value between 0 and 6 (0 = c, 1 = d, 2 = e, 3 = f, 4 = g, 5 = a, 6 = b)
+     */
     get value7() {
         let x = this.value % 7;
         if (x < 0) x += 7;
         return x;
     }
 
+    /**
+     * @returns midi value
+     */
     get midiPitch() { return 60 + this.nbHalfTones; }
 
     get nbHalfTones() {
@@ -48,7 +54,6 @@ class Pitch {
             }
             throw "value % 7 out of scope";
         }
-
 
         let a = () => (this.accidental > 0 ? "♯".repeat(this.accidental) : "♭".repeat(-this.accidental))
 
