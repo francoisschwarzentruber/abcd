@@ -183,3 +183,11 @@ buttonInsert("🤫", "mute voice");
 
 
 
+document.querySelector("textarea").onkeydown = (e) => {
+    if (e.ctrlKey && e.key == "k") {
+        ninja.open();
+        e.preventDefault();
+    }
+};
+
+

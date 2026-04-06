@@ -34,6 +34,26 @@ function movePitch(abcdTokenString, diff) {
 }
 
 
+
+/**
+ * 
+ * @param {string} abcdTokenString 
+ * @param {number} diff 
+ * @returns the string
+ */
+function addPitch(abcdTokenString, diff) {
+    const element = tokenToElement(abcdTokenString);
+
+    if (!(element instanceof Chord))
+        return abcdTokenString;
+
+    const newPitchs = element.pitchs.map((p) => new Pitch(p.value + diff, p.accidental));
+    element.pitchs.push(...newPitchs);
+
+    return element.toStringABCD();
+}
+
+
 /**
  * 
  * @param {string} abcdString 
