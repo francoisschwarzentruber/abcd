@@ -73,18 +73,11 @@ class ElementClef {
     }
 
     static isTokenClef(anyTokenStr) {
-        switch (anyTokenStr) {
-            case "𝄢", "f:": return "[K:bass]";
-            case "𝄞", "g:": return "[K:treble]";
-            case "𝄞8", "g8:": return "[K:treble-8]";
-            case "𝄞-8", "g-8:": return "[K:treble-8]";
-            case "𝄞+8", "g+8:": return "[K:treble+8]";
-        }
-        return undefined;
+        return clefsDictionnary[anyTokenStr];
     }
 
     toStringABC() {
-        return tokenClefToABC(this.tokenStr);
+        return ElementClef.isTokenClef(this.tokenStr);
     }
 }
 

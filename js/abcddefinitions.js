@@ -28,6 +28,26 @@ const instrumentToMIDITable = {
     "tenor": 53
 }
 
+
+
+
+/**
+ * @description Correspondance ABCD to ABC
+ */
+const clefsDictionnary = {
+    "𝄢": "[K:bass]",
+    "f:": "[K:bass]",
+    "𝄞": "[K:treble]",
+    "g:": "[K:treble]",
+    "𝄞8": "[K:treble-8]",
+    "g8:": "[K:treble-8]",
+    "𝄞-8": "[K:treble-8]",
+    "g-8:": "[K:treble-8]",
+    "𝄞+8": "[K:treble+8]",
+    "g+8:": "[K:treble+8]",
+}
+
+
 //if not present, by default it is 𝄞
 const instrumentToStandardKey = {
     "cello": "𝄢"

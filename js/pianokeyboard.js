@@ -103,6 +103,14 @@ class PianoKeyboard extends HTMLElement {
 
     // Interaction logic
     this.shadowRoot.querySelectorAll('.key').forEach(key => {
+      key.addEventListener('mousemove', (e) => {
+        e.stopPropagation();
+        this.dispatchEvent(new CustomEvent('notehover', {
+          detail: { name: key.dataset.name, accidental: key.dataset.accidental, octave: key.dataset.octave },
+          bubbles: true,
+          composed: true
+        }));
+      });
       key.addEventListener('mousedown', (e) => {
         e.stopPropagation();
         this.dispatchEvent(new CustomEvent('noteplay', {

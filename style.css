@@ -1,153 +1,204 @@
-        #editor {
-            position: absolute;
-            top: 76px;
-            right: 50%;
-            bottom: 64px;
-            left: 0;
-            border: 1px solid black;
-            resize: none;
-        }
+#editor {
+    position: absolute;
+    top: 76px;
+    right: 50%;
+    bottom: 64px;
+    left: 0;
+    border: 1px solid black;
+    resize: none;
+}
 
-        #midi {
-            position: absolute;
-            top: 48px;
-            left: 50%;
-            right: 0;
-        }
-
-
-        #outputWrapper {
-            overflow: auto;
-            position: absolute;
-            top: 76px;
-            left: 50%;
-            right: 0;
-            bottom: 64px;
-            padding-top: 16px;
-        }
-
-        #output {
-            overflow: visible;
-            width: fit-content;
-            height: fit-content;
-        }
-
-        button {
-            font-size: 18px;
-            border: 0px solid black;
-            border-radius: 7px;
-            margin: 2px;
-            padding: 4px;
-            height: 32px;
-            background: none;
-        }
-
-        #help {
-            font-size: 18px;
-            background-color: none;
-            border-radius: 7px;
-            padding: 4px;
-            text-decoration: none;
-            right: 0px;
-            top: 4px;
-            position: absolute;
-        }
-
-        button:hover,
-        #help:hover {
-            background: rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-        }
-
-        button:active {
-            scale: 0.95;
-        }
+#midi {
+    position: absolute;
+    top: 48px;
+    left: 50%;
+    right: 0;
+}
 
 
+#outputWrapper {
+    overflow: auto;
+    position: absolute;
+    top: 76px;
+    left: 50%;
+    right: 0;
+    bottom: 64px;
+    padding-top: 16px;
+}
 
-        .right {
-            right: 0px;
-            top: 0px;
-            position: absolute;
-        }
+#output {
+    overflow: visible;
+    width: fit-content;
+    height: fit-content;
+}
+
+button {
+    font-size: 18px;
+    border: 0px solid black;
+    border-radius: 7px;
+    margin: 2px;
+    padding: 4px;
+    height: 32px;
+    background: none;
+}
+
+#help {
+    font-size: 18px;
+    background-color: none;
+    border-radius: 7px;
+    padding: 4px;
+    text-decoration: none;
+    right: 0px;
+    top: 4px;
+    position: absolute;
+}
+
+button:hover,
+#help:hover {
+    background: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+button:active {
+    scale: 0.95;
+}
 
 
 
-        #buttonInsert {}
-
-        #toolbarInsert {
-            display: inline-block;
-        }
-
-        #recordMidi {
-            display: none;
-        }
-
-        #recordMidi:checked+label {
-            border-radius: 8px;
-            padding: 4px;
-            background-color: pink;
-            animation: recordMidi 1s alternate infinite;
-        }
-
-        @keyframes recordMidi {
-            from {
-                border: 4px solid white;
-            }
-
-            to {
-                border: 4px solid pink;
-            }
-        }
-
-        #recordMidi:not(:checked)+label {
-            border-radius: 8px;
-            padding: 4px;
-            color: gray;
-            text-decoration: line-through;
-        }
-
-        #recordMidi:not(:checked)+label:hover {
-            border-radius: 8px;
-            padding: 4px;
-            color: blue;
-        }
+.right {
+    right: 0px;
+    top: 0px;
+    position: absolute;
+}
 
 
 
+#buttonInsert {}
 
-        #audio {
-            left: 0px;
-            right: 0px;
-            filter: invert(1) brightness(1.2);
-        }
+#toolbarInsert {
+    display: inline-block;
+}
+
+#recordMidi {
+    display: none;
+}
+
+#recordMidi:checked+label {
+    border-radius: 8px;
+    padding: 4px;
+    background-color: pink;
+    animation: recordMidi 1s alternate infinite;
+}
+
+@keyframes recordMidi {
+    from {
+        border: 4px solid white;
+    }
+
+    to {
+        border: 4px solid pink;
+    }
+}
+
+#recordMidi:not(:checked)+label {
+    border-radius: 8px;
+    padding: 4px;
+    color: gray;
+    text-decoration: line-through;
+}
+
+#recordMidi:not(:checked)+label:hover {
+    border-radius: 8px;
+    padding: 4px;
+    color: blue;
+}
 
 
 
-        #toolbar {
-            background: #efefff;
-        }
 
-        .toolbarPart {
-            display: inline-block;
-            padding: 2px;
-            margin: 3px;
-            border-right: 1px lightgray solid;
-            padding-right: 8px;
-        }
+#audio {
+    left: 0px;
+    right: 0px;
+    filter: invert(1) brightness(1.2);
+}
 
 
-        body {
-            margin: 0px;
-            user-select: none;
-            /* Standard syntax */
-        }
+
+#toolbar {
+    background: #efefff;
+}
+
+.toolbarPart {
+    display: inline-block;
+    padding: 2px;
+    margin: 3px;
+    border-right: 1px lightgray solid;
+    padding-right: 8px;
+}
 
 
-        piano-keyboard {
-            height: 64px;
-            bottom: 0;
-            position:absolute;
-            left: 0;
-            right: 0;
-        }
+body {
+    margin: 0px;
+    user-select: none;
+    /* Standard syntax */
+}
+
+
+piano-keyboard {
+    height: 64px;
+    bottom: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+
+/* Le parent définit le point de référence */
+.tooltip-container {
+    height: 64px;
+    bottom: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: inline-block;
+}
+
+/* Le contenu caché par défaut */
+.tooltip-content {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 125%;
+    /* Position au-dessus de l'élément */
+    left: 50%;
+    transform: translateX(-50%);
+
+    /* Style du Tooltip */
+    width: 250px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    transition: opacity 0.3s ease;
+    /* Petit effet de fondu */
+}
+
+/* Affichage au survol */
+.tooltip-container:hover .tooltip-content {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Petit triangle en bas du tooltip */
+.tooltip-content::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: white transparent transparent transparent;
+}
