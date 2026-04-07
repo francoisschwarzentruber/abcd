@@ -76,6 +76,7 @@ buttonExportABC.onclick = async () => {
 
 }
 
+buttonActionMenu.onclick = () => { ninja.open(); }
 
 let storedValue = Save.load();
 if (storedValue == undefined)
