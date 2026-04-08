@@ -22,7 +22,20 @@ ninja.data = [
         handler: () => performActionOnSelection(abcdString => mapToAllTokens(abcdString, (str) => addPitch(str, -7)))
     },
 
-
+    {
+        id: "dynamics",
+        title: "Add dynamics",
+        handler: () => {
+            ninja.open({ parent: 'dynamics' });
+            return { keepOpen: true };
+        },
+    },
+    ...['pp', 'p', 'mp', 'mf', 'f', 'ff', 'fff'].map((dynamicsStr) => ({
+        id: `dynamics/${dynamicsStr}`,
+        parent: "dynamics",
+        title: `Add dynamics ${dynamicsStr}`,
+        handler: () => { editor.write(`!${dynamicsStr}!`) }
+    }))
 ];
 
 [

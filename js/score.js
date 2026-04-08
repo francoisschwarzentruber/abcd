@@ -71,8 +71,8 @@ class Staff {
             this.voices[i].appendWeak(emptyABCFromNbMeasures(this.nbMeasureAddedLastTime));
     }
 
-    appendLyrics(cursor, data) {
-        this.voices[0].append("w:" + data);
+    appendLyrics(cursor, lyricsStr) {
+        this.voices[0].append("w:" + lyricsStr);
     }
 
     toStringABCStructure() {
@@ -124,9 +124,15 @@ class Score {
         cursor.nextVoice();
     }
 
-    appendLyrics(cursor, data) {
+
+    /**
+     * 
+     * @param {*} cursor 
+     * @param {*} lyricsStr 
+     */
+    appendLyrics(cursor, lyricsStr) {
         this.ensureStaffExists(cursor.istaff);
-        this.staffs[cursor.istaff].appendLyrics(cursor, data);
+        this.staffs[cursor.istaff].appendLyrics(cursor, lyricsStr);
         cursor.nextLyrics();
 
     }
@@ -302,7 +308,15 @@ class Voice extends StringToBeAppended {
             return string
 
         }
-        return `V:V${this.voiceNumber}\n` + this.instrumentToABC() + `[V:V${this.voiceNumber}]` + replaceABCDtokensByABCtokens(this.data);
+        return `V:V${this.voiceNumber}\n`
+            + this.instrumentToABC()
+            + `[V:V${this.voiceNumber}]`
+            + this.data.split("\n").map((line) => {
+                if (line.startsWith("w:")) // lyrics
+                    return line; // are just rendered as they are
+                else
+                    return replaceABCDtokensByABCtokens(line);
+            }).join('\n');
     }
 
 
