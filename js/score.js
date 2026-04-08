@@ -197,16 +197,20 @@ class Score {
 
 
 
-
+/**
+ * This class represents a string in which we append a string as a new line at the end
+ */
 class StringToBeAppended {
-    constructor() {
-        this.data = "";
-    }
+    constructor() { this.data = ""; }
 
-    append(newData) {
+    /**
+     * @description append newLineString at the end of the string
+     * @param {string} newLineString 
+     */
+    append(newLineString) {
         if (this.data == "")
-            this.data = newData;
-        else this.data += "\n" + newData;
+            this.data = newLineString;
+        else this.data += "\n" + newLineString;
     }
 }
 
@@ -295,7 +299,6 @@ class Voice extends StringToBeAppended {
     }
 
     toStringABC() {
-
         function replaceABCDtokensByABCtokens(inputString) {
             let string = inputString;
             string = string.replaceAll("𝄢", "[K:bass]");
@@ -329,8 +332,10 @@ class Voice extends StringToBeAppended {
 }
 
 
-
-class ScorePreambule {
+/**
+ * Meta-data of a score (title + composer)
+ */
+class ScoreMetaData {
     constructor() {
         this.title = "Write the title at the top of the code";
         this.composer = "Composer follows the title";

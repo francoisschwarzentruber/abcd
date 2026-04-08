@@ -1,3 +1,6 @@
+/**
+ * @description dictionnary instrument name to MIDI id
+ */
 const instrumentToMIDITable = {
     "piano": 1,
     "harpsichord": 7,
@@ -48,7 +51,10 @@ const clefsDictionnary = {
 }
 
 
-//if not present, by default it is 𝄞
+/**
+ * @description dictionnary instrument name to standard key for playing that instrument
+ * if not present, by default it is 𝄞
+ */
 const instrumentToStandardKey = {
     "cello": "𝄢"
 }

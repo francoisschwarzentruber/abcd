@@ -24,15 +24,15 @@ function isStaffLine(abcdLine) {
         muted = true;
     }
 
-    if (abcdLine.startsWith("𝄞") || abcdLine.startsWith("𝄢"))
+    if (isStartsWithClefs(abcdLine))
         return { content: abcdLine, muted };
 
     const words = abcdLine.split(" ");
     const firstWord = words[0].toLowerCase();
     let content = words.splice(1).join(" ").trim();
     if (instrumentToMIDITable[firstWord] != undefined) {
-        if (!(content.startsWith("𝄞") || content.startsWith("𝄢")))
-            content = (instrumentToStandardKey[firstWord] ? instrumentToStandardKey[firstWord] : "𝄞") + content;
+        if (!(isStartsWithClefs(content)))
+            content = (instrumentToStandardKey[firstWord] ? instrumentToStandardKey[firstWord] : "𝄞") + " " + content;
         return { instrument: firstWord, content, muted };
     }
     return false;
@@ -81,7 +81,7 @@ function isLyricsLine(abcdLine) {
      * @returns the score preambule (title of the score + name of the composer)
      */
 function extractScorePreambuleFromABCDLines(abcdLines) {
-    const scorePreambule = new ScorePreambule();
+    const scorePreambule = new ScoreMetaData();
     let iLine = 0;
 
     function isNotATitleOrComposer(line) {
@@ -153,7 +153,7 @@ async function abcd2Score(abcdLines) {
     const cursor = new Cursor();
     let currentInstrument = undefined;
     for (let i = 0; i < abcdLines.length; i++) {
-        let lyrics = undefined;
+        let lyricsStr = undefined;
         let line = abcdLines[i].trim();
         if (line == "") {
             score.validateStaff(cursor);
@@ -169,8 +169,8 @@ async function abcd2Score(abcdLines) {
         else if (["[", "]", "{", "}"].indexOf(line) >= 0) {
             score.setStaffSymbol(cursor, line);
         }
-        else if (lyrics = isLyricsLine(line)) {
-            score.appendLyrics(cursor, lyrics);
+        else if (lyricsStr = isLyricsLine(line)) {
+            score.appendLyrics(cursor, lyricsStr);
         }
         else {
             let infoVoice = {};
