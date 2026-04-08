@@ -35,6 +35,7 @@ const instrumentToMIDITable = {
 
 
 /**
+ * @type {Object.<string, string>}
  * @description Correspondance ABCD to ABC
  */
 const clefsDictionnary = {

@@ -1,21 +1,31 @@
 // @ts-check
 
+/// <reference path="duration.js" />
 /**
  * An element with duration can be a Chord or a rest
  */
 class ElementWithDuration {
     duration;
+
+    /**
+     * 
+     * @param {Duration} duration 
+     */
     constructor(duration) { this.duration = duration; }
-    setDuration(d) { this.duration = new Duration(d); }
 }
 
 /**
  * A rest (silence)
  */
 class Rest extends ElementWithDuration {
+
+    /**
+     * 
+     * @param {string} letter 
+     * @param {Duration} duration 
+     */
     constructor(letter, duration) {
         super(duration);
-        this.duration = duration;
         this.letter = letter;
     }
     toStringABC() { return (this.letter == "r" ? "z" : this.letter) + this.duration.toString(); }
@@ -27,6 +37,11 @@ class Rest extends ElementWithDuration {
  * a note or a chord
  */
 class Chord extends ElementWithDuration {
+    /**
+     * 
+     * @param {Pitch[]} pitchs 
+     * @param {Duration} duration 
+     */
     constructor(pitchs, duration) {
         super(duration);
         this.pitchs = pitchs;
@@ -61,6 +76,11 @@ class Chord extends ElementWithDuration {
  * a signature, e.g. "4/4"
  */
 class ElementSignature {
+    /**
+     * 
+     * @param {string} tokenStr 
+     * @example new ElementSignature("4/4")
+     */
     constructor(tokenStr) { this.tokenStr = tokenStr; }
     toStringABC() { return "[M: " + this.tokenStr + "]"; }
 }
@@ -68,34 +88,55 @@ class ElementSignature {
 
 
 class ElementClef {
-    constructor(tokenStr) {
-        this.tokenStr = tokenStr;
-    }
+    /**
+     * 
+     * @param {string} tokenStr 
+     */
+    constructor(tokenStr) { this.tokenStr = tokenStr; }
 
-    static isTokenClef(anyTokenStr) {
-        return clefsDictionnary[anyTokenStr];
-    }
+    /**
+     * 
+     * @param {string} anyTokenStr 
+     * @returns {string | undefined} the string representing the clef in ABC
+     * or undefined
+     */
+    static getABCFromTokenABCDClef(anyTokenStr) { return clefsDictionnary[anyTokenStr]; }
 
     toStringABC() {
-        return ElementClef.isTokenClef(this.tokenStr);
+        return ElementClef.getABCFromTokenABCDClef(this.tokenStr);
     }
 }
 
 
 
 class ElementTempo {
+    /**
+     * 
+     * @param {string} tokenStr 
+     */
     constructor(tokenStr) {
         this.tokenStr = tokenStr;
     }
 
-    static isTokenStrTempo(tokenStr) {
-        if (tokenStr.startsWith("♩=")) {
-            return tokenStr.substr(2);
-        }
+    /**
+     * 
+     * @param {string} tokenStr 
+     * @returns {string | undefined} the ABC correspond
+     */
+    static getABCFromTokenABCDTempo(tokenStr) {
+        if (tokenStr.startsWith("𝅗𝅥="))
+            return "[Q:1/2=" + tokenStr.substring("𝅗𝅥=".length) + "]";
+        if (tokenStr.startsWith("♩="))
+            return "[Q:1/4=" + tokenStr.substring("♩=".length) + "]";
+        if (tokenStr.startsWith("𝅘𝅥𝅮="))
+            return "[Q:1/8=" + tokenStr.substring("𝅘𝅥𝅮=".length) + "]";
+        if (tokenStr.startsWith("𝅘𝅥𝅯="))
+            return "[Q:1/16=" + tokenStr.substring("𝅘𝅥𝅯=".length) + "]";
+        return undefined;
     }
 
     toStringABC() {
-        return "[Q:1/4=" + this.tokenStr.substr(2) + "]";
+        return ElementTempo.getABCFromTokenABCDTempo(this.tokenStr);
     }
 
 }
@@ -187,13 +228,13 @@ function tokenToElement(tokenStr) {
     if (isTimeSignature(tokenStr))
         return new ElementSignature(tokenStr);
 
-    if (ElementClef.isTokenClef(tokenStr))
+    if (ElementClef.getABCFromTokenABCDClef(tokenStr))
         return new ElementClef(tokenStr);
 
     if (ElementTonality.isTonalityStr(tokenStr))
         return new ElementTonality(tokenStr);
 
-    if (ElementTempo.isTokenStrTempo(tokenStr))
+    if (ElementTempo.getABCFromTokenABCDTempo(tokenStr))
         return new ElementTempo(tokenStr);
 
     /**
@@ -346,7 +387,11 @@ function tokenToElement(tokenStr) {
 
 
 
-
+/**
+ * 
+ * @param {string} iNote 
+ * @returns the value of the note between 0 and 6
+ */
 function lyNoteLetterToiNote7(iNote) {
     switch (iNote) {
         case "c": return 0;

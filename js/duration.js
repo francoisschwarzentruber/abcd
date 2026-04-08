@@ -2,6 +2,10 @@
  * duration of a rest / chord
  */
 class Duration {
+    /**
+     * 
+     * @param {string | number} value 
+     */
     constructor(value) {
         if (typeof (value) == "string")
             this.str = value;
@@ -15,7 +19,7 @@ class Duration {
 
 /**
  * 
- * @param {*} duration 
+ * @param {number} duration 
  * @returns a string representing the duration
  * 
  * @example durationFractionToStr(1.875) == "15/2"
