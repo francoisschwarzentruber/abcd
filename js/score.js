@@ -301,11 +301,7 @@ class Voice extends StringToBeAppended {
     toStringABC() {
         function replaceABCDtokensByABCtokens(inputString) {
             let string = inputString;
-            string = string.replaceAll("𝄢", "[K:bass]");
-            string = string.replaceAll("𝄞8", "[K:treble-8]");
-            string = string.replaceAll("𝄞-8", "[K:treble-8]");
-            string = string.replaceAll("𝄞+8", "[K:treble+8]");
-            string = string.replaceAll("𝄞", "[K:treble]");
+
             string = string.replaceAll(/(?<=\S) /g, ""); //remove a space after a letter different from a space
 
             return string

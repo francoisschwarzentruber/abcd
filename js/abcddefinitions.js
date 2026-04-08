@@ -52,6 +52,13 @@ const clefsDictionnary = {
 }
 
 
+
+const dictionnaryABCDtoABC = {
+    "tr": "!trill!",
+    
+}
+
+
 /**
  * @description dictionnary instrument name to standard key for playing that instrument
  * if not present, by default it is 𝄞

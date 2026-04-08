@@ -1,17 +1,21 @@
 // @ts-check
 
 /// <reference path="duration.js" />
+
+class MusicalElement { }
+
 /**
  * An element with duration can be a Chord or a rest
  */
-class ElementWithDuration {
+class ElementWithDuration extends MusicalElement {
+    dhat = 0;
     duration;
 
     /**
      * 
      * @param {Duration} duration 
      */
-    constructor(duration) { this.duration = duration; }
+    constructor(duration) { super(); this.duration = duration; }
 }
 
 /**
@@ -75,24 +79,24 @@ class Chord extends ElementWithDuration {
 /**
  * a signature, e.g. "4/4"
  */
-class ElementSignature {
+class ElementSignature extends MusicalElement {
     /**
      * 
      * @param {string} tokenStr 
      * @example new ElementSignature("4/4")
      */
-    constructor(tokenStr) { this.tokenStr = tokenStr; }
+    constructor(tokenStr) { super(); this.tokenStr = tokenStr; }
     toStringABC() { return "[M: " + this.tokenStr + "]"; }
 }
 
 
 
-class ElementClef {
+class ElementClef extends MusicalElement {
     /**
      * 
      * @param {string} tokenStr 
      */
-    constructor(tokenStr) { this.tokenStr = tokenStr; }
+    constructor(tokenStr) { super(); this.tokenStr = tokenStr; }
 
     /**
      * 
@@ -109,12 +113,13 @@ class ElementClef {
 
 
 
-class ElementTempo {
+class ElementTempo extends MusicalElement {
     /**
      * 
      * @param {string} tokenStr 
      */
     constructor(tokenStr) {
+        super();
         this.tokenStr = tokenStr;
     }
 
@@ -147,7 +152,7 @@ class ElementTempo {
  * a tonality changes
  * @example new ElementTonality("##")
  */
-class ElementTonality {
+class ElementTonality extends MusicalElement {
 
     tonalityNumber = 0;
 
@@ -156,9 +161,15 @@ class ElementTonality {
      * @param {string} tokenStr 
      */
     constructor(tokenStr) {
+        super();
         this.tonalityNumber = ElementTonality.isTonalityStr(tokenStr);
     }
 
+    /**
+     * 
+     * @param {string} token 
+     * @returns {number}
+     */
     static isTonalityStr(token) {
         return strToTonalityNumber(token);
     }
@@ -197,21 +208,25 @@ class ElementTonality {
 /**
  * class for a symbol e.g. "(3", "(5"
  */
-class NupletSymbolElement {
+class NupletSymbolElement extends MusicalElement {
     /**
      * 
      * @param {number} value
      * @example new NupletSymbolElement(3)
      */
-    constructor(value) { this.value = value; }
+    constructor(value) { super(); this.value = value; }
     toStringABC() { return "(" + this.value; }
 }
 
 /**
  * class for any element (which is not a note or a rest)
  */
-class StringElement {
-    constructor(string) { this.string = string; }
+class StringElement extends MusicalElement {
+    /**
+     * 
+     * @param {string} string 
+     */
+    constructor(string) { super(); this.string = string; }
     toStringABC() { return this.string; }
 }
 

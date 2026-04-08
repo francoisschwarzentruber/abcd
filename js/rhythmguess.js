@@ -1,14 +1,18 @@
+// @ts-check
+
+
 /**
+ * @type {Record<string, string>}
  * Memoïzation of the guessed rhythm for small portion of abcd strings
  */
 const memo = {};
 
 /**
  * 
- * @param {*} abcdStr 
- * @param {*} signature 
- * @param {*} result
- * @example abcdStr = "a  b ", signature = 1, result = "a2 b2 "
+ * @param {string} abcdStr 
+ * @param {string} signature 
+ * @param {string} result
+ * @example abcdStr = "a  b ", signature = "4/4", result = "a2 b2 "
  * @description store the result of guessing rhythm so that we do not call the solver again and again 
  */
 function storeMemo(abcdStr, signature, result) {
@@ -19,9 +23,9 @@ function storeMemo(abcdStr, signature, result) {
 class RhythmGuess {
     /**
      * 
-     * @param {*} abcdStr 
-     * @param {*} signature 
-     * @returns the abcd string where the durations of the notes have been infered
+     * @param {string} abcdStr 
+     * @param {string} signature 
+     * @returns {Promise<string>} the abcd string where the durations of the notes have been infered
      */
     static async getRhythm(abcdStr, signature = "4/4") {
         abcdStr = abcdStr.trimLeft();
@@ -34,14 +38,14 @@ class RhythmGuess {
 
     /**
      * 
-     * @param {*} abcStr, a string representing the content of a voice of a measure
-     * @param {*} signature, a string representing the duration of the measure, e.g. 4/4 = a whole note
-     * @returns a string where each element (note or rest) has a duration
+     * @param {string} abcdStr, a string representing the content of a voice of a measure
+     * @param {string} signature, a string representing the duration of the measure, e.g. 4/4 = a whole note
+     * @returns {Promise<string>} a string where each element (note or rest) has a duration
      * @description if the string does not contain any note/rest/chord, then it adds a "x" with its duration at the end
      */
-    static async inferRhythm(abcStr, signature) {
+    static async inferRhythm(abcdStr, signature) {
         const signatureValue = eval(signature);
-        console.log(`inferRhythm(${abcStr}, ${signature})`)
+        console.log(`inferRhythm(${abcdStr}, ${signature})`)
 
 
 
@@ -95,8 +99,8 @@ class RhythmGuess {
 
         /**
          * 
-         * @param {*} elements
-         * @returns elements unchanged if elements contain notes or rests
+         * @param {MusicalElement[]} elements
+         * @returns {MusicalElement[]} elements unchanged if elements contain notes or rests
          * elements + a rest 
          */
         function addFakeRestIfMeasureIsEmpty(elements) {
@@ -110,13 +114,18 @@ class RhythmGuess {
             }
         }
 
+
+        /**
+         * 
+         * @param {MusicalElement[]} elements 
+         * @returns {number[][]}
+         */
         function computePossibleDurations(elements) {
             let nupletValue = undefined;
             let nupletCount = undefined;
 
             return elements.map(
                 (e) => {
-
                     if (e instanceof ElementWithDuration) {
                         let factor = 1;
                         if (nupletCount) {
@@ -138,7 +147,11 @@ class RhythmGuess {
                 });
         }
 
-
+        /**
+         * 
+         * @param {MusicalElement[]} elements 
+         * @param {number[]} durationsSolution 
+         */
         function setDurations(elements, durationsSolution) {
             let nupletValue = undefined;
             let nupletCount = undefined;
@@ -170,9 +183,9 @@ class RhythmGuess {
 
         /**
          * 
-         * @param {*} elements with already the correct durations 
-         * @param {*} durationsSolution 
-         * @returns the ABC string with the durations
+         * @param {MusicalElement[]} elements with already the correct durations 
+         * @param {number[]} durationsSolution 
+         * @returns {string} the ABC string with the durations
          */
         function elementsToABC(elements, durationsSolution) {
 
@@ -190,7 +203,7 @@ class RhythmGuess {
         }
 
         let isDurationMeasureSmallerThanSignatureForSure = false;
-        const tokens = abcStr.split(" ");
+        const tokens = abcdStr.split(" ");
         const elements = addFakeRestIfMeasureIsEmpty(tokensToElements(tokens));
 
         //main
@@ -209,16 +222,16 @@ class RhythmGuess {
             setDurations(elements, durationsSolution);
             const abcResult = elementsToABC(elements, durationsSolution);
             console.log("result of the inference: ", durationsSolution, abcResult)
-            storeMemo(abcStr, signature, abcResult);
+            storeMemo(abcdStr, signature, abcResult);
             return abcResult;
 
         } catch (e) {
             console.error(e);
 
             if (isDurationMeasureSmallerThanSignatureForSure) // in case of of anacrusis, we do not show an error
-                return abcStr;
+                return abcdStr;
             else
-                return abcStr + ' [Q:"error: inconsistent_rhythm"] ';
+                return abcdStr + ' [Q:"error: inconsistent_rhythm"] ';
         }
     }
 
@@ -229,10 +242,10 @@ class RhythmGuess {
 
 /**
  * 
- * @param {*} element a musical element (class ElementWithDuration) 
- * @param {*} ratio an estimation of the duration of the element
- * @param {*} signatureValue the signature (e.g. 0.75 for a "3/4" measure) of a full measure
- * @returns an array of possible durations for the element
+ * @param {ElementWithDuration} element a musical element (class ElementWithDuration) 
+ * @param {number} ratio an estimation of the duration of the element
+ * @param {number} signatureValue the signature (e.g. 0.75 for a "3/4" measure) of a full measure
+ * @returns {number[]} an array of possible durations for the element
  */
 function getPossibleDurations(element, ratio, signatureValue) {
     let A = [];
@@ -295,9 +308,9 @@ function getPossibleDurations(element, ratio, signatureValue) {
 
 /**
  * 
- * @param {*} a 
- * @param {*} b 
- * @returns true iff a and b are equal (close to equal)
+ * @param {number} a 
+ * @param {number} b 
+ * @returns {boolean} true iff a and b are equal (close to equal)
  */
 function isEq(a, b) { return Math.abs(a - b) < 0.00001; }
 
@@ -335,11 +348,11 @@ async function solveWithLP(possibleDurations, totalDuration, dhats) {
 
 /**
  * 
- * @param {*} possibleDurations: a list of list of possibleDurations. possibleDurations[i] is the list of possible durations of element n° i 
- * @param {*} totalDuration 
- * @param {*} dhats: a list of duration ratios (the sum of these numbers equals 1), these numbers are just used to prune the search tree
+ * @param {number[][]} possibleDurations: a list of list of possibleDurations. possibleDurations[i] is the list of possible durations of element n° i 
+ * @param {number} totalDuration 
+ * @param {number[]} dhats: a list of duration ratios (the sum of these numbers equals 1), these numbers are just used to prune the search tree
 
- * @returns returns an array "solutions" of durations such that:
+ * @returns {Promise<number[]>} returns an array "solutions" of durations such that:
  *  - the solutions[i] is in possibleDurations[i]
  *  - solutions[0] + solutions[1] + ... sums to totalDuration
  *  - solutions comply with dhats (same ratios => same duration etc.)
@@ -347,8 +360,12 @@ async function solveWithLP(possibleDurations, totalDuration, dhats) {
 async function solveQuickAndDirty(possibleDurations, totalDuration, dhats) {
 
     /**
-     * up([1, 2, 4, 5,3], [3, 4])
-     * */
+     * 
+     * @param {number[]} durations 
+     * @param {number[]} bests 
+     * @returns {number[]}
+     * @example up([1, 2, 4, 5,3], [3, 4])    
+     */
     function up(durations, bests) {
         return durations.sort((a, b) => {
             if ((bests.indexOf(a) >= 0) && (bests.indexOf(b) >= 0))
@@ -367,10 +384,10 @@ async function solveQuickAndDirty(possibleDurations, totalDuration, dhats) {
 
     /**
      * 
-     * @param {*} possibleDurations 
-     * @param {*} i 
-     * @param {*} subTotal 
-     * @returns 
+     * @param {number[][]} possibleDurations 
+     * @param {number} i 
+     * @param {number} subTotal 
+     * @returns {boolean}
      */
     function solveRec(possibleDurations, i, subTotal) {
         if (i >= possibleDurations.length && Math.abs(subTotal) < 0.000001) {
