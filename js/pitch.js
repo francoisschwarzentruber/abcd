@@ -36,7 +36,8 @@ class Pitch {
                 default: return 0;
             }
         }
-        return 12 * this.octave + f() + this.accidental;
+        const a = this.accidental == undefined ? 0 : this.accidental;
+        return 12 * this.octave + f() + a;
     }
 
 
@@ -55,7 +56,7 @@ class Pitch {
             throw "value % 7 out of scope";
         }
 
-        let a = () => (this.accidental > 0 ? "♯".repeat(this.accidental) : "♭".repeat(-this.accidental))
+        let a = () => (this.accidental == undefined) ? "" : (this.accidental > 0 ? "♯".repeat(this.accidental) : "♭".repeat(-this.accidental))
 
         let octave = this.octave;
         return f() + a() + ((octave >= 0) ? "'".repeat(octave) : ",".repeat(-octave));
@@ -66,25 +67,25 @@ class Pitch {
 
 
     toStringLy() {
-        const accidentalString = (this.accidental > 0 ? "♯".repeat(this.accidental) : "♭".repeat(-this.accidental));
+        const accidentalString = (this.accidental == undefined) ? "" : (this.accidental > 0 ? "♯".repeat(this.accidental) : "♭".repeat(-this.accidental));
         const octaveString = octaveToString(this.octave);
         return iNote7ToLy(this.value7) + accidentalString + octaveString;
     }
 
     toStringABCD() {
-        const accidentalString = (this.accidental == 0) ? "♮" : (this.accidental > 0 ? "♯".repeat(this.accidental) : "♭".repeat(-this.accidental));
+        const accidentalString = (this.accidental == undefined) ? "" : (this.accidental == 0) ? "♮" : (this.accidental > 0 ? "♯".repeat(this.accidental) : "♭".repeat(-this.accidental));
         const octaveString = octaveToString(this.octave);
         return accidentalString + iNote7ToLy(this.value7) + octaveString;
     }
 
     toStringABC() {
-        const accidentalString = (this.accidental == 0) ? "=" : (this.accidental > 0 ? "^".repeat(this.accidental) : "_".repeat(-this.accidental));
+        const accidentalString = (this.accidental == undefined) ? "" : (this.accidental == 0) ? "=" : (this.accidental > 0 ? "^".repeat(this.accidental) : "_".repeat(-this.accidental));
         const octaveString = octaveToString(this.octave - 1);
         return accidentalString + iNote7ToLy(this.value7) + octaveString;
     }
 
     toStringTone() {
-        const accidentalString = (this.accidental > 0 ?
+        const accidentalString = (this.accidental == undefined) ? "" : (this.accidental > 0 ?
             "#".repeat(this.accidental) : "b".repeat(-this.accidental));
         const octaveString = this.octave + 4;
         return iNote7ToLy(this.value7).toUpperCase() + accidentalString + octaveString;
@@ -99,7 +100,7 @@ class Pitch {
      * @returns 
      */
     static fromNameAccidentalOctave(name, accidental, octave) {
-        return new Pitch(lyNoteLetterToiNote7(name) + 7*octave, accidental);
+        return new Pitch(lyNoteLetterToiNote7(name) + 7 * octave, accidental);
     }
 
 }

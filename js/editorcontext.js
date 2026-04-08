@@ -1,5 +1,6 @@
 // @ts-check
 /// <reference path="element.js" />
+/// <reference path="editor.js" />
 
 
 /**

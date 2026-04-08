@@ -57,12 +57,18 @@ function addPitch(abcdTokenString, diff) {
 /**
  * 
  * @param {string} abcdString 
- * @returns the string where each note is one octave higher
+ * @returns {string} the string where each note is one octave higher
  * 
  * @example str8up("a'' c,") == "a''' c"
  */
 function str8up(abcdString) {
-    return mapToAllTokens(abcdString, (str) => movePitch(str, 7));
+    return mapToAllTokens(abcdString, 
+        /**
+         * 
+         * @param {string} str 
+         * @returns {string}
+         */
+        (str) => movePitch(str, 7));
 }
 
 /**
@@ -73,7 +79,13 @@ function str8up(abcdString) {
  * @example str8up("a'' c,") == "a' c,,"
  */
 function str8down(abcdString) {
-    return mapToAllTokens(abcdString, (str) => movePitch(str, -7));
+    return mapToAllTokens(abcdString, 
+        /**
+         * 
+         * @param {string} str 
+         * @returns {string}
+         */
+        (str) => movePitch(str, -7));
 }
 
 
@@ -119,9 +131,12 @@ function enharmonic(pitch, key) {
 /**
 * 
 * @param {Pitch} key
-* @returns the array of accidentals in the key
+* @returns {(number | undefined)[]} the array of accidentals in the key
 */
 function getAccidentals(key) {
+    /**
+     * @type {(number | undefined)[]}
+     */
     const array = [0, 0, 0, 0, 0, 0, 0];
     for (let i = 0; i < 7; i++) {
         let newPitch = modulo(add(new Pitch(i, 0), key));

@@ -1,3 +1,5 @@
+
+
 /**
  * @description dictionnary instrument name to MIDI id
  */
@@ -55,7 +57,7 @@ const clefsDictionnary = {
 
 const dictionnaryABCDtoABC = {
     "tr": "!trill!",
-    
+
 }
 
 
@@ -75,8 +77,8 @@ function isTimeSignature(str) { return abcdStringTimeSignature.indexOf(str) >= 0
 
 /**
  * 
- * @param {*} str 
- * @returns the corresponding tonality number, and undefined if not a tonality
+ * @param {string} str 
+ * @returns {number | undefined} the corresponding tonality number, and undefined if not a tonality
  * 
  * @example strToTonalityNumber('###') == 3
  * @example strToTonalityNumber('bb') == -2

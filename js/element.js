@@ -52,11 +52,7 @@ class Chord extends ElementWithDuration {
     }
 
     toStringABC() {
-        const pitchsStr = this.pitchs.map(pitch => {
-            const accidentalString = (pitch.accidental == 0) ? "=" : (pitch.accidental > 0 ? "^".repeat(pitch.accidental) : "_".repeat(-pitch.accidental));
-            const octaveString = octaveToString(pitch.octave - 1);
-            return accidentalString + iNote7ToLy(pitch.value7) + octaveString;
-        });
+        const pitchsStr = this.pitchs.map(pitch => pitch.toStringABC());
 
         if (pitchsStr.length == 1)
             return pitchsStr[0] + this.duration.toString();
@@ -65,14 +61,8 @@ class Chord extends ElementWithDuration {
     }
 
     toStringABCD() {
-        const pitchsStr = this.pitchs.map(pitch => {
-            const accidentalString = (pitch.accidental == 0) ? "♮" : (pitch.accidental > 0 ? "♯".repeat(pitch.accidental) : "♭".repeat(-pitch.accidental));
-            const octaveString = octaveToString(pitch.octave);
-            return accidentalString + iNote7ToLy(pitch.value7) + octaveString;
-        });
-
+        const pitchsStr = this.pitchs.map(pitch => pitch.toStringABCD());
         return pitchsStr.join("") + this.duration.toString();
-
     }
 }
 
@@ -162,17 +152,18 @@ class ElementTonality extends MusicalElement {
      */
     constructor(tokenStr) {
         super();
-        this.tonalityNumber = ElementTonality.isTonalityStr(tokenStr);
+        const tonalityNumber = ElementTonality.getTonalityNumberFromStr(tokenStr);
+        if (tonalityNumber == undefined)
+            throw "the string does not represent a tonality"
+        this.tonalityNumber = tonalityNumber;
     }
 
     /**
      * 
      * @param {string} token 
-     * @returns {number}
+     * @returns {number | undefined}
      */
-    static isTonalityStr(token) {
-        return strToTonalityNumber(token);
-    }
+    static getTonalityNumberFromStr(token) { return strToTonalityNumber(token); }
 
     /**
      * @returns {Pitch}
@@ -234,7 +225,7 @@ class StringElement extends MusicalElement {
 /**
  * 
  * @param {string} tokenStr 
- * @returns {Element} element corresponding to tokenStr
+ * @returns {MusicalElement} element corresponding to tokenStr
  */
 function tokenToElement(tokenStr) {
     if (tokenStr == "")
@@ -246,26 +237,24 @@ function tokenToElement(tokenStr) {
     if (ElementClef.getABCFromTokenABCDClef(tokenStr))
         return new ElementClef(tokenStr);
 
-    if (ElementTonality.isTonalityStr(tokenStr))
+    if (ElementTonality.getTonalityNumberFromStr(tokenStr))
         return new ElementTonality(tokenStr);
 
     if (ElementTempo.getABCFromTokenABCDTempo(tokenStr))
         return new ElementTempo(tokenStr);
 
     /**
-    * @param {*} string
-    * @returns the value of the nuplet symbol if it is one, otherwise it returns undefined
+    * @param {string} string
+    * @returns {number | undefined} the value of the nuplet symbol if it is one, otherwise it returns undefined
     * @example on "(3" returns 3
     */
-    function isStringNupletSymbol(string) {
+    function getValueFromTokenNupletSymbol(string) {
         return string.startsWith("(") ? parseInt(string.substr(1)) : undefined;
     }
 
-
-    if (isStringNupletSymbol(tokenStr)) {
-        const value = isStringNupletSymbol(tokenStr);
+    const value = getValueFromTokenNupletSymbol(tokenStr);
+    if (value != undefined)
         return new NupletSymbolElement(value);
-    }
 
     /**
      * 
@@ -337,6 +326,11 @@ function tokenToElement(tokenStr) {
         return [str.substr(1), letterNote];
     }
 
+    /**
+     * 
+     * @param {string} str 
+     * @returns {[string, number]}
+     */
     function eatOctaves(str) {
         let octave = 0; // by default
         for (let i = 4; i >= 1; i--)
@@ -428,5 +422,9 @@ function lyNoteLetterToiNote7(iNote) {
  */
 function lyToPitch(str) {
     const el = tokenToElement(str);
+
+    if (!(el instanceof Chord))
+        throw "the string was not representing a pitch";
+
     return el.pitchs[0];
 }

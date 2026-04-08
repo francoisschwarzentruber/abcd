@@ -2,6 +2,8 @@
 /// <reference path="editorcontext.js" />
 /// <reference path="pitch.js" />
 /// <reference path="harmony.js" />
+/// <reference path="midiinput.js" />
+/// <reference path="playnote.js" />
 
 
 let beginningTimeForAChord = Date.now();
@@ -91,10 +93,18 @@ function dtToNbSpaces(dt) {
     return 0;
 }
 
+/**
+ * @type {string[]}
+ */
 let notes = [];
 let nbnotes = 0;
 
-MidiInput.setEventListenerNoteOff((inote) => {
+MidiInput.setEventListenerNoteOff(
+    /**
+     * 
+     * @param {number} inote 
+     */
+    (inote) => {
     nbnotes--;
     if (nbnotes == 0) {
         const dt = Date.now() - beginningTimeForAChord;
@@ -110,7 +120,12 @@ MidiInput.setEventListenerNoteOff((inote) => {
 
 
 
-MidiInput.setEventListenerNoteOn((inote) => {
+MidiInput.setEventListenerNoteOn(
+    /**
+     * 
+     * @param {number} inote 
+     */
+    (inote) => {
     if (nbnotes == 0) {
         beginningTimeForAChord = Date.now();
     }
