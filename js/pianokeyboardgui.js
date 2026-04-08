@@ -1,6 +1,8 @@
 const piano = document.getElementById('myPiano');
 
-// Connect your listener here
+/**
+ * when the user clicks on a piano key
+ */
 piano.addEventListener('noteplay', (e) => {
     const rawPitch = Pitch.fromNameAccidentalOctave(e.detail.name, parseInt(e.detail.accidental), e.detail.octave - 3);
     const pitch = rawPitch2Pitch(rawPitch);
@@ -10,17 +12,15 @@ piano.addEventListener('noteplay', (e) => {
     console.log(pitch)
     editor.write(pitch.toStringABCD() + " ");
     setTimeout(() => editor.focus(), 200);
-    // This is where you'd trigger your AudioContext or Synth
 });
 
-
-// Connect your listener here
+/**
+ * when the user move the mouse on a piano key
+ */
 piano.addEventListener('notehover', (e) => {
     const rawPitch = Pitch.fromNameAccidentalOctave(e.detail.name, parseInt(e.detail.accidental), e.detail.octave - 3);
     const pitch = rawPitch2Pitch(rawPitch);
 
     const abc = editorContext.getCurrentClef().toStringABC() + " " + pitch.toStringABC();
-console.log(abc)
     abcjs.renderAbc('notesnapshot', abc);
-    // This is where you'd trigger your AudioContext or Synth
 });

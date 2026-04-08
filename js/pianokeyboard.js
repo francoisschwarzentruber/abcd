@@ -64,6 +64,14 @@ class PianoKeyboard extends HTMLElement {
           cursor: pointer;
         }
 
+        .white:hover {
+          filter: brightness(90%);
+        }
+
+        .black:hover {
+          background: #555;
+        }
+
         .white {
           flex: 1 0 var(--white-width);
           background: white;
@@ -93,7 +101,7 @@ class PianoKeyboard extends HTMLElement {
         }
 
         .black:active {
-          background: #444;
+          background: #777;
         }
       </style>
       <div class="keyboard">

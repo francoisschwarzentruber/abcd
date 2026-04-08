@@ -181,7 +181,6 @@ class StringElement {
  * @returns {Element} element corresponding to tokenStr
  */
 function tokenToElement(tokenStr) {
-    console.log(tokenStr)
     if (tokenStr == "")
         return new StringElement(tokenStr);
 

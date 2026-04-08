@@ -1,8 +1,10 @@
 // @ts-check
 /// <reference path="editorcontext.js" />
+/// <reference path="pitch.js" />
+/// <reference path="harmony.js" />
 
 
-let beginningTimeForAChord;
+let beginningTimeForAChord = Date.now();
 
 
 /**
@@ -14,7 +16,6 @@ function imidiNote2RawPitch(midiNote) {
     const iC = 0;
     const midiNotefromC = midiNote - iC;
     let octave = Math.floor(midiNotefromC / 12);
-    console.log(octave)
     let midi12 = midiNotefromC % 12;
     if (midi12 < 0) {
         midi12 = midi12 + 12;
@@ -45,8 +46,6 @@ function imidiNote2RawPitch(midiNote) {
      * 
      */
     function midi12ToAccidental(midi12) { return [1, 3, 6, 8, 10].indexOf(midi12) >= 0 ? 1 : 0; }
-    console.log(midi12ToPitch7(midi12) + octave * 7)
-
     return new Pitch(midi12ToPitch7(midi12) + octave * 7,
         midi12ToAccidental(midi12));
 }
@@ -70,9 +69,7 @@ function imidiNote2Pitch(midiNoteRelative) {
 function rawPitch2Pitch(rawPitch) {
     const currentTonality = editorContext.getCurrentTonality();
     const key = currentTonality.tonic;
-    console.log(rawPitch.toStringLy())
     const pitchCorrected = enharmonic(rawPitch, key);
-    console.log(pitchCorrected.toStringLy())
     return pitchCorrected;
 }
 
