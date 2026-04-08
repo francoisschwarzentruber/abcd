@@ -98,7 +98,7 @@ function strToTonalityNumber(str) {
 
 
 
-const abcdStringClefs = ["𝄞", "𝄢"];
+const abcdStringClefs = Object.keys(clefsDictionnary);
 
 /**
  * 
