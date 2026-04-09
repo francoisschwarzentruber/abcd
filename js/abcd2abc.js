@@ -1,9 +1,14 @@
+// @ts-check
+
+/// <reference path="score.js" />
+/// <reference path="element.js" />
+
 
 
 /**
  * 
- * @param {*} abcdLine 
- * @returns false if the line is not a staff line, otherwise returns an object containing the information of the line
+ * @param {string} abcdLine 
+ * @returns {false | {content: string, muted: boolean, instrument: string|undefined}} false if the line is not a staff line, otherwise returns an object containing the information of the line
  * {content: content without the instrument name, instrument: (optional) instrument name}
  * @description a staffline is a line starting with a key or starting with an instrument name followed by a key
  * 
@@ -12,7 +17,7 @@
  * isStaffLine('   a a |)' returns false
  *
  */
-function isStaffLine(abcdLine) {
+function getInfoStaffLine(abcdLine) {
     let muted = false;
 
     if (abcdLine == "")
@@ -25,7 +30,7 @@ function isStaffLine(abcdLine) {
     }
 
     if (isStartsWithClefs(abcdLine))
-        return { content: abcdLine, muted };
+        return { content: abcdLine, muted, instrument: undefined };
 
     const words = abcdLine.split(" ");
     const firstWord = words[0].toLowerCase();
@@ -40,8 +45,8 @@ function isStaffLine(abcdLine) {
 
 
 /**
- * 
- * @returns true if line is of the form "flute {" or "piano   {   "
+ * @param {string} abcdLine
+ * @returns {false | {instrument: string}} true if line is of the form "flute {" or "piano   {   "
  * 
  * isStaffInstrumentAndOpenCurlyBracket('piano {') returns {instrument: "piano"}
  * isStaffInstrumentAndOpenCurlyBracket('flute 𝄞 a a a |') returns false
@@ -84,8 +89,17 @@ function extractScorePreambuleFromABCDLines(abcdLines) {
     const scorePreambule = new ScoreMetaData();
     let iLine = 0;
 
+    /**
+     * 
+     * @param {string} line 
+     * @returns {boolean}
+     */
     function isNotATitleOrComposer(line) {
-        return line == "{" || isStaffLine(line);
+        if(line == "{")
+            return true;
+        if(getInfoStaffLine(line))
+            return true;
+        return false;
     }
 
     while (abcdLines.length > 0) {
@@ -110,7 +124,7 @@ function extractScorePreambuleFromABCDLines(abcdLines) {
 
 /**
  * 
- * @param {*} abcdString that represents a score. For instance
+ * @param {string} abcdString that represents a score. For instance
  *          Bloup
  *                    Mozart
  * 
@@ -128,7 +142,7 @@ async function abcd2abc(abcdString) {
     const abcdLines = abcdString.split("\n");
     const scorePreambule = extractScorePreambuleFromABCDLines(abcdLines);
     const score = await abcd2Score(abcdLines);
-    score.scorePreambule = scorePreambule;
+    score.scoreMetaData = scorePreambule;
 
     return score.toStringABC();
 }
@@ -136,17 +150,11 @@ async function abcd2abc(abcdString) {
 
 
 
-function abcdMultipleLines2abcdSingleLines(abcdLines) {
-    return abcdLines;
-}
-
-
-
 
 /**
  * 
  * @param {string[]} abcdLines 
- * @returns {Score}
+ * @returns {Promise<Score>}
  */
 async function abcd2Score(abcdLines) {
     const score = new Score();
@@ -175,10 +183,10 @@ async function abcd2Score(abcdLines) {
         else {
             let infoVoice = {};
 
-            if (isStaffLine(line)) {
+            if (getInfoStaffLine(line)) {
                 score.validateStaff(cursor);
                 cursor.nextStaff();
-                infoVoice = isStaffLine(line);
+                infoVoice = getInfoStaffLine(line);
                 line = infoVoice.content;
                 if (infoVoice.instrument)
                     currentInstrument = infoVoice.instrument;
@@ -195,9 +203,6 @@ async function abcd2Score(abcdLines) {
 
                 let timeSignatureRead = undefined;
 
-                const abcdToken2abcToken = (token) => tokenToElement(token).toStringABC();
-
-
                 /**
                  * 
                  * @param {*} measureStr
@@ -208,7 +213,6 @@ async function abcd2Score(abcdLines) {
                         if (element instanceof ElementSignature)
                             currentTimeSignature = element.tokenStr;
                 }
-                console.log(measureStr)
 
                 readSignature(measureStr);
 

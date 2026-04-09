@@ -1,9 +1,22 @@
+// @ts-check
+
+/// <reference path="abcddefinitions.js" />
+
+
 /**
  * a cursor in the staffs and voices (i.e. a staff index & a voice index in that staff)
  */
 class Cursor {
-    istaff;
-    ivoice;
+    /**
+     * @type {number}
+     */
+    istaff = -1;
+
+
+    /**
+     * @type {number}
+     */
+    ivoice = 0;
 
     constructor() {
         this.reset();
@@ -52,6 +65,13 @@ class Staff {
         this.nbMeasureAddedLastTime = 0;
     }
 
+
+    /**
+     * 
+     * @param {Cursor} cursor 
+     * @param {string} data 
+     * @param {*} info 
+     */
     appendVoice(cursor, data, info) {
         this.nbMeasureAddedLastTime = abcToNbMeasures(data);
         if (cursor.ivoice >= this.voices.length)
@@ -65,16 +85,30 @@ class Staff {
 
     }
 
-
+    /**
+     * 
+     * @param {Cursor} cursor 
+     */
     validate(cursor) {
         for (let i = cursor.ivoice; i < this.voices.length; i++)
             this.voices[i].appendWeak(emptyABCFromNbMeasures(this.nbMeasureAddedLastTime));
     }
 
+
+    /**
+     * 
+     * @param {Cursor} cursor 
+     * @param {string} lyricsStr 
+     */
     appendLyrics(cursor, lyricsStr) {
         this.voices[0].append("w:" + lyricsStr);
     }
 
+
+    /**
+     * 
+     * @returns {string}
+     */
     toStringABCStructure() {
         if (this.voices.length == 1)
             return "V" + this.voices[0].voiceNumber;
@@ -85,8 +119,8 @@ class Staff {
 
 /**
  * 
- * @param {*} nbMeasures 
- * @returns a abcd string with empty measures
+ * @param {number} nbMeasures 
+ * @returns {string} a abcd string with empty measures
  * @example emptyABCFromNbMeasures(2) == "   |   |   "
  */
 function emptyABCFromNbMeasures(nbMeasures) {
@@ -96,8 +130,8 @@ function emptyABCFromNbMeasures(nbMeasures) {
 
 /**
  * 
- * @param {*} abcdString 
- * @returns the number of measures in abcdString
+ * @param {string} abcdString 
+ * @returns {number} the number of measures in abcdString
  * @example abcToNbMeasures("    |    |") == 2
  */
 function abcToNbMeasures(abcdString) {
@@ -109,15 +143,38 @@ function abcToNbMeasures(abcdString) {
  */
 class Score {
 
-    scorePreambule;
+    /**
+     * @type {ScoreMetaData}
+     */
+    scoreMetaData;
 
-    constructor() { this.staffs = []; }
 
+    /**
+     * @type {Staff[]}
+     */
+    staffs;
 
+    constructor() {
+        this.scoreMetaData = new ScoreMetaData();
+        this.staffs = [];
+    }
+
+    /**
+     * 
+     * @param {number} istaff 
+     */
     ensureStaffExists(istaff) {
         if (istaff >= this.staffs.length)
             this.staffs.push(new Staff());
     }
+
+
+    /**
+     * 
+     * @param {Cursor} cursor 
+     * @param {string} data 
+     * @param {*} info 
+     */
     appendVoice(cursor, data, info) {
         this.ensureStaffExists(cursor.istaff);
         this.staffs[cursor.istaff].appendVoice(cursor, data, info);
@@ -127,8 +184,8 @@ class Score {
 
     /**
      * 
-     * @param {*} cursor 
-     * @param {*} lyricsStr 
+     * @param {Cursor} cursor 
+     * @param {string} lyricsStr 
      */
     appendLyrics(cursor, lyricsStr) {
         this.ensureStaffExists(cursor.istaff);
@@ -137,21 +194,29 @@ class Score {
 
     }
 
-
+    /**
+     * 
+     * @param {Cursor} cursor 
+     */
     validateStaff(cursor) {
         if (cursor.istaff >= 0)
             this.staffs[cursor.istaff].validate(cursor);
     }
 
+    /**
+     * 
+     * @param {Cursor} cursor 
+     * @returns {string | undefined}
+     */
     getLastTimeSignature(cursor) {
         this.ensureStaffExists(cursor.istaff);
         return this.staffs[cursor.istaff].voices[0].getLastTimeSignature();
     }
 
     /**
-     * 
-     * @param symbol 
-     * @effect add a "symbol", e.g.'{' = beginning of a group, '}' = end of a group
+     * @param {Cursor} cursor
+     * @param {string} symbol, e.g.'{' = beginning of a group, '}' = end of a group
+     * @effect add a "symbol"
      */
     setStaffSymbol(cursor, symbol) {
         if (symbol == '{' || symbol == '[') {
@@ -162,6 +227,11 @@ class Score {
             this.staffs[cursor.istaff].symbolEnding = symbol;
     }
 
+
+    /**
+     * 
+     * @returns {string}
+     */
     getStringABCStructure() {
         let scoreExpression = "%%score ";
 
@@ -172,7 +242,10 @@ class Score {
     }
 
 
-
+    /**
+     * 
+     * @returns {string}
+     */
     getStringABCData() {
         const lines = [];
 
@@ -186,9 +259,12 @@ class Score {
         return lines.join('\n');
     }
 
-
+    /**
+     * 
+     * @returns {string}
+     */
     toStringABC() {
-        return this.scorePreambule.toStringABC() + '\n' + this.getStringABCStructure() + '\n' + this.getStringABCData();
+        return this.scoreMetaData.toStringABC() + '\n' + this.getStringABCStructure() + '\n' + this.getStringABCData();
     }
 
 
@@ -218,13 +294,14 @@ class StringToBeAppended {
 
 
 /**
- * @param {*} abcdString
- * @returns the last thing from array appearing in the abcdString 
- * @example getLastClef("𝄞 a a 𝄢 a", ["𝄞", "𝄢"]) == "𝄢"
- * @example getLastClef("𝄞 a a a", ["𝄞", "𝄢"]) == "𝄞"
+ * @param {string} abcdString
+ * @param {string[]} array
+ * @returns {string | undefined} the last thing from array appearing in the abcdString 
+ * @example getLastThing("𝄞 a a 𝄢 a", ["𝄞", "𝄢"]) == "𝄢"
+ * @example getLastThing("𝄞 a a a", ["𝄞", "𝄢"]) == "𝄞"
  */
 function getLastThing(abcdString, array) {
-    const positions = array.map((clef) => abcdString.lastIndexOf(clef));
+    const positions = array.map((token) => abcdString.lastIndexOf(token));
     const pos = Math.max(...positions);
     if (pos == -1)
         return undefined;
@@ -236,16 +313,29 @@ function getLastThing(abcdString, array) {
 
 
 /**
- * @param {*} abcdString
- * @returns the last clef appearing in the voice 
+ * @param {string} abcdString
+ * @returns {string | undefined} the last clef appearing in the voice 
  * @example getLastClef("𝄞 a a 𝄢 a") == "𝄢"
  * @example getLastClef("𝄞 a a a") == "𝄞"
  */
 function getLastClef(abcdString) { return getLastThing(abcdString, abcdStringClefs); }
+
+
+/**
+ * 
+ * @param {string} abcdString 
+ * @returns {string | undefined} the last clef appearing in the time signature 
+ */
 function getLastTimeSignature(abcdString) { return getLastThing(abcdString, abcdStringTimeSignature.map(sign => " " + sign)); }
 
 
 class Voice extends StringToBeAppended {
+    /**
+     * @type {number}
+     */
+    static NEXTNUMBER;
+
+
     constructor() {
         super();
         if (Voice.NEXTNUMBER == undefined) // internal numbering used in ABC
@@ -288,7 +378,7 @@ class Voice extends StringToBeAppended {
 
     /**
      * 
-     * @returns the last signature in the voice
+     * @returns {string | undefined} the last signature in the voice
      * @example returns "4/4"
      */
     getLastTimeSignature() {
@@ -299,6 +389,11 @@ class Voice extends StringToBeAppended {
     }
 
     toStringABC() {
+        /**
+         * 
+         * @param {string} inputString 
+         * @returns {string}
+         */
         function replaceABCDtokensByABCtokens(inputString) {
             let string = inputString;
 
@@ -320,7 +415,7 @@ class Voice extends StringToBeAppended {
 
 
     instrumentToABC() {
-        if (this.instrument)
+        if (this.instrument && instrumentToMIDITable[this.instrument] != undefined)
             return "%%MIDI program " + instrumentToMIDITable[this.instrument] + "\n";
         else
             return "";

@@ -1,3 +1,6 @@
+// @ts-check
+/// <reference path="pitch.js" />
+
 const piano = document.getElementById('myPiano');
 
 /**

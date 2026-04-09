@@ -1,8 +1,13 @@
 // @ts-check
 
 /// <reference path="duration.js" />
+/// <reference path="pitch.js" />
 
-class MusicalElement { }
+class MusicalElement {
+    toStringABC() {
+        throw "not implemented because abstract class MusicalElement";
+    }
+}
 
 /**
  * An element with duration can be a Chord or a rest

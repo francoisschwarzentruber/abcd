@@ -1,6 +1,7 @@
-
+// @ts-check
 
 /**
+ * @type {Record<string, number>}
  * @description dictionnary instrument name to MIDI id
  */
 const instrumentToMIDITable = {
@@ -62,6 +63,7 @@ const dictionnaryABCDtoABC = {
 
 
 /**
+ * @type {Record<string, string>}
  * @description dictionnary instrument name to standard key for playing that instrument
  * if not present, by default it is 𝄞
  */
@@ -73,6 +75,11 @@ const instrumentToStandardKey = {
 
 const abcdStringTimeSignature = ["1/2", "1/4", "2/2", "2/4", "3/4", "5/4", "7/4", "3/8", "4/4", "6/4", "6/8", "12/8", "15/8"];
 
+/**
+ * 
+ * @param {string} str 
+ * @returns {boolean}
+ */
 function isTimeSignature(str) { return abcdStringTimeSignature.indexOf(str) >= 0; }
 
 /**
@@ -90,6 +97,12 @@ function strToTonalityNumber(str) {
     if (str == "♮")
         return 0;
 
+    /**
+     * 
+     * @param {string} accident 
+     * @param {number} n 
+     * @returns {string}
+     */
     function accidentals(accident, n) { return accident.repeat(n); }
 
     for (const accident of ["#", "♯", "♭", "b"]) {
@@ -112,13 +125,13 @@ const abcdStringClefs = Object.keys(clefsDictionnary);
 
 /**
  * 
- * @param {*} abcdString 
- * @returns false if abcdString does not start with a clef, or that clef
+ * @param {string} abcdString 
+ * @returns {string | false} false if abcdString does not start with a clef, or that clef
  * @example isStartsWithClefs("𝄞 a") == "𝄞"
  * @example isStartsWithClefs("a a ") == false 
  */
 function isStartsWithClefs(abcdString) {
-    for (clef of abcdStringClefs)
+    for (const clef of abcdStringClefs)
         if (abcdString.startsWith(clef))
             return clef;
 

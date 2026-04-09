@@ -1,3 +1,6 @@
+// @ts-check
+// 
+
 var log = console.log.bind(console), keyData = document.getElementById('key_data'),
     deviceInfoInputs = document.getElementById('inputs'), deviceInfoOutputs = document.getElementById('outputs');
 var AudioContext = AudioContext || webkitAudioContext; // for ios/safari

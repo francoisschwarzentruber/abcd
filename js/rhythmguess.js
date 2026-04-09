@@ -1,6 +1,7 @@
 // @ts-check
 
 
+
 /**
  * @type {Record<string, string>}
  * Memoïzation of the guessed rhythm for small portion of abcd strings
@@ -121,14 +122,14 @@ class RhythmGuess {
          * @returns {number[][]}
          */
         function computePossibleDurations(elements) {
-            let nupletValue = undefined;
-            let nupletCount = undefined;
+            let nupletValue = 1;
+            let nupletCount = 0;
 
             return elements.map(
                 (e) => {
                     if (e instanceof ElementWithDuration) {
                         let factor = 1;
-                        if (nupletCount) {
+                        if (nupletCount > 0) {
                             factor = 1 / nupletValue;
                             nupletCount--;
                         }
@@ -153,8 +154,8 @@ class RhythmGuess {
          * @param {number[]} durationsSolution 
          */
         function setDurations(elements, durationsSolution) {
-            let nupletValue = undefined;
-            let nupletCount = undefined;
+            let nupletValue = 1;
+            let nupletCount = 0;
 
             for (let i = 0; i < elements.length; i++) {
                 const e = elements[i];
@@ -171,7 +172,7 @@ class RhythmGuess {
                         return 2 ** Math.floor(Math.log2(x));
                     }
 
-                    if (nupletCount) {
+                    if (nupletCount > 0) {
                         factor = lowerpoweroftwo(nupletValue) / nupletValue;
                         nupletCount--;
                     }
@@ -364,12 +365,12 @@ async function solveQuickAndDirty(possibleDurations, totalDuration, dhats) {
      * @param {number[]} durations 
      * @param {number[]} bests 
      * @returns {number[]}
-     * @example up([1, 2, 4, 5,3], [3, 4])    
+     * @example up([1, 2, 4, 5, 3], [3, 4])    
      */
     function up(durations, bests) {
         return durations.sort((a, b) => {
             if ((bests.indexOf(a) >= 0) && (bests.indexOf(b) >= 0))
-                return bests.indexOf(a) >= bests.indexOf(b);
+                return bests.indexOf(a) >= bests.indexOf(b) ? 1 : -1;
             else if (bests.indexOf(a) >= 0)
                 return -1;
             else if (bests.indexOf(b) >= 0)
@@ -380,6 +381,9 @@ async function solveQuickAndDirty(possibleDurations, totalDuration, dhats) {
     }
 
 
+    /**
+     * @type {number[]}
+     */
     const solution = [];
 
     /**
@@ -403,7 +407,7 @@ async function solveQuickAndDirty(possibleDurations, totalDuration, dhats) {
         newPossibleDurations[i] = [...newPossibleDurations[i]];
 
         // prune the search for consistency of durations
-        for (j = 0; j < i; j++)
+        for (let j = 0; j < i; j++)
             if (dhats[j] == dhats[i]) { // same number of spaces => same duration
                 newPossibleDurations[i] = up(newPossibleDurations[i], [solution[j]]);
             }

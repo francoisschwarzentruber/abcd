@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * duration of a rest / chord
  */
@@ -31,7 +33,11 @@ function durationFractionToStr(duration) {
         case 0.75: return "3";
     }
 
-
+    /**
+     * 
+     * @param {number} i 
+     * @returns {string}
+     */
     function exp2sym(i) {
         if (i == 0)
             return "4";
