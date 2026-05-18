@@ -193,3 +193,14 @@ document.querySelector("textarea").onkeydown = (e) => {
 };
 
 
+
+
+
+
+Split(['#editor', '#output-panel'], {
+    sizes: [50, 50],
+    minSize: 150,
+    cursor: 'col-resize',
+    direction: 'horizontal',
+    gutterSize: 6
+});

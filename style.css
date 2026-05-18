@@ -1,8 +1,15 @@
-#editor {
+#container {
     position: absolute;
+    display: flex;
+    flex-direction: row;
     top: 76px;
-    right: 50%;
     bottom: 64px;
+    left: 0px;
+    right: 0px;
+}
+
+#editor {
+    bottom: 0px;
     left: 0;
     border: 1px solid black;
     resize: none;
@@ -16,13 +23,12 @@
 }
 
 
-#outputWrapper {
+#output-panel {
     overflow: auto;
     position: absolute;
     top: 76px;
-    left: 50%;
     right: 0;
-    bottom: 64px;
+    bottom: 0px;
     padding-top: 16px;
 }
 
@@ -201,4 +207,22 @@ piano-keyboard {
     border-width: 5px;
     border-style: solid;
     border-color: white transparent transparent transparent;
+}
+
+
+
+
+
+
+/* Styling the draggable gutter injected by Split.js */
+.gutter {
+    background-color: #AAAAAA;
+    cursor: col-resize;
+    transition: background-color 0.2s;
+}
+
+.gutter:hover,
+.gutter:active {
+    background-color: #007acc;
+    /* VS Code Blue */
 }
