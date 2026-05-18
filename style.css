@@ -11,7 +11,7 @@
 #editor {
     bottom: 0px;
     left: 0;
-    border: 1px solid black;
+    border: 0px solid black;
     resize: none;
 }
 
@@ -25,10 +25,6 @@
 
 #output-panel {
     overflow: auto;
-    position: absolute;
-    top: 76px;
-    right: 0;
-    bottom: 0px;
     padding-top: 16px;
 }
 
@@ -216,13 +212,20 @@ piano-keyboard {
 
 /* Styling the draggable gutter injected by Split.js */
 .gutter {
-    background-color: #AAAAAA;
-    cursor: col-resize;
+    background-color: #eee;
     transition: background-color 0.2s;
+    background-repeat: no-repeat;
+    background-position: 50%;
 }
 
 .gutter:hover,
 .gutter:active {
     background-color: #007acc;
     /* VS Code Blue */
+}
+
+/* Split.js adds a '.gutter-horizontal' class specifically for row layouts */
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize;
 }
