@@ -232,7 +232,7 @@ class RhythmGuess {
             if (isDurationMeasureSmallerThanSignatureForSure) // in case of of anacrusis, we do not show an error
                 return abcdStr;
             else
-                return abcdStr + ' [Q:"error: inconsistent_rhythm"] ';
+                return abcdStr + ` [Q:"${e.replaceAll(" ", "_")}"] `;
         }
     }
 
@@ -360,6 +360,7 @@ async function solveWithLP(possibleDurations, totalDuration, dhats) {
  */
 async function solveQuickAndDirty(possibleDurations, totalDuration, dhats) {
 
+    const timeOut = Date.now() + 100;
     /**
      * 
      * @param {number[]} durations 
@@ -393,7 +394,10 @@ async function solveQuickAndDirty(possibleDurations, totalDuration, dhats) {
      * @param {number} subTotal 
      * @returns {boolean}
      */
-    function solveRec(possibleDurations, i, subTotal) {
+    function backtracking(possibleDurations, i, subTotal) {
+        if(Date.now() > timeOut)
+            throw "to complex to find the durations";
+
         if (i >= possibleDurations.length && Math.abs(subTotal) < 0.000001) {
             console.log("we win!")
             console.log(possibleDurations)
@@ -419,15 +423,15 @@ async function solveQuickAndDirty(possibleDurations, totalDuration, dhats) {
 
         for (const v of newPossibleDurations[i]) {
             solution[i] = v;
-            const a = solveRec(newPossibleDurations, i + 1, subTotal - v);
-            if (a) return true;
+            const solutionFound = backtracking(newPossibleDurations, i + 1, subTotal - v);
+            if (solutionFound) return true;
         }
         return false;
     }
 
-    const a = solveRec(possibleDurations, 0, totalDuration);
-    if (a)
+    const solutionFound = backtracking(possibleDurations, 0, totalDuration);
+    if (solutionFound)
         return solution;
     else
-        throw "impossible to solve";
+        throw "impossible to find durations";
 }
