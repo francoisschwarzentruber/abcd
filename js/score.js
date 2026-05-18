@@ -366,9 +366,13 @@ class Voice extends StringToBeAppended {
      * @description append the data to the voice (the voice is then non-empty)
      */
     appendWeak(newData) {
+        console.log(newData)
+        console.log(isStartsWithClefs(newData))
         if (isStartsWithClefs(newData)) {
             const lastClef = getLastClef(this.data);
             const clef = isStartsWithClefs(newData);
+
+            console.log(lastClef, clef)
             if (lastClef == clef)
                 newData = newData.substr(clef.length);
 
@@ -406,8 +410,8 @@ class Voice extends StringToBeAppended {
             + this.instrumentToABC()
             + `[V:V${this.voiceNumber}]`
             + this.data.split("\n").map((line) => {
-                if (line.startsWith("w:")) // lyrics
-                    return line; // are just rendered as they are
+                if (line.startsWith("w:")) // lyrics...
+                    return line; // ...are just rendered as they are
                 else
                     return replaceABCDtokensByABCtokens(line);
             }).join('\n');

@@ -189,7 +189,6 @@ class RhythmGuess {
          * @returns {string} the ABC string with the durations
          */
         function elementsToABC(elements, durationsSolution) {
-
             let splittingDuration = 0.25; //
             if (["6/8", "9/8", "3/8", "12/8", "15/8"].indexOf(signature) >= 0)
                 splittingDuration = 1.5 / 4;

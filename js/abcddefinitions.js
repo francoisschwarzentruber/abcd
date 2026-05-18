@@ -42,6 +42,12 @@ const instrumentToMIDITable = {
  * @description Correspondance ABCD to ABC
  */
 const clefsDictionnary = {
+    "[K:treble]": "[K:treble]",
+    "[K:bass]": "[K:bass]",
+    "[K:treble-8]": "[K:treble-8]",
+    "[K:bass-8]": "[K:bass-8]",
+    "[K:treble+8]": "[K:treble+8]",
+    "[K:bass+8]": "[K:bass+8]",
     "𝄢": "[K:bass]",
     "f:": "[K:bass]",
     "𝄞": "[K:treble]",
@@ -128,6 +134,7 @@ const abcdStringClefs = Object.keys(clefsDictionnary);
  * @param {string} abcdString 
  * @returns {string | false} false if abcdString does not start with a clef, or that clef
  * @example isStartsWithClefs("𝄞 a") == "𝄞"
+ * @example isStartsWithClefs("[K:treble] a") == "[K:treble]"
  * @example isStartsWithClefs("a a ") == false 
  */
 function isStartsWithClefs(abcdString) {
