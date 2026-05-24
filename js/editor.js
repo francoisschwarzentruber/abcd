@@ -1,10 +1,52 @@
 // @ts-check
 
+// Direct imports from esm.sh CDN
+import { EditorView, basicSetup } from "https://esm.sh/codemirror@6.0.1";
+import { StreamLanguage } from "https://esm.sh/@codemirror/language@6.0.0";
+import { tags as t } from "https://esm.sh/@lezer/highlight@1.0.0";
+
+// 1. Define your custom grammar using regex
+const myCustomGrammar = StreamLanguage.define({
+    token(stream) {
+        // Highlighting logic:
+
+        // Match variables (e.g., $foo)
+        if (stream.match(/^\$[a-zA-Z_]\w*/)) return "variableName";
+
+        // Match numbers
+        if (stream.match(/^\d+/)) return "number";
+
+        // Match strings in quotes
+        if (stream.match(/^"[^"]*"/)) return "string";
+
+        // Match specific keywords
+        if (stream.match(/^(?:SELECT|FROM|WHERE)\b/i)) return "keyword";
+
+        // IMPORTANT: Move stream forward if no match found to avoid infinite loops
+        stream.next();
+        return null;
+    }
+});
+
+
 
 /**
  * A wrapper class for the text editor where the code is written 
  */
 class Editor {
+
+
+    constructor() {
+        // 2. Initialize the Editor
+        new EditorView({
+            doc: 'SELECT * FROM users WHERE id = 123 AND name = "$admin"',
+            extensions: [
+                basicSetup,
+                myCustomGrammar
+            ],
+            parent: document.getElementById("editor")
+        });
+    }
     /**
      * return {string} the full code
      */
@@ -98,4 +140,6 @@ class Editor {
     }
 }
 
-let editor = new Editor;
+let editor = new Editor();
+
+window.editor = editor;
