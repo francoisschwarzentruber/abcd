@@ -1,6 +1,8 @@
 // @ts-check
-/// <reference path="element.js" />
-/// <reference path="editor.js" />
+import {editor} from "./editor.js";
+import { clefsDictionnary } from "./abcddefinitions.js";
+import { ElementClef, tokenToElement } from "./element.js";
+
 
 
 /**
@@ -107,4 +109,4 @@ class EditorContext {
 
 }
 
-const editorContext = new EditorContext(editor);
+export const editorContext = new EditorContext(editor);

@@ -1,9 +1,10 @@
 // @ts-check
+import { Duration } from "./duration.js";
+import { Pitch } from "./pitch.js";
+import { isTimeSignature, clefsDictionnary, strToTonalityNumber } from "./abcddefinitions.js";
 
-/// <reference path="duration.js" />
-/// <reference path="pitch.js" />
 
-class MusicalElement {
+export class MusicalElement {
     toStringABC() {
         throw "not implemented because abstract class MusicalElement";
     }
@@ -12,7 +13,7 @@ class MusicalElement {
 /**
  * An element with duration can be a Chord or a rest
  */
-class ElementWithDuration extends MusicalElement {
+export class ElementWithDuration extends MusicalElement {
     dhat = 0;
     duration;
 
@@ -26,7 +27,7 @@ class ElementWithDuration extends MusicalElement {
 /**
  * A rest (silence)
  */
-class Rest extends ElementWithDuration {
+export class Rest extends ElementWithDuration {
 
     /**
      * 
@@ -74,7 +75,7 @@ class Chord extends ElementWithDuration {
 /**
  * a signature, e.g. "4/4"
  */
-class ElementSignature extends MusicalElement {
+export class ElementSignature extends MusicalElement {
     /**
      * 
      * @param {string} tokenStr 
@@ -86,7 +87,7 @@ class ElementSignature extends MusicalElement {
 
 
 
-class ElementClef extends MusicalElement {
+export class ElementClef extends MusicalElement {
     /**
      * 
      * @param {string} tokenStr 
@@ -204,7 +205,7 @@ class ElementTonality extends MusicalElement {
 /**
  * class for a symbol e.g. "(3", "(5"
  */
-class NupletSymbolElement extends MusicalElement {
+export class NupletSymbolElement extends MusicalElement {
     /**
      * 
      * @param {number} value
@@ -232,7 +233,7 @@ class StringElement extends MusicalElement {
  * @param {string} tokenStr 
  * @returns {MusicalElement} element corresponding to tokenStr
  */
-function tokenToElement(tokenStr) {
+export function tokenToElement(tokenStr) {
     if (tokenStr == "")
         return new StringElement(tokenStr);
 
@@ -406,7 +407,7 @@ function tokenToElement(tokenStr) {
  * @param {string} iNote 
  * @returns the value of the note between 0 and 6
  */
-function lyNoteLetterToiNote7(iNote) {
+export function lyNoteLetterToiNote7(iNote) {
     switch (iNote) {
         case "c": return 0;
         case "d": return 1;

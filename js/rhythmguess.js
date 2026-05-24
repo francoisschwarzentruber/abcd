@@ -1,5 +1,7 @@
 // @ts-check
 
+import { Duration } from "./duration.js";
+import { tokenToElement, ElementWithDuration, Rest, NupletSymbolElement, MusicalElement } from "./element.js";
 
 
 /**
@@ -21,7 +23,7 @@ function storeMemo(abcdStr, signature, result) {
 }
 
 
-class RhythmGuess {
+export class RhythmGuess {
     /**
      * 
      * @param {string} abcdStr 
@@ -394,7 +396,7 @@ async function solveQuickAndDirty(possibleDurations, totalDuration, dhats) {
      * @returns {boolean}
      */
     function backtracking(possibleDurations, i, subTotal) {
-        if(Date.now() > timeOut)
+        if (Date.now() > timeOut)
             throw "to complex to find the durations";
 
         if (i >= possibleDurations.length && Math.abs(subTotal) < 0.000001) {

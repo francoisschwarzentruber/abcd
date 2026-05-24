@@ -1,9 +1,10 @@
 // @ts-check
-/// <reference path="editorcontext.js" />
-/// <reference path="pitch.js" />
-/// <reference path="harmony.js" />
-/// <reference path="midiinput.js" />
-/// <reference path="playnote.js" />
+
+import { MidiInput } from "./midiinput.js";
+import { PlayNote } from "./playnote.js";
+import { Pitch } from "./pitch.js";
+import { editorContext } from "./editorcontext.js";
+import { enharmonic } from "./harmony.js";
 
 
 let beginningTimeForAChord = Date.now();
@@ -68,7 +69,7 @@ function imidiNote2Pitch(midiNoteRelative) {
  * @param {Pitch} rawPitch 
  * @returns {Pitch} the pitch that is same as rawPitch but possibly enharmonic because of the current tonality
  */
-function rawPitch2Pitch(rawPitch) {
+export function rawPitch2Pitch(rawPitch) {
     const currentTonality = editorContext.getCurrentTonality();
     const key = currentTonality.tonic;
     const pitchCorrected = enharmonic(rawPitch, key);
@@ -105,18 +106,18 @@ MidiInput.setEventListenerNoteOff(
      * @param {number} inote 
      */
     (inote) => {
-    nbnotes--;
-    if (nbnotes == 0) {
-        const dt = Date.now() - beginningTimeForAChord;
-        const nbSpaces = dtToNbSpaces(dt);
-        const spaces = " ".repeat(nbSpaces);
-        editor.write(notes.join("") + spaces);
+        nbnotes--;
+        if (nbnotes == 0) {
+            const dt = Date.now() - beginningTimeForAChord;
+            const nbSpaces = dtToNbSpaces(dt);
+            const spaces = " ".repeat(nbSpaces);
+            editor.write(notes.join("") + spaces);
 
-        PlayNote.play(notes);
+            PlayNote.play(notes);
 
-        notes = [];
-    }
-});
+            notes = [];
+        }
+    });
 
 
 
@@ -126,9 +127,9 @@ MidiInput.setEventListenerNoteOn(
      * @param {number} inote 
      */
     (inote) => {
-    if (nbnotes == 0) {
-        beginningTimeForAChord = Date.now();
-    }
-    console.log(inote); notes.push(imidiNote2Pitch(inote - 60).toStringLy()); nbnotes++;
-});
+        if (nbnotes == 0) {
+            beginningTimeForAChord = Date.now();
+        }
+        console.log(inote); notes.push(imidiNote2Pitch(inote - 60).toStringLy()); nbnotes++;
+    });
 MidiInput.start();

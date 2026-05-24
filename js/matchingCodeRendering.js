@@ -1,7 +1,9 @@
+import { editor } from "./editor.js";
+
 /**
  * A class with helpers for the link between the rendering and the code
  */
-class MatchingCodeRendering {
+export class MatchingCodeRendering {
 
     static install() {
         const renderedSystems = document.getElementById("output").children;

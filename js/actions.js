@@ -1,4 +1,4 @@
-const ninja = document.querySelector('ninja-keys');
+export const ninja = document.querySelector('ninja-keys');
 ninja.data = [
     {
         title: 'Move notes one octave up',

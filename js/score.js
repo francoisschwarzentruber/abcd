@@ -1,12 +1,12 @@
 // @ts-check
 
-/// <reference path="abcddefinitions.js" />
+import { abcdStringTimeSignature, abcdStringClefs, isStartsWithClefs, instrumentToMIDITable } from "./abcddefinitions.js";
 
 
 /**
  * a cursor in the staffs and voices (i.e. a staff index & a voice index in that staff)
  */
-class Cursor {
+export class Cursor {
     /**
      * @type {number}
      */
@@ -141,7 +141,7 @@ function abcToNbMeasures(abcdString) {
 /**
  * content of the score (structure + data)
  */
-class Score {
+export class Score {
 
     /**
      * @type {ScoreMetaData}
@@ -430,7 +430,7 @@ class Voice extends StringToBeAppended {
 /**
  * Meta-data of a score (title + composer)
  */
-class ScoreMetaData {
+export class ScoreMetaData {
     constructor() {
         this.title = "Write the title at the top of the code";
         this.composer = "Composer follows the title";

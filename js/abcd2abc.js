@@ -1,9 +1,8 @@
 // @ts-check
-
-/// <reference path="score.js" />
-/// <reference path="element.js" />
-
-
+import { ScoreMetaData, Score, Cursor } from "./score.js";
+import { isStartsWithClefs, instrumentToMIDITable, instrumentToStandardKey } from "./abcddefinitions.js";
+import { ElementSignature, tokenToElement } from "./element.js";
+import { RhythmGuess } from "./rhythmguess.js";
 
 /**
  * 
@@ -95,9 +94,9 @@ function extractScorePreambuleFromABCDLines(abcdLines) {
      * @returns {boolean}
      */
     function isNotATitleOrComposer(line) {
-        if(line == "{")
+        if (line == "{")
             return true;
-        if(getInfoStaffLine(line))
+        if (getInfoStaffLine(line))
             return true;
         return false;
     }
@@ -138,7 +137,7 @@ function extractScorePreambuleFromABCDLines(abcdLines) {
  * 
  * @returns the corresponding abc code
  */
-async function abcd2abc(abcdString) {
+export async function abcd2abc(abcdString) {
     const abcdLines = abcdString.split("\n");
     const scorePreambule = extractScorePreambuleFromABCDLines(abcdLines);
     const score = await abcd2Score(abcdLines);

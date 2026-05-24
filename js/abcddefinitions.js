@@ -4,7 +4,7 @@
  * @type {Record<string, number>}
  * @description dictionnary instrument name to MIDI id
  */
-const instrumentToMIDITable = {
+export const instrumentToMIDITable = {
     "piano": 1,
     "harpsichord": 7,
     "clavinet": 8,
@@ -41,7 +41,7 @@ const instrumentToMIDITable = {
  * @type {Object.<string, string>}
  * @description Correspondance ABCD to ABC
  */
-const clefsDictionnary = {
+export const clefsDictionnary = {
     "[K:treble]": "[K:treble]",
     "[K:bass]": "[K:bass]",
     "[K:treble-8]": "[K:treble-8]",
@@ -62,7 +62,7 @@ const clefsDictionnary = {
 
 
 
-const dictionnaryABCDtoABC = {
+export const dictionnaryABCDtoABC = {
     "tr": "!trill!",
 
 }
@@ -73,20 +73,20 @@ const dictionnaryABCDtoABC = {
  * @description dictionnary instrument name to standard key for playing that instrument
  * if not present, by default it is 𝄞
  */
-const instrumentToStandardKey = {
+export const instrumentToStandardKey = {
     "cello": "𝄢"
 }
 
 
 
-const abcdStringTimeSignature = ["1/2", "1/4", "2/2", "2/4", "3/4", "5/4", "7/4", "3/8", "4/4", "6/4", "6/8", "12/8", "15/8"];
+export const abcdStringTimeSignature = ["1/2", "1/4", "2/2", "2/4", "3/4", "5/4", "7/4", "3/8", "4/4", "6/4", "6/8", "12/8", "15/8"];
 
 /**
  * 
  * @param {string} str 
  * @returns {boolean}
  */
-function isTimeSignature(str) { return abcdStringTimeSignature.indexOf(str) >= 0; }
+export function isTimeSignature(str) { return abcdStringTimeSignature.indexOf(str) >= 0; }
 
 /**
  * 
@@ -99,7 +99,7 @@ function isTimeSignature(str) { return abcdStringTimeSignature.indexOf(str) >= 0
  * @example strToTonalityNumber('bonjour') == undefined
  * 
  */
-function strToTonalityNumber(str) {
+export function strToTonalityNumber(str) {
     if (str == "♮")
         return 0;
 
@@ -127,7 +127,7 @@ function strToTonalityNumber(str) {
 
 
 
-const abcdStringClefs = Object.keys(clefsDictionnary);
+export const abcdStringClefs = Object.keys(clefsDictionnary);
 
 /**
  * 
@@ -137,7 +137,7 @@ const abcdStringClefs = Object.keys(clefsDictionnary);
  * @example isStartsWithClefs("[K:treble] a") == "[K:treble]"
  * @example isStartsWithClefs("a a ") == false 
  */
-function isStartsWithClefs(abcdString) {
+export function isStartsWithClefs(abcdString) {
     for (const clef of abcdStringClefs)
         if (abcdString.startsWith(clef))
             return clef;

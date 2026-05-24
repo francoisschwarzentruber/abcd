@@ -3,7 +3,7 @@
 
 var log = console.log.bind(console), keyData = document.getElementById('key_data'),
     deviceInfoInputs = document.getElementById('inputs'), deviceInfoOutputs = document.getElementById('outputs');
-var AudioContext = AudioContext || webkitAudioContext; // for ios/safari
+//var AudioContext = AudioContext || webkitAudioContext; // for ios/safari
 var context = new AudioContext();
 var activeNotes = [];
 var btnBox = document.getElementById('content'), btn = document.getElementsByClassName('button');
@@ -12,7 +12,7 @@ var data, cmd, channel, type, note, velocity;
 let midi;
 
 
-class MidiInput {
+export class MidiInput {
     static setEventListenerNoteOff(f) { MidiInput.onNoteOff = f; }
     static setEventListenerNoteOn(f) { MidiInput.onNoteOn = f; }
 

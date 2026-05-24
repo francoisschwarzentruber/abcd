@@ -12,6 +12,7 @@
     display: flex;
     bottom: 0px;
     left: 0px;
+    height: 100%;
     border: 0px solid black;
     resize: none;
 }
@@ -23,6 +24,14 @@
     right: 0;
 }
 
+#editor-panel {
+    overflow: auto;
+    height: 100%;
+}
+
+.cm-editor {
+    height: 100%;
+}
 
 #output-panel {
     overflow: auto;

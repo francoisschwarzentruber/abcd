@@ -1,5 +1,8 @@
 // @ts-check
 /// <reference path="pitch.js" />
+import { Pitch } from "./pitch.js";
+import { editorContext } from "./editorcontext.js";
+import { rawPitch2Pitch } from "./midiinputgui.js";
 
 const piano = document.getElementById('myPiano');
 

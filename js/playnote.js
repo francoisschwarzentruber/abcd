@@ -9,7 +9,7 @@ function noteABCDToToneJS(note) {
     return noteName;
 }
 
-class PlayNote {
+export class PlayNote {
     /**
      * 
      * @param {*} notes

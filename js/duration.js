@@ -3,7 +3,7 @@
 /**
  * duration of a rest / chord
  */
-class Duration {
+export class Duration {
     /**
      * 
      * @param {string | number} value 

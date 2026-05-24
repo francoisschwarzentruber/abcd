@@ -1,6 +1,9 @@
 // @ts-check
 
-class Pitch {
+import { lyNoteLetterToiNote7 } from "./element.js";
+
+
+export class Pitch {
 
     /**
      * 

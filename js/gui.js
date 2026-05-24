@@ -1,3 +1,17 @@
+import { editor } from "./editor.js";
+import { Save } from "./save.js";
+import { ninja } from "./actions.js";
+import { abcd2abc } from "./abcd2abc.js";
+import { MatchingCodeRendering } from "./matchingCodeRendering.js";
+
+
+Split(['#editor-panel', '#output-panel'], {
+    sizes: [50, 50],
+    minSize: 150,
+    cursor: 'col-resize',
+    direction: 'horizontal',
+    gutterSize: 6
+});
 
 
 const abcjs = window.ABCJS;
@@ -85,7 +99,8 @@ if (storedValue == undefined)
 
 let lines = storedValue.split("\n");
 storedValue = lines.join("\n");
-editor.text = storedValue
+editor.text = storedValue;
+
 
 setInterval(() => Save.save(editor.text), 5000);
 
@@ -160,7 +175,7 @@ function buttonInsert(s, hint) {
 
 
 
-function performActionOnSelection(f) {
+export function performActionOnSelection(f) {
     editor.focus();
     editor.setSelectedText(f(editor.getSelectedText()));
 }
@@ -185,7 +200,7 @@ buttonInsert("🤫", "mute voice");
 
 
 
-document.querySelector("textarea").onkeydown = (e) => {
+document.querySelector("#editor-panel").onkeydown = (e) => {
     if (e.ctrlKey && e.key == "k") {
         ninja.open();
         e.preventDefault();
@@ -197,10 +212,3 @@ document.querySelector("textarea").onkeydown = (e) => {
 
 
 
-Split(['#editor', '#output-panel'], {
-    sizes: [50, 50],
-    minSize: 150,
-    cursor: 'col-resize',
-    direction: 'horizontal',
-    gutterSize: 6
-});

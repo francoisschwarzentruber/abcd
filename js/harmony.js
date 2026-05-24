@@ -1,12 +1,14 @@
 // @ts-check
-/// <reference path="pitch.js" />
+import { Pitch } from "./pitch.js";
+import { tokenToElement } from "./element.js";
+
 /**
  * 
  * @param {string} abcdString 
  * @param {*} f 
  * @returns apply function f to all tokens in abcdString and returns the obtained string
  */
-function mapToAllTokens(abcdString, f) {
+export function mapToAllTokens(abcdString, f) {
     return abcdString.replaceAll("[", " [ ")
         .replaceAll("]", " ] ")
         .split(' ').map(f).join(' ').replaceAll(" [ ", "[").replaceAll(" ] ", "]");
@@ -21,7 +23,7 @@ function mapToAllTokens(abcdString, f) {
  * @param {number} diff 
  * @returns the string
  */
-function movePitch(abcdTokenString, diff) {
+export function movePitch(abcdTokenString, diff) {
     const element = tokenToElement(abcdTokenString);
 
     if (!(element instanceof Chord))
@@ -41,7 +43,7 @@ function movePitch(abcdTokenString, diff) {
  * @param {number} diff 
  * @returns the string
  */
-function addPitch(abcdTokenString, diff) {
+export function addPitch(abcdTokenString, diff) {
     const element = tokenToElement(abcdTokenString);
 
     if (!(element instanceof Chord))
@@ -61,7 +63,7 @@ function addPitch(abcdTokenString, diff) {
  * 
  * @example str8up("a'' c,") == "a''' c"
  */
-function str8up(abcdString) {
+export function str8up(abcdString) {
     return mapToAllTokens(abcdString, 
         /**
          * 
@@ -78,7 +80,7 @@ function str8up(abcdString) {
  * 
  * @example str8up("a'' c,") == "a' c,,"
  */
-function str8down(abcdString) {
+export function str8down(abcdString) {
     return mapToAllTokens(abcdString, 
         /**
          * 
@@ -123,7 +125,7 @@ function modulo(pitch) {
 * @example enharmonic(new Pitch(1, 1), new Pitch(3, -1)) is Object { value: 2, accidental: -1 }
 * @returns the same pitch but in the key (e.g. G# in Eb is Ab)
 */
-function enharmonic(pitch, key) {
+export function enharmonic(pitch, key) {
     const pitch0e = imidiNote2RawPitch(pitch.nbHalfTones - key.nbHalfTones);
     return add(pitch0e, key);
 }
@@ -133,7 +135,7 @@ function enharmonic(pitch, key) {
 * @param {Pitch} key
 * @returns {(number | undefined)[]} the array of accidentals in the key
 */
-function getAccidentals(key) {
+export function getAccidentals(key) {
     /**
      * @type {(number | undefined)[]}
      */
@@ -152,5 +154,5 @@ function getAccidentals(key) {
  * @return the pitch with the accidental that is natural in the key
  * @example accidentalize(C, E) => C# because C has a # in E major
  */
-function accidentalize(pitch, key) { return new Pitch(pitch.value, getAccidentals(key)[pitch.value7]); }
+export function accidentalize(pitch, key) { return new Pitch(pitch.value, getAccidentals(key)[pitch.value7]); }
 
