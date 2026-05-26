@@ -1,9 +1,11 @@
+// @ts-check
 import { editor } from "./editor.js";
 import { Save } from "./save.js";
 import { ninja } from "./actions.js";
 import { abcd2abc } from "./abcd2abc.js";
 import { MatchingCodeRendering } from "./matchingCodeRendering.js";
-import { utf8DurationSymbols } from "./abcddefinitions.js";
+import { utf8AccidentalSymbols, utf8DurationSymbols, utf8ClefSymbols, utf8DynamicSymbols, utf8DecorationSymbols, utf8NavigationSymbols, utf8RestSymbols, utf8BarSymbols } from "./abcddefinitions.js";
+import { str8down, str8up } from "./harmony.js";
 
 
 Split(['#editor-panel', '#output-panel'], {
@@ -165,10 +167,10 @@ function addButton(text, hint, event) {
     toolbarInsert.append(b);
 }
 
-function buttonInsert(s, hint) {
-    addButton(s, hint, (evt) => {
+function buttonInsert(caption, textToInserted, hint) {
+    addButton(caption, hint, (evt) => {
         evt.srcElement.blur();
-        editor.write(s)
+        editor.write(textToInserted)
         editor.focus();
     });
 }
@@ -178,7 +180,7 @@ function buttonInsert(s, hint) {
 
 export function performActionOnSelection(f) {
     editor.focus();
-    editor.setSelectedText(f(editor.getSelectedText()));
+    editor.applyToSelection(f);
 }
 
 
@@ -186,22 +188,42 @@ button8up.onclick = () => performActionOnSelection(str8up);
 button8down.onclick = () => performActionOnSelection(str8down);
 
 
+buttonInsert("💬 ", "💬 ", "start a line of lyrics");
+buttonInsert("♩=120 ", "♩=120 ", "add tempo indication");
+buttonInsert("🤫", "🤫", "mute voice");
 
+for (const symbol of utf8ClefSymbols)
+    buttonInsert(symbol.utf8, symbol.utf8, symbol.description);
 
+buttonInsert("3/4", "temporal signature");
 
-buttonInsert("𝄞 ", "add a treble key");
-buttonInsert("𝄡 ", "add an alto key");
-buttonInsert("𝄢 ", "add a bass key");
-buttonInsert("♭", "add flat");
-buttonInsert("♮", "add normal");
-buttonInsert("♯", "add sharp");
+for (const symbol of utf8AccidentalSymbols)
+    buttonInsert(symbol.utf8, symbol.utf8, symbol.description);
 
 for (const symbol of utf8DurationSymbols)
-    buttonInsert(symbol.utf8, symbol.description);
+    buttonInsert(symbol.utf8, symbol.utf8, symbol.description);
 
-buttonInsert("💬 ", "start a line of lyrics");
-buttonInsert("♩=120 ", "add tempo indication");
-buttonInsert("🤫", "mute voice");
+buttonInsert(".", ".", "increase the duration by half");
+buttonInsert("..", "..", "increase the duration by half + quarter");
+
+buttonInsert("r", "a rest (of arbitrary duration)");
+
+for (const symbol of utf8RestSymbols)
+    buttonInsert(symbol.utf8, symbol.utf8, symbol.description);
+
+for (const symbol of utf8DynamicSymbols)
+    buttonInsert(symbol.utf8, symbol.utf8, symbol.description);
+
+for (const symbol of utf8DecorationSymbols)
+    buttonInsert(symbol.utf8, symbol.utf8, symbol.description);
+
+
+for (const symbol of utf8BarSymbols)
+    buttonInsert(symbol.utf8, symbol.abcd, symbol.description);
+
+for (const symbol of utf8NavigationSymbols)
+    buttonInsert(symbol.utf8, symbol.utf8, symbol.description);
+
 
 
 

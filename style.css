@@ -1,11 +1,13 @@
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
 #container {
-    position: absolute;
     display: flex;
     flex-direction: row;
-    top: 76px;
-    bottom: 64px;
-    left: 0px;
-    right: 0px;
+    flex-grow: 1;
 }
 
 #editor {
@@ -135,8 +137,13 @@ button:active {
 }
 
 
+#toolbar-panel {
+    display: flex;
+    flex-direction: column;
+}
 
 #toolbar {
+    display: flex;
     background: #efefff;
 }
 
@@ -158,10 +165,6 @@ body {
 
 piano-keyboard {
     height: 64px;
-    bottom: 0;
-    position: absolute;
-    left: 0;
-    right: 0;
 }
 
 
@@ -169,7 +172,7 @@ piano-keyboard {
 .tooltip-container {
     height: 64px;
     bottom: 0;
-    position: absolute;
+    position: relative;
     left: 0;
     right: 0;
     display: inline-block;

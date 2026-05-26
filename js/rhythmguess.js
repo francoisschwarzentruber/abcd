@@ -2,7 +2,7 @@
 
 import { Duration } from "./duration.js";
 import { tokenToElement, ElementWithDuration, Rest, NupletSymbolElement, MusicalElement } from "./element.js";
-import { utf8DurationSymbols } from "./abcddefinitions.js";
+import { utf8DurationSymbols, utf8RestSymbols } from "./abcddefinitions.js";
 
 /**
  * @type {Record<string, string>}
@@ -257,6 +257,12 @@ function getPossibleDurations(element, ratio, signatureValue) {
     let durationStr = element.duration.toString();
 
     for (const symbol of utf8DurationSymbols) {
+        if (durationStr == symbol.utf8) return [symbol.duration];
+        if (durationStr == symbol.utf8 + ".") return [symbol.duration * 3 / 2];
+        if (durationStr == symbol.utf8 + "..") return [symbol.duration * 7 / 4];
+    }
+
+    for (const symbol of utf8RestSymbols) {
         if (durationStr == symbol.utf8) return [symbol.duration];
         if (durationStr == symbol.utf8 + ".") return [symbol.duration * 3 / 2];
         if (durationStr == symbol.utf8 + "..") return [symbol.duration * 7 / 4];

@@ -3,7 +3,9 @@
 import { Pitch } from "./pitch.js";
 import { editorContext } from "./editorcontext.js";
 import { rawPitch2Pitch } from "./midiinputgui.js";
+import { editor } from "./editor.js";
 
+const abcjs = window.ABCJS;
 const piano = document.getElementById('myPiano');
 
 /**

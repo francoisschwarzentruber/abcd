@@ -1,11 +1,10 @@
 // @ts-check
 
 import { EditorView, basicSetup } from "https://esm.sh/codemirror@6.0.1";
-import { EditorState } from "https://esm.sh/@codemirror/state";
+import { EditorState, EditorSelection } from "https://esm.sh/@codemirror/state";
 import { StreamLanguage, HighlightStyle, syntaxHighlighting } from "https://esm.sh/@codemirror/language@6.0.0";
 import { tags as t, Tag } from "https://esm.sh/@lezer/highlight@1.0.0";
 import { abcdStringClefs } from "./abcddefinitions.js";
-
 
 
 /**
@@ -118,25 +117,32 @@ class Editor {
     }
 
 
+    /**
+     * 
+     * @param {function | string} transformFn
+     * @description apply a function (or a string) to each range of the selection
+     */
+    applyToSelection(transformFn) {
+        this.view.dispatch(
+            this.view.state.changeByRange((range) => {
+                const oldText = this.view.state.sliceDoc(range.from, range.to);
+                const newText = typeof transformFn === "function" ? transformFn(oldText) : transformFn;
 
-
-    getSelectedText() {
-        return window.getSelection().toString();
+                return {
+                    changes: { from: range.from, to: range.to, insert: newText },
+                    // 3. On définit la nouvelle sélection pour ce fragment précis
+                    range: EditorSelection.range(range.from, range.from + newText.length)
+                };
+            })
+        );
+        this.view.focus();
     }
+
 
     get DOMelement() {
         return document.getElementById("editor-panel");
     }
 
-    /**
-     * 
-     * @param {string} txt 
-     */
-    setSelectedText(txt) {
-        this.write(txt);
-        const pos = this.DOMelement.selectionStart;
-        this.DOMelement.setSelectionRange(pos - txt.length, pos);
-    }
 
 
     /**
@@ -173,16 +179,16 @@ class Editor {
      * @returns {{iline: number, icolumn: number, ipos: number}}
      */
     getCursor() {
-        const textarea = this.DOMelement;
-        const code = this.text;
-        const lines = code.split("\n");
-        const ipos = textarea.selectionStart;
-        function getLineNumber() {
-            return textarea.value.substr(0, textarea.selectionStart).split("\n").length;
-        }
-        const iline = getLineNumber();
-        const icolumn = code.lastIndexOf("\n", ipos);
-        return { iline, icolumn, ipos };
+        const state = this.view.state;
+        const ipos = state.selection.main.head;
+
+        const line = state.doc.lineAt(ipos);
+
+        return {
+            iline: line.number,          //starts at 1
+            icolumn: ipos - line.from + 1, // Position in the line (starts at 1)
+            ipos: ipos                   // global position
+        };
     }
 }
 

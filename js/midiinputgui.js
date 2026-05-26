@@ -15,7 +15,7 @@ let beginningTimeForAChord = Date.now();
  * @param {number} midiNote 
  * @returns {Pitch} the lilypond string for the midi note midiNote
  */
-function imidiNote2RawPitch(midiNote) {
+export function imidiNote2RawPitch(midiNote) {
     const iC = 0;
     const midiNotefromC = midiNote - iC;
     let octave = Math.floor(midiNotefromC / 12);

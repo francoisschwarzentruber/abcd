@@ -1,6 +1,6 @@
 // @ts-check
 
-import { abcdStringTimeSignature, abcdStringClefs, isStartsWithClefs, instrumentToMIDITable } from "./abcddefinitions.js";
+import { abcdStringTimeSignature, abcdStringClefs, isStartsWithClefs, instrumentToMIDITable, utf8DynamicSymbols, utf8NavigationSymbols } from "./abcddefinitions.js";
 
 
 /**
@@ -400,6 +400,12 @@ class Voice extends StringToBeAppended {
          */
         function replaceABCDtokensByABCtokens(inputString) {
             let string = inputString;
+
+            for (const symbol of utf8DynamicSymbols)
+                string = string.replaceAll(" " + symbol.utf8 + " ", " " + symbol.abc + " ");
+
+            for (const symbol of utf8NavigationSymbols)
+                string = string.replaceAll(" " + symbol.utf8 + " ", " " + symbol.abc + " ");
 
             string = string.replaceAll(/(?<=\S) /g, ""); //remove a space after a letter different from a space
 

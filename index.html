@@ -28,42 +28,42 @@
 
 
 
-    <div id="toolbar">
-        <span class="toolbarPart">
-            <button id="buttonDialogOpen" title="open a score">📂</button>
-            <button id="buttonSave" title="save the score">💾</button>
-            <button id="buttonPrint" title="print the score" onclick="window.print()">⎙</button>
+    <div id="toolbar-panel">
+        <div id="toolbar">
+            <span class="toolbarPart">
+                <button id="buttonDialogOpen" title="open a score">📂</button>
+                <button id="buttonSave" title="save the score">💾</button>
+                <button id="buttonPrint" title="print the score" onclick="window.print()">⎙</button>
 
-        </span>
+            </span>
 
-        <span class="toolbarPart">
-            <button id="buttonExportMIDI">MIDI</button>
-            <button id="buttonExportABC">ABC</button>
-        </span>
+            <span class="toolbarPart">
+                <button id="buttonExportMIDI">MIDI</button>
+                <button id="buttonExportABC">ABC</button>
+            </span>
 
-        <div class="toolbarPart" id="toolbarInsert"></div>
-
-
-
-        <span hidden="hidden" class="toolbarPart">
-            <button title="menu of actions" id="buttonActionMenu">🦄</button>
-            <button title="shift one octave down" id="button8down">8↓</button>
-            <button title="shift one octave up" id="button8up">8↑</button>
-        </span>
-        <input checked type="checkbox" id="recordMidi">
-        <label for="recordMidi" title="works on Chrome only">record Midi</label>
+            <div class="toolbarPart" id="toolbarInsert"></div>
 
 
-        <div id="audio"></div>
+
+            <span hidden="hidden" class="toolbarPart">
+                <button title="menu of actions" id="buttonActionMenu">🦄</button>
+                <button title="shift one octave down" id="button8down">8↓</button>
+                <button title="shift one octave up" id="button8up">8↑</button>
+            </span>
+            <input checked type="checkbox" id="recordMidi">
+            <label for="recordMidi" title="works on Chrome only">record Midi</label>
 
 
 
 
-        <a id="help" href="https://github.com/francoisschwarzentruber/abcd" target="_blank">?</a>
+            <div id="midi"></div>
 
-        <div id="midi">
+            <a id="help" href="https://github.com/francoisschwarzentruber/abcd" target="_blank">?</a>
 
         </div>
+        <div id="audio"></div>
+
         <ninja-keys placeholder="Search actions..."></ninja-keys>
 
     </div>

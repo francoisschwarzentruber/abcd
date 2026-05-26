@@ -1,7 +1,9 @@
 // @ts-check
-import {editor} from "./editor.js";
+import { editor } from "./editor.js";
 import { clefsDictionnary } from "./abcddefinitions.js";
-import { ElementClef, tokenToElement } from "./element.js";
+import { ElementClef, tokenToElement, ElementTonality, Chord } from "./element.js";
+import { accidentalize, mapToAllTokens } from "./harmony.js";
+import { Pitch } from "./pitch.js";
 
 
 

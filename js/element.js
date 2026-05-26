@@ -1,7 +1,7 @@
 // @ts-check
 import { Duration } from "./duration.js";
 import { Pitch } from "./pitch.js";
-import { isTimeSignature, clefsDictionnary, strToTonalityNumber } from "./abcddefinitions.js";
+import { isTimeSignature, clefsDictionnary, strToTonalityNumber, utf8AccidentalSymbols, utf8RestSymbols } from "./abcddefinitions.js";
 
 
 export class MusicalElement {
@@ -46,7 +46,7 @@ export class Rest extends ElementWithDuration {
 /**
  * a note or a chord
  */
-class Chord extends ElementWithDuration {
+export class Chord extends ElementWithDuration {
     /**
      * 
      * @param {Pitch[]} pitchs 
@@ -148,7 +148,7 @@ class ElementTempo extends MusicalElement {
  * a tonality changes
  * @example new ElementTonality("##")
  */
-class ElementTonality extends MusicalElement {
+export class ElementTonality extends MusicalElement {
 
     tonalityNumber = 0;
 
@@ -284,6 +284,13 @@ export function tokenToElement(tokenStr) {
         else if (str.startsWith("♭")) {
             accidental = -1;
         }
+        else {
+            for (const symbol of utf8AccidentalSymbols)
+                if (str.startsWith(symbol.utf8)) {
+                    accidental = symbol.accidental;
+                    break;
+                }
+        }
 
         if (accidental != undefined)
             str = str.substr(Math.abs(accidental));
@@ -300,6 +307,10 @@ export function tokenToElement(tokenStr) {
         if (str.startsWith("_")) return [str.substr(1), "r"];
         if (str.startsWith("r")) return [str.substr(1), "r"];
         if (str.startsWith("x")) return [str.substr(1), "x"];
+
+        for (const symbol of utf8RestSymbols)
+            if (str.startsWith(symbol.utf8))
+                return [str, "r"]; // we do not move forward because we need the information for the duration
         return [str, undefined];
     }
 

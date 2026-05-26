@@ -1,6 +1,7 @@
 // @ts-check
 import { Pitch } from "./pitch.js";
-import { tokenToElement } from "./element.js";
+import { Chord, tokenToElement } from "./element.js";
+import { imidiNote2RawPitch } from "./midiinputgui.js";
 
 /**
  * 
