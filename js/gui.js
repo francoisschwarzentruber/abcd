@@ -3,6 +3,7 @@ import { Save } from "./save.js";
 import { ninja } from "./actions.js";
 import { abcd2abc } from "./abcd2abc.js";
 import { MatchingCodeRendering } from "./matchingCodeRendering.js";
+import { utf8DurationSymbols } from "./abcddefinitions.js";
 
 
 Split(['#editor-panel', '#output-panel'], {
@@ -189,14 +190,18 @@ button8down.onclick = () => performActionOnSelection(str8down);
 
 
 buttonInsert("𝄞 ", "add a treble key");
-buttonInsert("𝄢 ", "add a treble key");
+buttonInsert("𝄡 ", "add an alto key");
+buttonInsert("𝄢 ", "add a bass key");
 buttonInsert("♭", "add flat");
 buttonInsert("♮", "add normal");
 buttonInsert("♯", "add sharp");
+
+for (const symbol of utf8DurationSymbols)
+    buttonInsert(symbol.utf8, symbol.description);
+
 buttonInsert("💬 ", "start a line of lyrics");
 buttonInsert("♩=120 ", "add tempo indication");
 buttonInsert("🤫", "mute voice");
-
 
 
 

@@ -8,14 +8,18 @@ import { abcdStringClefs } from "./abcddefinitions.js";
 
 
 
-
+/**
+ * Tags for color highlighting
+ */
 const clefTag = Tag.define();
 const signatureTag = Tag.define();
 const barTag = Tag.define();
 const alterationTag = Tag.define();
 
 
-
+/**
+ * define the parser for the tags
+ */
 const abcdGrammar = StreamLanguage.define({
     token(stream) {
         for (const clef of abcdStringClefs)
@@ -41,14 +45,14 @@ const abcdGrammar = StreamLanguage.define({
 
 
 
-// --- 2. Define the Visual Style (The Colors) ---
+/**
+ * style for each tag
+ */
 const abcdHighlightStyle = HighlightStyle.define([
-    { tag: barTag, color: "black", background: "lightgray", fontWeight: "bold" },
+    { tag: barTag, color: "black", background: "#AAAAAAAA", fontWeight: "bold" },
     { tag: signatureTag, color: "black", background: "#ffa657", fontWeight: "bold", padding: "1px" },
     { tag: clefTag, color: "brown", background: "lightyellow", fontWeight: "bold", padding: "1px" },
     { tag: alterationTag, color: "darkgreen", fontWeight: "bold", padding: "1px" },
-
-
 ]);
 
 
@@ -71,7 +75,7 @@ class Editor {
             basicSetup,
             abcdGrammar,
             onUpdate,
-            syntaxHighlighting(abcdHighlightStyle)
+            syntaxHighlighting(abcdHighlightStyle),
         ];
 
         this.view = new EditorView({
@@ -123,6 +127,11 @@ class Editor {
     get DOMelement() {
         return document.getElementById("editor-panel");
     }
+
+    /**
+     * 
+     * @param {string} txt 
+     */
     setSelectedText(txt) {
         this.write(txt);
         const pos = this.DOMelement.selectionStart;
@@ -130,6 +139,11 @@ class Editor {
     }
 
 
+    /**
+     * 
+     * @param {number} lineNumber 
+     * @param {number} columnNumber 
+     */
     gotoLine(lineNumber, columnNumber = 0) {
         // 1. Ensure the line number is within bounds
         const lineCount = this.view.state.doc.lines;

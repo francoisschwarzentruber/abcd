@@ -51,6 +51,7 @@ export const clefsDictionnary = {
     "𝄢": "[K:bass]",
     "f:": "[K:bass]",
     "𝄞": "[K:treble]",
+    "𝄡": "[K:alto]",
     "g:": "[K:treble]",
     "𝄞8": "[K:treble-8]",
     "g8:": "[K:treble-8]",
@@ -76,6 +77,53 @@ export const dictionnaryABCDtoABC = {
 export const instrumentToStandardKey = {
     "cello": "𝄢"
 }
+
+
+
+
+
+export const utf8DurationSymbols = [
+  {
+    utf8: "𝅜",
+    description: "Musical Symbol Breve",
+    duration: 2
+  },
+  {
+    utf8: "𝅝",
+    description: "Musical Symbol Whole Note",
+    duration: 1
+  },
+  {
+    utf8: "𝅗𝅥",
+    description: "Musical Symbol Half Note",
+    duration: 0.5
+  },
+  {
+    utf8: "𝅘𝅥",
+    description: "Musical Symbol Quarter Note",
+    duration: 0.25
+  },
+  {
+    utf8: "𝅘𝅥𝅮",
+    description: "Musical Symbol Eighth Note",
+    duration: 0.125
+  },
+  {
+    utf8: "𝅘𝅥𝅯",
+    description: "Musical Symbol Sixteenth Note",
+    duration: 0.0625
+  },
+  {
+    utf8: "𝅘𝅥𝅰",
+    description: "Musical Symbol Thirty-Second Note",
+    duration: 0.03125
+  },
+  {
+    utf8: "𝅘𝅥𝅱",
+    description: "Musical Symbol Sixty-Fourth Note",
+    duration: 0.015625
+  }
+];
 
 
 
