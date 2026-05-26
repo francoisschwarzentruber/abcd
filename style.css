@@ -19,11 +19,9 @@ body {
     resize: none;
 }
 
-#midi {
-    position: absolute;
-    top: 48px;
-    left: 50%;
-    right: 0;
+label {
+    white-space:nowrap;
+    height:fit-content;
 }
 
 #editor-panel {
@@ -62,9 +60,6 @@ button {
     border-radius: 7px;
     padding: 4px;
     text-decoration: none;
-    right: 0px;
-    top: 4px;
-    position: absolute;
 }
 
 button:hover,

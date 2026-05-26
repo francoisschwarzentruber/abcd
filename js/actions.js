@@ -1,3 +1,11 @@
+// @ts-check
+
+import { editor } from "./editor.js";
+import { performActionOnSelection } from "./gui.js";
+import { addPitch, mapToAllTokens, str8down, str8up } from "./harmony.js";
+
+
+
 export const ninja = document.querySelector('ninja-keys');
 ninja.data = [
     {

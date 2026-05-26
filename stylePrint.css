@@ -11,8 +11,9 @@
 
     #toolbar,
     #audio,
-    #editor,
+    #editor-panel,
     .gutter,
+    piano-keyboard,
     #buttonPrint {
         display: none;
     }
