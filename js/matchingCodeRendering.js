@@ -65,17 +65,17 @@ export class MatchingCodeRendering {
 
 /**
  * 
- * @param {*} fullABCDCode 
- * @param {*} isystem 
- * @returns the first line number that corresponds to the system isystem
+ * @param {*} lines the full ABCD code 
+ * @param {*} isystem number of system (starting from 0)
+ * @returns the first line number that corresponds to the system isystem (between 1 and ..., and undefined if not found)
  */
-function systemNumberToLineNumber(fullABCDCodeLines, isystem) {
+function systemNumberToLineNumber(lines, isystem) {
     let currentStaffNumber = 0;
     let nbConsecutiveEmptyLines = 0;
-    for (let i = 0; i < fullABCDCodeLines.length; i++) {
-        if (fullABCDCodeLines[i].trim() == "")
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i].trim() == "")
             nbConsecutiveEmptyLines++;
-        else if (nbConsecutiveEmptyLines > 1) {
+        else if (nbConsecutiveEmptyLines >= 1) {
             nbConsecutiveEmptyLines = 0;
             currentStaffNumber++;
         }
@@ -83,7 +83,7 @@ function systemNumberToLineNumber(fullABCDCodeLines, isystem) {
         if (currentStaffNumber == isystem)
             return i + 1;
     }
-    return -1;
+    return undefined;
 }
 
 
@@ -100,6 +100,12 @@ function systemNumberToLineNumber(fullABCDCodeLines, isystem) {
 function editorGoTo(musicalInformation) {
     const lines = editor.text.split("\n");
     const ilineBeginningSystem = systemNumberToLineNumber(lines, musicalInformation.isystem);
+
+    console.log(musicalInformation)
+
+    if (ilineBeginningSystem == undefined)
+        throw "musical system not found"
+
     const iline = ilineBeginningSystem + musicalInformation.istaff;
     const line = lines[iline - 1];
     const icolumn = getColumnBeginningMeasure(line, musicalInformation.imeasure);
@@ -111,16 +117,16 @@ function editorGoTo(musicalInformation) {
  * 
  * @param {string} line 
  * @param {number} imeasure 
- * @returns the position just after the "|" of the measure number imeasure in the line
+ * @returns the column number (starting from 1) just after the "|" of the measure number imeasure in the line, undefined if non existing
  * 
- * @example getColumnBeginningMeasure("a c | d e | f", 0) == 0
- * @example getColumnBeginningMeasure("a c | d e | f", 1) == 5
- * @example getColumnBeginningMeasure("a c | d e | f", 2) == 11
+ * @example getColumnBeginningMeasure("a c | d e | f", 0) == 1
+ * @example getColumnBeginningMeasure("a c | d e | f", 1) == 6
+ * @example getColumnBeginningMeasure("a c | d e | f", 2) == 12
  */
 function getColumnBeginningMeasure(line, imeasure) {
     const cleanedLine = line.replace(/g||/, "| ");
     let pos = 0;
     for (let i = 0; i < imeasure; i++)
         pos = cleanedLine.indexOf("|", pos + 1);
-    return pos <= 0 ? 0 : pos + 1;
+    return pos <= 0 ? undefined : pos + 1;
 }

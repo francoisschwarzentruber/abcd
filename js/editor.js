@@ -60,7 +60,7 @@ const abcdHighlightStyle = HighlightStyle.define([
 /**
  * A wrapper class for the text editor where the code is written 
  */
-class Editor {
+export class Editor {
     constructor() {
         // 2. Initialize the Editor
 
@@ -147,29 +147,22 @@ class Editor {
 
     /**
      * 
-     * @param {number} lineNumber 
-     * @param {number} columnNumber 
+     * @param {number} lineNumber between 1 and ...
+     * @param {number} columnNumber between 1 and ...
      */
     gotoLine(lineNumber, columnNumber = 0) {
-        // 1. Ensure the line number is within bounds
         const lineCount = this.view.state.doc.lines;
         const targetLine = Math.max(1, Math.min(lineNumber, lineCount));
 
-        // 2. Get the line object (CM6 lines are 1-indexed)
         const lineInfo = this.view.state.doc.line(targetLine);
 
-        // 3. Calculate the character offset
-        // Column is usually 1-indexed in UI, but 0-indexed in character count
-        // We constrain the column to the length of the line
-        const pos = lineInfo.from + Math.min(columnNumber - 1, lineInfo.length);
+        const pos = lineInfo.from + Math.min(columnNumber, lineInfo.length);
 
-        // 4. Update the cursor position and scroll it into view
         this.view.dispatch({
             selection: { anchor: pos, head: pos },
             scrollIntoView: true
         });
 
-        // 5. Focus the editor so the cursor is visible/blinking
         this.view.focus();
     }
 
@@ -177,6 +170,9 @@ class Editor {
     /**
      * 
      * @returns {{iline: number, icolumn: number, ipos: number}}
+     * @description iline between 1 and nb of lines
+     * icolumn starts at 1
+     * ipos starts at 0
      */
     getCursor() {
         const state = this.view.state;
@@ -185,11 +181,12 @@ class Editor {
         const line = state.doc.lineAt(ipos);
 
         return {
-            iline: line.number,          //starts at 1
-            icolumn: ipos - line.from + 1, // Position in the line (starts at 1)
-            ipos: ipos                   // global position
+            iline: line.number,         
+            icolumn: ipos - line.from, 
+            ipos: ipos           
         };
     }
 }
 
 export let editor = new Editor();
+window.editor = editor;
