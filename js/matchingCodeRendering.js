@@ -5,6 +5,9 @@ import { editor } from "./editor.js";
  */
 export class MatchingCodeRendering {
 
+    /**
+     * @description attach onclick events to the elements of SVG
+     */
     static install() {
         const renderedSystems = document.getElementById("output").children;
         for (let isystem = 0; isystem < renderedSystems.length; isystem++) {

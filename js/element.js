@@ -437,7 +437,7 @@ export function lyNoteLetterToiNote7(iNote) {
  * @param {string} str 
  * @returns {Pitch}
  */
-function lyToPitch(str) {
+export function lyToPitch(str) {
     const el = tokenToElement(str);
 
     if (!(el instanceof Chord))

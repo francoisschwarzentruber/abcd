@@ -1,3 +1,7 @@
+// @ts-check
+
+import { lyToPitch } from "./element.js";
+
 /**
  * 
  * @param {*} note 

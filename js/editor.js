@@ -48,10 +48,10 @@ const abcdGrammar = StreamLanguage.define({
  * style for each tag
  */
 const abcdHighlightStyle = HighlightStyle.define([
-    { tag: barTag, color: "black", background: "#AAAAAAAA", fontWeight: "bold" },
-    { tag: signatureTag, color: "black", background: "#ffa657", fontWeight: "bold", padding: "1px" },
-    { tag: clefTag, color: "brown", background: "lightyellow", fontWeight: "bold", padding: "1px" },
-    { tag: alterationTag, color: "darkgreen", fontWeight: "bold", padding: "1px" },
+    { tag: barTag, color: "black", background: "#AAAAAA55", fontWeight: "bold" },
+    { tag: signatureTag, color: "black", background: "#ffa65722", fontWeight: "bold" },
+    { tag: clefTag, color: "brown", background: "#ffff0055", fontWeight: "bold" },
+    { tag: alterationTag, color: "darkgreen", fontWeight: "bold" },
 ]);
 
 
@@ -181,9 +181,9 @@ export class Editor {
         const line = state.doc.lineAt(ipos);
 
         return {
-            iline: line.number,         
-            icolumn: ipos - line.from, 
-            ipos: ipos           
+            iline: line.number,
+            icolumn: ipos - line.from,
+            ipos: ipos
         };
     }
 }
