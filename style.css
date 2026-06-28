@@ -1,13 +1,17 @@
+html,
 body {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+
 }
 
 #container {
     display: flex;
     flex-direction: row;
     flex-grow: 1;
+    min-height: 0;
 }
 
 #editor {
@@ -20,8 +24,8 @@ body {
 }
 
 label {
-    white-space:nowrap;
-    height:fit-content;
+    white-space: nowrap;
+    height: fit-content;
 }
 
 #editor-panel {
@@ -36,6 +40,9 @@ label {
 #output-panel {
     overflow: auto;
     padding-top: 16px;
+    min-height: 0;
+
+
 }
 
 #output {
